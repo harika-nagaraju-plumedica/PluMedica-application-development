@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../../utils/validation_utils.dart';
+import '../../services/patient_session_service.dart';
 
 /// Hospital Registration Controller
 class HospitalRegistrationController extends GetxController {
@@ -83,6 +84,14 @@ class HospitalRegistrationController extends GetxController {
   @override
   void onInit() {
     super.onInit();
+    _redirectIfAlreadyRegistered();
+  }
+
+  Future<void> _redirectIfAlreadyRegistered() async {
+    final isRegistered = await PatientSessionService.isRoleRegistered(AppRole.hospital);
+    if (isRegistered) {
+      Get.offAllNamed('/hospital/login');
+    }
   }
 
   /// Get cities for selected state
@@ -240,22 +249,22 @@ class HospitalRegistrationController extends GetxController {
 
       // Simulate API delay
       await Future.delayed(const Duration(seconds: 2));
+      await PatientSessionService.markRoleLoggedIn(
+        AppRole.hospital,
+        email: emailController.text,
+      );
 
-      registrationStatus.value = 'Pending Verification';
+      registrationStatus.value = 'Approved';
 
       Get.snackbar(
         'Success',
-        'Hospital registration submitted. Status: Pending Verification',
+        'Hospital registration successful. Welcome to Plumedica!',
         snackPosition: SnackPosition.BOTTOM,
         duration: const Duration(seconds: 2),
       );
 
-      // Navigate to pending verification page after snackbar
       await Future.delayed(const Duration(milliseconds: 500));
-      Get.offNamed('/pending-verification', arguments: {
-        'registrationType': 'Hospital',
-        'userEmail': emailController.text,
-      });
+      Get.offAllNamed('/hospital/dashboard');
     } catch (e) {
       Get.snackbar(
         'Error',

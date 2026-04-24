@@ -8,7 +8,7 @@ import '../../widgets/app_button.dart';
 import '../../widgets/app_text_field.dart';
 
 class PartnerRegistrationView extends GetView<PartnerRegistrationController> {
-  const PartnerRegistrationView({Key? key}) : super(key: key);
+  const PartnerRegistrationView({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -84,7 +84,7 @@ class PartnerRegistrationView extends GetView<PartnerRegistrationController> {
 }
 
 class PartnerLoginView extends GetView<PartnerLoginController> {
-  const PartnerLoginView({Key? key}) : super(key: key);
+  const PartnerLoginView({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -162,20 +162,24 @@ class PartnerLoginView extends GetView<PartnerLoginController> {
 }
 
 class PartnerDashboardView extends GetView<PartnerDashboardController> {
-  const PartnerDashboardView({Key? key}) : super(key: key);
+  const PartnerDashboardView({super.key});
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColors.backgroundLight,
       appBar: AppBar(
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back),
-          onPressed: () => Get.back(),
-        ),
+        leading: const SizedBox.shrink(),
+        leadingWidth: 0,
         backgroundColor: AppColors.white,
         elevation: 0,
         iconTheme: const IconThemeData(color: AppColors.textPrimary),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.logout),
+            onPressed: controller.logout,
+          ),
+        ],
       ),
       body: Obx(
         () => controller.isLoading.value
@@ -209,7 +213,7 @@ class PartnerDashboardView extends GetView<PartnerDashboardController> {
                                     style: AppFonts.bodyMedium
                                         .copyWith(
                                       color: AppColors.white
-                                          .withOpacity(0.8),
+                                          .withValues(alpha: 0.8),
                                     ),
                                     overflow: TextOverflow.ellipsis,
                                   ),
@@ -423,7 +427,7 @@ class PartnerDashboardView extends GetView<PartnerDashboardController> {
 }
 
 class PartnerPoliciesView extends GetView<PartnerPoliciesController> {
-  const PartnerPoliciesView({Key? key}) : super(key: key);
+  const PartnerPoliciesView({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -497,7 +501,7 @@ class PartnerPoliciesView extends GetView<PartnerPoliciesController> {
                                   ),
                                   decoration: BoxDecoration(
                                     color: AppColors.green
-                                        .withOpacity(0.1),
+                                      .withValues(alpha: 0.1),
                                     borderRadius:
                                         BorderRadius.circular(
                                             4),
@@ -531,7 +535,7 @@ class PartnerPoliciesView extends GetView<PartnerPoliciesController> {
 }
 
 class PartnerClaimsView extends GetView<PartnerClaimsController> {
-  const PartnerClaimsView({Key? key}) : super(key: key);
+  const PartnerClaimsView({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -611,7 +615,7 @@ class PartnerClaimsView extends GetView<PartnerClaimsController> {
                                   ),
                                   decoration: BoxDecoration(
                                     color: statusColor
-                                        .withOpacity(0.1),
+                                      .withValues(alpha: 0.1),
                                     borderRadius:
                                         BorderRadius.circular(
                                             4),
@@ -645,7 +649,7 @@ class PartnerClaimsView extends GetView<PartnerClaimsController> {
 }
 
 class PartnerNetworkView extends GetView<PartnerNetworkController> {
-  const PartnerNetworkView({Key? key}) : super(key: key);
+  const PartnerNetworkView({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -749,7 +753,7 @@ class PartnerNetworkView extends GetView<PartnerNetworkController> {
 }
 
 class PartnerReportsView extends GetView<PartnerReportsController> {
-  const PartnerReportsView({Key? key}) : super(key: key);
+  const PartnerReportsView({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -823,7 +827,7 @@ class PartnerReportsView extends GetView<PartnerReportsController> {
                                   ),
                                   decoration: BoxDecoration(
                                     color: AppColors.green
-                                        .withOpacity(0.1),
+                                      .withValues(alpha: 0.1),
                                     borderRadius:
                                         BorderRadius.circular(
                                             4),

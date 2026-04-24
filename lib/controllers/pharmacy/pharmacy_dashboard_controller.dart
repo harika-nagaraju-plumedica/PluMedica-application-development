@@ -1,4 +1,5 @@
 import 'package:get/get.dart';
+import '../../services/patient_session_service.dart';
 
 class PharmacyDashboardController extends GetxController {
   final pharmacyName = RxString('City Pharmacy');
@@ -141,10 +142,11 @@ class PharmacyDashboardController extends GetxController {
     },
   ]);
 
-  void logout() {
+  Future<void> logout() async {
+    await PatientSessionService.logoutRole(AppRole.pharmacy);
     Get.snackbar('Logged Out', 'You have been successfully logged out');
     Future.delayed(const Duration(milliseconds: 500), () {
-      Get.offNamed('/pharmacy/login');
+      Get.offAllNamed('/role_selection');
     });
   }
 

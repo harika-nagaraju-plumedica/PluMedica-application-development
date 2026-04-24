@@ -8,60 +8,79 @@ import '../../utils/constants.dart';
 class PharmacyCustomersView extends GetView<PharmacyCustomersController> {
   const PharmacyCustomersView({Key? key}) : super(key: key);
 
+  void _handleBackNavigation() {
+    final navigatorState = Get.key.currentState;
+    if (navigatorState != null && navigatorState.canPop()) {
+      Get.back();
+      return;
+    }
+
+    Get.offNamed('/pharmacy/dashboard');
+  }
+
+  Future<bool> _onWillPop() async {
+    _handleBackNavigation();
+    return false;
+  }
+
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: AppColors.backgroundLight,
-      appBar: AppBar(
-        backgroundColor: AppColors.green,
-        title: const Text('Customers'),
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back),
-          onPressed: () => Get.back(),
+    return WillPopScope(
+      onWillPop: _onWillPop,
+      child: Scaffold(
+        backgroundColor: AppColors.backgroundLight,
+        appBar: AppBar(
+          backgroundColor: AppColors.green,
+          title: const Text('Customers'),
+          leading: IconButton(
+            icon: const Icon(Icons.arrow_back),
+            onPressed: _handleBackNavigation,
+          ),
         ),
-      ),
-      body: Column(
-        children: [
-          // Search Bar
-          Padding(
-            padding: const EdgeInsets.all(AppConstants.paddingMedium),
-            child: TextField(
-              onChanged: (val) => controller.search(val),
-              decoration: InputDecoration(
-                hintText: 'Search by name, email, or phone',
-                prefixIcon: const Icon(Icons.search),
-                border: OutlineInputBorder(
-                  borderRadius:
-                      BorderRadius.circular(AppConstants.borderRadiusMedium),
+        body: Column(
+          children: [
+            // Search Bar
+            Padding(
+              padding: const EdgeInsets.all(AppConstants.paddingMedium),
+              child: TextField(
+                onChanged: (val) => controller.search(val),
+                decoration: InputDecoration(
+                  hintText: 'Search by name, email, or phone',
+                  prefixIcon: const Icon(Icons.search),
+                  border: OutlineInputBorder(
+                    borderRadius:
+                        BorderRadius.circular(AppConstants.borderRadiusMedium),
+                  ),
+                  contentPadding:
+                      const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
                 ),
-                contentPadding:
-                    const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
               ),
             ),
-          ),
-          // Customers List
-          Expanded(
-            child: Obx(
-              () => controller.filteredCustomers.isEmpty
-                  ? Center(
-                      child: Text(
-                        'No customers found',
-                        style: AppFonts.bodyMedium.copyWith(
-                          color: AppColors.textSecondary,
+            // Customers List
+            Expanded(
+              child: Obx(
+                () => controller.filteredCustomers.isEmpty
+                    ? Center(
+                        child: Text(
+                          'No customers found',
+                          style: AppFonts.bodyMedium.copyWith(
+                            color: AppColors.textSecondary,
+                          ),
                         ),
+                      )
+                    : ListView.builder(
+                        padding:
+                            const EdgeInsets.all(AppConstants.paddingMedium),
+                        itemCount: controller.filteredCustomers.length,
+                        itemBuilder: (context, index) {
+                          final customer = controller.filteredCustomers[index];
+                          return _buildCustomerCard(customer);
+                        },
                       ),
-                    )
-                  : ListView.builder(
-                      padding: const EdgeInsets.all(AppConstants.paddingMedium),
-                      itemCount: controller.filteredCustomers.length,
-                      itemBuilder: (context, index) {
-                        final customer = controller.filteredCustomers[index];
-                        return _buildCustomerCard(customer);
-                      },
-                    ),
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

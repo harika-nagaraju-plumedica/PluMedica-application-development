@@ -2,11 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../utils/colors.dart';
 import '../utils/constants.dart';
-import '../controllers/navigation_controller.dart';
+import '../services/patient_session_service.dart';
 
 /// Splash screen widget
 class SplashView extends StatefulWidget {
-  const SplashView({Key? key}) : super(key: key);
+  const SplashView({super.key});
 
   @override
   State<SplashView> createState() => _SplashViewState();
@@ -40,10 +40,19 @@ class _SplashViewState extends State<SplashView>
   void _navigateToRoleSelection() async {
     await Future.delayed(AppConstants.splashDuration, () {
       if (mounted) {
-        final navigationController = Get.find<NavigationController>();
-        navigationController.goToRoleSelection();
+        _resolveStartupRoute();
       }
     });
+  }
+
+  Future<void> _resolveStartupRoute() async {
+    final startupRoute = await PatientSessionService.getStartupRoute();
+
+    if (!mounted) {
+      return;
+    }
+
+    Get.offAllNamed(startupRoute);
   }
 
   @override

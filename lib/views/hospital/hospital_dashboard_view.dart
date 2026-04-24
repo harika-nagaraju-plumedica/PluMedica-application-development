@@ -9,20 +9,24 @@ import '../../widgets/hospital/hospital_summary_card_widget.dart';
 
 class HospitalDashboardView
     extends GetView<HospitalDashboardController> {
-  const HospitalDashboardView({Key? key}) : super(key: key);
+  const HospitalDashboardView({super.key});
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColors.backgroundLight,
       appBar: AppBar(
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back),
-          onPressed: () => Get.back(),
-        ),
+        leading: const SizedBox.shrink(),
+        leadingWidth: 0,
         backgroundColor: AppColors.white,
         elevation: 0,
         iconTheme: const IconThemeData(color: AppColors.textPrimary),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.logout),
+            onPressed: controller.logout,
+          ),
+        ],
       ),
       body: Obx(
         () => controller.isLoading.value
@@ -62,7 +66,7 @@ class HospitalDashboardView
                             icon: Icons.people,
                             backgroundColor:
                                 AppColors.primaryBlue
-                                    .withOpacity(0.1),
+                                .withValues(alpha: 0.1),
                             textColor: AppColors.primaryBlue,
                             onTap: () {
                               // TODO: Navigate to patient list
@@ -74,7 +78,7 @@ class HospitalDashboardView
                                 '${controller.occupiedBeds}/${controller.totalBeds}',
                             icon: Icons.bed,
                             backgroundColor: AppColors.warning
-                                .withOpacity(0.1),
+                              .withValues(alpha: 0.1),
                             textColor: AppColors.warning,
                             onTap: () {
                               // TODO: Navigate to bed management
@@ -86,7 +90,7 @@ class HospitalDashboardView
                                 .toString(),
                             icon: Icons.person_outline,
                             backgroundColor: AppColors.green
-                                .withOpacity(0.1),
+                              .withValues(alpha: 0.1),
                             textColor: AppColors.green,
                             onTap:
                                 controller
@@ -98,7 +102,7 @@ class HospitalDashboardView
                                 .toString(),
                             icon: Icons.emergency,
                             backgroundColor:
-                                AppColors.error.withOpacity(0.1),
+                              AppColors.error.withValues(alpha: 0.1),
                             textColor: AppColors.error,
                             onTap:
                                 controller

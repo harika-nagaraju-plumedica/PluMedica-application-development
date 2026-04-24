@@ -1,4 +1,5 @@
 import 'package:get/get.dart';
+import '../../services/patient_session_service.dart';
 
 class PartnerRegistrationController extends GetxController {
   final isLoading = false.obs;
@@ -12,7 +13,15 @@ class PartnerRegistrationController extends GetxController {
   @override
   void onInit() {
     super.onInit();
+    _redirectIfAlreadyRegistered();
     loadDemoData();
+  }
+
+  Future<void> _redirectIfAlreadyRegistered() async {
+    final isRegistered = await PatientSessionService.isRoleRegistered(AppRole.partner);
+    if (isRegistered) {
+      Get.offAllNamed('/partner/login');
+    }
   }
 
   void loadDemoData() {
@@ -28,7 +37,11 @@ class PartnerRegistrationController extends GetxController {
     isLoading.value = true;
     try {
       await Future.delayed(const Duration(milliseconds: 500));
-      Get.offNamed('/partner/login');
+      await PatientSessionService.markRoleLoggedIn(
+        AppRole.partner,
+        email: email.value,
+      );
+      Get.offAllNamed('/partner/dashboard');
     } catch (e) {
       Get.snackbar('Error', 'Registration failed');
     } finally {
@@ -57,15 +70,28 @@ class PartnerLoginController extends GetxController {
   @override
   void onInit() {
     super.onInit();
-    email.value = 'admin@healthinsurance.com';
+    _loadRegisteredEmail();
     password.value = 'demo123';
+  }
+
+  Future<void> _loadRegisteredEmail() async {
+    final registeredEmail = await PatientSessionService.getRoleEmail(AppRole.partner);
+    if (registeredEmail.isNotEmpty) {
+      email.value = registeredEmail;
+    } else {
+      email.value = 'admin@healthinsurance.com';
+    }
   }
 
   Future<void> login() async {
     isLoading.value = true;
     try {
       await Future.delayed(const Duration(milliseconds: 500));
-      Get.offNamed('/partner/dashboard');
+      await PatientSessionService.markRoleLoggedIn(
+        AppRole.partner,
+        email: email.value,
+      );
+      Get.offAllNamed('/partner/dashboard');
     } catch (e) {
       Get.snackbar('Error', 'Login failed');
     } finally {
@@ -175,6 +201,11 @@ class PartnerDashboardController extends GetxController {
 
   Future<void> refreshDashboard() async {
     await loadDashboardData();
+  }
+
+  Future<void> logout() async {
+    await PatientSessionService.logoutRole(AppRole.partner);
+    Get.offAllNamed('/role_selection');
   }
 }
 

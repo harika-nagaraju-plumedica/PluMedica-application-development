@@ -1,4 +1,5 @@
 import 'package:get/get.dart';
+import '../../services/patient_session_service.dart';
 
 class PatientDashboardController extends GetxController {
   final isLoading = false.obs;
@@ -117,5 +118,10 @@ class PatientDashboardController extends GetxController {
 
   Future<void> refreshDashboard() async {
     await loadDashboardData();
+  }
+
+  Future<void> logout() async {
+    await PatientSessionService.logout();
+    Get.offAllNamed('/role_selection');
   }
 }

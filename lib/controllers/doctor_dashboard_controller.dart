@@ -2,6 +2,7 @@ import 'package:get/get.dart';
 import '../models/appointment_model.dart';
 import '../models/doctor_model.dart';
 import '../models/prescription_model.dart';
+import '../services/patient_session_service.dart';
 
 /// Controller for doctor dashboard
 class DoctorDashboardController extends GetxController {
@@ -115,9 +116,9 @@ class DoctorDashboardController extends GetxController {
   }
 
   /// Logout
-  void logout() {
-    // TODO: Clear session data
-    Get.offNamed('/login');
+  Future<void> logout() async {
+    await PatientSessionService.logoutRole(AppRole.doctor);
+    Get.offAllNamed('/role_selection');
   }
 
   /// Refresh dashboard

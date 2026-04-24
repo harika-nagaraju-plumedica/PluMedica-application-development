@@ -50,7 +50,7 @@ class PatientSosView extends GetView<PatientSosController> {
                     ),
                     const SizedBox(height: 8),
                     Text(
-                      'Tap the button below to alert emergency services',
+                      'Tap the button below to alert emergency services and your emergency contacts',
                       style: AppFonts.bodySmall.copyWith(
                         color: AppColors.textSecondary,
                       ),
@@ -102,6 +102,10 @@ class PatientSosView extends GetView<PatientSosController> {
                       itemBuilder: (context, index) {
                         final contact =
                             controller.emergencyContacts[index];
+                        final contactId = contact['id'] ?? '';
+                        final contactName = contact['name'] ?? 'Unnamed Contact';
+                        final contactPhone = contact['phone'] ?? 'No phone number';
+                        final contactRelation = contact['relation'] ?? '';
                         return Container(
                           padding: const EdgeInsets.all(
                               AppConstants.paddingMedium),
@@ -129,7 +133,7 @@ class PatientSosView extends GetView<PatientSosController> {
                                       CrossAxisAlignment.start,
                                   children: [
                                     Text(
-                                      'Contact Name',
+                                      contactName,
                                       style: AppFonts.labelLarge
                                           .copyWith(
                                         color:
@@ -137,7 +141,9 @@ class PatientSosView extends GetView<PatientSosController> {
                                       ),
                                     ),
                                     Text(
-                                      '+91 9876543210',
+                                      contactRelation.isEmpty
+                                          ? contactPhone
+                                          : '$contactPhone  •  $contactRelation',
                                       style: AppFonts.bodySmall
                                           .copyWith(
                                         color:
@@ -148,10 +154,22 @@ class PatientSosView extends GetView<PatientSosController> {
                                 ),
                               ),
                               IconButton(
+                                icon: const Icon(Icons.call),
+                                color: AppColors.primaryDarkBlue,
+                                onPressed: () => controller
+                                    .callEmergencyContact(contactPhone),
+                              ),
+                              IconButton(
+                                icon: const Icon(Icons.edit),
+                                color: AppColors.primaryBlue,
+                                onPressed: () => controller
+                                    .editEmergencyContact(contactId),
+                              ),
+                              IconButton(
                                 icon: const Icon(Icons.delete),
                                 color: AppColors.error,
                                 onPressed: () => controller
-                                    .deleteEmergencyContact(contact),
+                                    .deleteEmergencyContact(contactId),
                               ),
                             ],
                           ),

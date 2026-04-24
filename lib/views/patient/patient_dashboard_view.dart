@@ -9,7 +9,7 @@ import '../../widgets/patient/quick_action_tile_widget.dart';
 import '../../widgets/patient/health_metric_card_widget.dart';
 
 class PatientDashboardView extends GetView<PatientDashboardController> {
-  const PatientDashboardView({Key? key}) : super(key: key);
+  const PatientDashboardView({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -27,9 +27,7 @@ class PatientDashboardView extends GetView<PatientDashboardController> {
           ),
           IconButton(
             icon: const Icon(Icons.logout),
-            onPressed: () {
-              Get.offNamed('/patient/login');
-            },
+            onPressed: controller.logout,
           ),
         ],
       ),
@@ -52,6 +50,42 @@ class PatientDashboardView extends GetView<PatientDashboardController> {
                         ),
                       ),
                       Padding(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: AppConstants.paddingMedium,
+                        ),
+                        child: Center(
+                          child: GestureDetector(
+                            onTap: controller.navigateToSOS,
+                            child: Container(
+                              width: 84,
+                              height: 84,
+                              decoration: const BoxDecoration(
+                                color: AppColors.error,
+                                shape: BoxShape.circle,
+                              ),
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  const Icon(
+                                    Icons.emergency,
+                                    color: AppColors.white,
+                                    size: 30,
+                                  ),
+                                  Text(
+                                    'SOS',
+                                    style: AppFonts.labelMedium.copyWith(
+                                      color: AppColors.white,
+                                      fontWeight: AppFonts.bold,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                      const SizedBox(height: AppConstants.paddingMedium),
+                      Padding(
                         padding: const EdgeInsets.all(AppConstants.paddingMedium),
                         child: GridView.count(
                           crossAxisCount: 2,
@@ -70,7 +104,7 @@ class PatientDashboardView extends GetView<PatientDashboardController> {
                               label: 'Health Records',
                               icon: Icons.document_scanner,
                               backgroundColor: AppColors.green,
-                              onTap: () => Get.toNamed('/patient/health-records'),
+                              onTap: controller.navigateToHealthRecords,
                             ),
                             QuickActionTileWidget(
                               label: 'Fitness',
@@ -111,7 +145,7 @@ class PatientDashboardView extends GetView<PatientDashboardController> {
                                   value: '120',
                                   unit: 'mmHg',
                                   icon: Icons.favorite,
-                                  backgroundColor: AppColors.error.withOpacity(0.1),
+                                  backgroundColor: AppColors.error.withValues(alpha: 0.1),
                                   iconColor: AppColors.error,
                                 ),
                                 HealthMetricCardWidget(
@@ -119,7 +153,7 @@ class PatientDashboardView extends GetView<PatientDashboardController> {
                                   value: '75',
                                   unit: 'bpm',
                                   icon: Icons.favorite,
-                                  backgroundColor: AppColors.warning.withOpacity(0.1),
+                                  backgroundColor: AppColors.warning.withValues(alpha: 0.1),
                                   iconColor: AppColors.warning,
                                 ),
                                 HealthMetricCardWidget(
@@ -127,7 +161,7 @@ class PatientDashboardView extends GetView<PatientDashboardController> {
                                   value: '72',
                                   unit: 'kg',
                                   icon: Icons.fitness_center,
-                                  backgroundColor: AppColors.green.withOpacity(0.1),
+                                  backgroundColor: AppColors.green.withValues(alpha: 0.1),
                                   iconColor: AppColors.green,
                                 ),
                                 HealthMetricCardWidget(
@@ -135,56 +169,12 @@ class PatientDashboardView extends GetView<PatientDashboardController> {
                                   value: '98',
                                   unit: '%',
                                   icon: Icons.air,
-                                  backgroundColor: AppColors.lightBlue.withOpacity(0.1),
+                                  backgroundColor: AppColors.lightBlue.withValues(alpha: 0.1),
                                   iconColor: AppColors.lightBlue,
                                 ),
                               ],
                             ),
                           ],
-                        ),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.all(AppConstants.paddingMedium),
-                        child: GestureDetector(
-                          onTap: controller.navigateToSOS,
-                          child: Container(
-                            padding: const EdgeInsets.all(AppConstants.paddingMedium),
-                            decoration: BoxDecoration(
-                              color: AppColors.error.withOpacity(0.1),
-                              border: Border.all(color: AppColors.error),
-                              borderRadius:
-                                  BorderRadius.circular(AppConstants.borderRadiusLarge),
-                            ),
-                            child: Row(
-                              children: [
-                                Icon(
-                                  Icons.emergency,
-                                  color: AppColors.error,
-                                ),
-                                const SizedBox(width: AppConstants.paddingMedium),
-                                Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Text(
-                                      'Emergency Alert',
-                                      style: AppFonts.labelLarge.copyWith(
-                                        color: AppColors.error,
-                                      ),
-                                    ),
-                                    Text(
-                                      'Tap to activate S.O.S',
-                                      style: AppFonts.bodySmall.copyWith(
-                                        color: AppColors.textSecondary,
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                                const Spacer(),
-                                const Icon(Icons.arrow_forward_ios,
-                                    color: AppColors.error),
-                              ],
-                            ),
-                          ),
                         ),
                       ),
                       const SizedBox(height: AppConstants.paddingLarge),

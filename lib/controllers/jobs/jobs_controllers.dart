@@ -1,4 +1,5 @@
 import 'package:get/get.dart';
+import '../../services/patient_session_service.dart';
 
 class JobSeekerRegistrationController extends GetxController {
   final isLoading = false.obs;
@@ -11,7 +12,15 @@ class JobSeekerRegistrationController extends GetxController {
   @override
   void onInit() {
     super.onInit();
+    _redirectIfAlreadyRegistered();
     loadDemoData();
+  }
+
+  Future<void> _redirectIfAlreadyRegistered() async {
+    final isRegistered = await PatientSessionService.isRoleRegistered(AppRole.jobSeeker);
+    if (isRegistered) {
+      Get.offAllNamed('/jobs/job-seeker/login');
+    }
   }
 
   void loadDemoData() {
@@ -26,7 +35,11 @@ class JobSeekerRegistrationController extends GetxController {
     isLoading.value = true;
     try {
       await Future.delayed(const Duration(milliseconds: 500));
-      Get.offNamed('/jobs/job-seeker/login');
+      await PatientSessionService.markRoleLoggedIn(
+        AppRole.jobSeeker,
+        email: email.value,
+      );
+      Get.offAllNamed('/jobs/search');
     } catch (e) {
       Get.snackbar('Error', 'Registration failed');
     } finally {
@@ -55,15 +68,28 @@ class JobSeekerLoginController extends GetxController {
   @override
   void onInit() {
     super.onInit();
-    email.value = 'john.seeker@email.com';
+    _loadRegisteredEmail();
     password.value = 'demo123';
+  }
+
+  Future<void> _loadRegisteredEmail() async {
+    final registeredEmail = await PatientSessionService.getRoleEmail(AppRole.jobSeeker);
+    if (registeredEmail.isNotEmpty) {
+      email.value = registeredEmail;
+    } else {
+      email.value = 'john.seeker@email.com';
+    }
   }
 
   Future<void> login() async {
     isLoading.value = true;
     try {
       await Future.delayed(const Duration(milliseconds: 500));
-      Get.offNamed('/jobs/job-seeker/search');
+      await PatientSessionService.markRoleLoggedIn(
+        AppRole.jobSeeker,
+        email: email.value,
+      );
+      Get.offAllNamed('/jobs/search');
     } catch (e) {
       Get.snackbar('Error', 'Login failed');
     } finally {
@@ -185,10 +211,25 @@ class ApplicationStatusController extends GetxController {
 
 class EmployerRegistrationController extends GetxController {
   final isLoading = false.obs;
+
+  @override
+  void onInit() {
+    super.onInit();
+    _redirectIfAlreadyRegistered();
+  }
+
+  Future<void> _redirectIfAlreadyRegistered() async {
+    final isRegistered = await PatientSessionService.isRoleRegistered(AppRole.employer);
+    if (isRegistered) {
+      Get.offAllNamed('/jobs/employer/login');
+    }
+  }
+
   Future<void> register() async {
     isLoading.value = true;
     try {
-      Get.offNamed('/jobs/employer/login');
+      await PatientSessionService.markRoleLoggedIn(AppRole.employer);
+      Get.offAllNamed('/jobs/employer/post-job');
     } catch (e) {
       Get.snackbar('Error', 'Registration failed');
     } finally {
@@ -199,10 +240,12 @@ class EmployerRegistrationController extends GetxController {
 
 class EmployerLoginController extends GetxController {
   final isLoading = false.obs;
+
   Future<void> login() async {
     isLoading.value = true;
     try {
-      Get.offNamed('/jobs/employer/dashboard');
+      await PatientSessionService.markRoleLoggedIn(AppRole.employer);
+      Get.offAllNamed('/jobs/employer/post-job');
     } catch (e) {
       Get.snackbar('Error', 'Login failed');
     } finally {
@@ -213,6 +256,12 @@ class EmployerLoginController extends GetxController {
 
 class JobPostingCreationController extends GetxController {
   final isLoading = false.obs;
+
+  Future<void> logout() async {
+    await PatientSessionService.logoutRole(AppRole.employer);
+    Get.offAllNamed('/role_selection');
+  }
+
   Future<void> post() async {
     isLoading.value = true;
     try {

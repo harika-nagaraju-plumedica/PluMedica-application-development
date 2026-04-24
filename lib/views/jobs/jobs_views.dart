@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../../controllers/jobs/jobs_controllers.dart';
+import '../../services/patient_session_service.dart';
 import '../../utils/colors.dart';
 import '../../utils/fonts.dart';
 import '../../utils/constants.dart';
@@ -9,7 +10,7 @@ import '../../widgets/app_text_field.dart';
 
 class JobSeekerRegistrationView
     extends GetView<JobSeekerRegistrationController> {
-  const JobSeekerRegistrationView({Key? key}) : super(key: key);
+  const JobSeekerRegistrationView({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -93,7 +94,7 @@ class JobSeekerRegistrationView
 }
 
 class JobSeekerLoginView extends GetView<JobSeekerLoginController> {
-  const JobSeekerLoginView({Key? key}) : super(key: key);
+  const JobSeekerLoginView({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -169,22 +170,29 @@ class JobSeekerLoginView extends GetView<JobSeekerLoginController> {
 }
 
 class JobSearchView extends GetView<JobSearchController> {
-  const JobSearchView({Key? key}) : super(key: key);
+  const JobSearchView({super.key});
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColors.backgroundLight,
       appBar: AppBar(
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back),
-          onPressed: () => Get.back(),
-        ),
+        leading: const SizedBox.shrink(),
+        leadingWidth: 0,
         title: Text(
           'Find Jobs',
           style: AppFonts.heading3.copyWith(color: AppColors.white),
         ),
         backgroundColor: AppColors.primaryDarkBlue,
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.logout),
+            onPressed: () async {
+              await PatientSessionService.logoutRole(AppRole.jobSeeker);
+              Get.offAllNamed('/role_selection');
+            },
+          ),
+        ],
       ),
       body: Obx(
         () => controller.isLoading.value
@@ -265,7 +273,7 @@ class JobSearchView extends GetView<JobSearchController> {
                                           decoration: BoxDecoration(
                                             color: AppColors
                                                 .primaryBlue
-                                                .withOpacity(0.1),
+                                              .withValues(alpha: 0.1),
                                             borderRadius:
                                                 BorderRadius
                                                     .circular(4),
@@ -316,7 +324,7 @@ class JobSearchView extends GetView<JobSearchController> {
 }
 
 class JobListingView extends GetView<JobListingController> {
-  const JobListingView({Key? key}) : super(key: key);
+  const JobListingView({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -339,7 +347,7 @@ class JobListingView extends GetView<JobListingController> {
 }
 
 class JobDetailView extends GetView<JobDetailController> {
-  const JobDetailView({Key? key}) : super(key: key);
+  const JobDetailView({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -371,7 +379,7 @@ class JobDetailView extends GetView<JobDetailController> {
 }
 
 class ApplicationStatusView extends GetView<ApplicationStatusController> {
-  const ApplicationStatusView({Key? key}) : super(key: key);
+  const ApplicationStatusView({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -404,7 +412,7 @@ class ApplicationStatusView extends GetView<ApplicationStatusController> {
 
 class EmployerRegistrationView
     extends GetView<EmployerRegistrationController> {
-  const EmployerRegistrationView({Key? key}) : super(key: key);
+  const EmployerRegistrationView({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -443,7 +451,7 @@ class EmployerRegistrationView
 }
 
 class EmployerLoginView extends GetView<EmployerLoginController> {
-  const EmployerLoginView({Key? key}) : super(key: key);
+  const EmployerLoginView({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -480,13 +488,19 @@ class EmployerLoginView extends GetView<EmployerLoginController> {
 
 class JobPostingCreationView
     extends GetView<JobPostingCreationController> {
-  const JobPostingCreationView({Key? key}) : super(key: key);
+  const JobPostingCreationView({super.key});
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColors.backgroundLight,
       appBar: AppBar(
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.logout),
+            onPressed: controller.logout,
+          ),
+        ],
         title: Text(
           'Post Job',
           style: AppFonts.heading3.copyWith(color: AppColors.white),
@@ -520,7 +534,7 @@ class JobPostingCreationView
 }
 
 class CandidateListView extends GetView<CandidateListController> {
-  const CandidateListView({Key? key}) : super(key: key);
+  const CandidateListView({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -543,7 +557,7 @@ class CandidateListView extends GetView<CandidateListController> {
 }
 
 class CandidateDetailView extends GetView<CandidateDetailController> {
-  const CandidateDetailView({Key? key}) : super(key: key);
+  const CandidateDetailView({super.key});
 
   @override
   Widget build(BuildContext context) {

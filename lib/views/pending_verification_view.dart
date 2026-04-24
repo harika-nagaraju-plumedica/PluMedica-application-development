@@ -412,7 +412,7 @@ class _PendingVerificationViewState extends State<PendingVerificationView> {
                     child: OutlinedButton(
                       onPressed: () {
                         // TODO: Implement logout logic
-                        Get.offNamed('/');
+                        Get.offAllNamed('/role_selection');
                       },
                       style: OutlinedButton.styleFrom(
                         side: const BorderSide(
@@ -426,7 +426,7 @@ class _PendingVerificationViewState extends State<PendingVerificationView> {
                         ),
                       ),
                       child: Text(
-                        'Return to Home',
+                        'Return to Role Selection',
                         style: AppFonts.labelLarge.copyWith(
                           color: AppColors.primaryBlue,
                           fontWeight: FontWeight.bold,

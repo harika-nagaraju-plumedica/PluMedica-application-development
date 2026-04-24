@@ -86,28 +86,6 @@ class PatientLoginView extends GetView<PatientLoginController> {
                       onPressed: controller.login,
                       width: double.infinity,
                     ),
-                    const SizedBox(height: AppConstants.paddingMedium),
-                    Center(
-                      child: GestureDetector(
-                        onTap: () => Get.toNamed('/patient/registration'),
-                        child: RichText(
-                          text: TextSpan(
-                            text: 'Don\'t have account? ',
-                            style: AppFonts.bodyMedium.copyWith(
-                              color: AppColors.textSecondary,
-                            ),
-                            children: [
-                              TextSpan(
-                                text: 'Register',
-                                style: AppFonts.labelMedium.copyWith(
-                                  color: AppColors.primaryBlue,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-                    ),
                   ],
                 ),
               ),

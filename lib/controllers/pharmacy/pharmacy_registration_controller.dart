@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../../utils/validation_utils.dart';
+import '../../services/patient_session_service.dart';
 
 /// Pharmacy Registration Controller
 class PharmacyRegistrationController extends GetxController {
@@ -95,6 +96,14 @@ class PharmacyRegistrationController extends GetxController {
   @override
   void onInit() {
     super.onInit();
+    _redirectIfAlreadyRegistered();
+  }
+
+  Future<void> _redirectIfAlreadyRegistered() async {
+    final isRegistered = await PatientSessionService.isRoleRegistered(AppRole.pharmacy);
+    if (isRegistered) {
+      Get.offAllNamed('/pharmacy/login');
+    }
   }
 
   /// Get cities for selected state
@@ -332,22 +341,19 @@ class PharmacyRegistrationController extends GetxController {
 
       // Simulate API delay
       await Future.delayed(const Duration(seconds: 2));
+      await PatientSessionService.markRoleLoggedIn(AppRole.pharmacy);
 
-      registrationStatus.value = 'Pending Verification';
+      registrationStatus.value = 'Approved';
 
       Get.snackbar(
         'Success',
-        'Pharmacy registration submitted. Status: Pending Verification',
+        'Pharmacy registration successful. Welcome to Plumedica!',
         snackPosition: SnackPosition.BOTTOM,
         duration: const Duration(seconds: 2),
       );
 
-      // Navigate to pending verification page
       await Future.delayed(const Duration(milliseconds: 500));
-      Get.offNamed('/pending-verification', arguments: {
-        'registrationType': 'Pharmacy',
-        'userEmail': '', // TODO: Get from user session
-      });
+      Get.offAllNamed('/pharmacy/dashboard');
     } catch (e) {
       Get.snackbar(
         'Error',

@@ -9,7 +9,7 @@ import '../widgets/app_text_field.dart';
 
 /// Doctor Login View
 class DoctorLoginView extends GetView<DoctorLoginController> {
-  const DoctorLoginView({Key? key}) : super(key: key);
+  const DoctorLoginView({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -63,7 +63,7 @@ class DoctorLoginView extends GetView<DoctorLoginController> {
                           Text(
                             'Access your medical dashboard',
                             style: AppFonts.bodySmall.copyWith(
-                              color: AppColors.white.withOpacity(0.9),
+                              color: AppColors.white.withValues(alpha: 0.9),
                             ),
                           ),
                           const SizedBox(height: 32),
@@ -147,72 +147,6 @@ class DoctorLoginView extends GetView<DoctorLoginController> {
                                     fontWeight: FontWeight.w600,
                                   ),
                                 ),
-                              ),
-                            ),
-                            const SizedBox(height: 32),
-
-                            // Divider
-                            Row(
-                              children: [
-                                Expanded(
-                                  child: Container(
-                                    height: 1,
-                                    color: AppColors.lightGrey,
-                                  ),
-                                ),
-                                Padding(
-                                  padding: const EdgeInsets.symmetric(
-                                    horizontal: AppConstants.paddingMedium,
-                                  ),
-                                  child: Text(
-                                    'OR',
-                                    style: AppFonts.bodySmall.copyWith(
-                                      color: AppColors.textSecondary,
-                                    ),
-                                  ),
-                                ),
-                                Expanded(
-                                  child: Container(
-                                    height: 1,
-                                    color: AppColors.lightGrey,
-                                  ),
-                                ),
-                              ],
-                            ),
-                            const SizedBox(height: 32),
-
-                            // Registration Link
-                            Container(
-                              width: double.infinity,
-                              padding: const EdgeInsets.all(
-                                AppConstants.paddingMedium,
-                              ),
-                              decoration: BoxDecoration(
-                                color: AppColors.surface,
-                                borderRadius: BorderRadius.circular(
-                                  AppConstants.borderRadiusMedium,
-                                ),
-                                border: Border.all(
-                                  color: AppColors.lightGrey,
-                                ),
-                              ),
-                              child: Column(
-                                children: [
-                                  Text(
-                                    'New to Plumedica?',
-                                    style: AppFonts.bodySmall.copyWith(
-                                      color: AppColors.textSecondary,
-                                    ),
-                                  ),
-                                  const SizedBox(height: 12),
-                                  AppButton(
-                                    text: 'Register as Doctor',
-                                    onPressed: controller.navigateToRegistration,
-                                    width: double.infinity,
-                                    height: 45,
-                                    backgroundColor: AppColors.primaryBlue,
-                                  ),
-                                ],
                               ),
                             ),
                             const SizedBox(height: 32),

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import '../services/patient_session_service.dart';
 
 /// Controller for doctor login flow
 class DoctorLoginController extends GetxController {
@@ -9,6 +10,19 @@ class DoctorLoginController extends GetxController {
   final isLoading = false.obs;
   final loginFormKey = GlobalKey<FormState>();
   final showPassword = false.obs;
+
+  @override
+  void onInit() {
+    super.onInit();
+    _loadRegisteredEmail();
+  }
+
+  Future<void> _loadRegisteredEmail() async {
+    final registeredEmail = await PatientSessionService.getRoleEmail(AppRole.doctor);
+    if (registeredEmail.isNotEmpty) {
+      emailController.text = registeredEmail;
+    }
+  }
 
   /// Toggle password visibility
   void togglePasswordVisibility() {
@@ -59,8 +73,13 @@ class DoctorLoginController extends GetxController {
         snackPosition: SnackPosition.BOTTOM,
       );
 
+      await PatientSessionService.markRoleLoggedIn(
+        AppRole.doctor,
+        email: emailController.text,
+      );
+
       // Navigate to doctor dashboard
-      Get.offNamed('/doctor_dashboard');
+      Get.offAllNamed('/doctor_dashboard');
     } catch (e) {
       Get.snackbar(
         'Error',

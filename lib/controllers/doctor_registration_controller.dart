@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import '../services/patient_session_service.dart';
 
 /// Controller for doctor registration flow
 class DoctorRegistrationController extends GetxController {
@@ -22,6 +23,8 @@ class DoctorRegistrationController extends GetxController {
   final selectedAvailability = <String>[].obs;
   final selectedDayTimeSlots = <String, String>{}.obs;
   final selectedDayConsultationModes = <String, String>{}.obs;
+  final expandedAvailabilityDay = Rx<String?>(null);
+  final daySectionKeys = <String, GlobalKey>{};
   final offersHomeTreatment = false.obs;
   final medicalLicenseFileName = Rx<String?>(null); // Renamed from resumeFileName
   final registrationStatus = Rx<String>('Pending Approval');
@@ -69,6 +72,19 @@ class DoctorRegistrationController extends GetxController {
     'In-Person',
   ];
 
+  @override
+  void onInit() {
+    super.onInit();
+    _redirectIfAlreadyRegistered();
+  }
+
+  Future<void> _redirectIfAlreadyRegistered() async {
+    final isRegistered = await PatientSessionService.isRoleRegistered(AppRole.doctor);
+    if (isRegistered) {
+      Get.offAllNamed('/doctor_login');
+    }
+  }
+
   /// Toggle availability day
   void toggleAvailabilityDay(String day) {
     if (selectedAvailability.contains(day)) {
@@ -87,12 +103,53 @@ class DoctorRegistrationController extends GetxController {
 
   /// Update selected time slot for a given day
   void setDayTimeSlot(String day, String slot) {
+    if (!selectedAvailability.contains(day)) {
+      selectedAvailability.add(day);
+    }
     selectedDayTimeSlots[day] = slot;
   }
 
   /// Update selected consultation mode for a given day
   void setDayConsultationMode(String day, String mode) {
+    if (!selectedAvailability.contains(day)) {
+      selectedAvailability.add(day);
+    }
     selectedDayConsultationModes[day] = mode;
+  }
+
+  /// Open one day panel at a time for compact availability editing
+  void toggleAvailabilityPanel(String day) {
+    if (expandedAvailabilityDay.value == day) {
+      expandedAvailabilityDay.value = null;
+      return;
+    }
+
+    expandedAvailabilityDay.value = day;
+    if (!selectedAvailability.contains(day)) {
+      selectedAvailability.add(day);
+    }
+  }
+
+  /// Remove a day from availability and clear its configured data
+  void removeAvailabilityDay(String day) {
+    selectedAvailability.remove(day);
+    selectedDayTimeSlots.remove(day);
+    selectedDayConsultationModes.remove(day);
+    if (expandedAvailabilityDay.value == day) {
+      expandedAvailabilityDay.value = null;
+    }
+  }
+
+  /// Whether a day already has complete availability data configured
+  bool hasConfiguredAvailability(String day) {
+    return selectedAvailability.contains(day) &&
+        (selectedDayTimeSlots[day]?.isNotEmpty ?? false) &&
+        (selectedDayConsultationModes[day]?.isNotEmpty ?? false);
+  }
+
+  /// Stable key for each day card so UI can scroll it into view when expanded
+  GlobalKey getDaySectionKey(String day) {
+    return daySectionKeys.putIfAbsent(day, () => GlobalKey());
   }
 
   /// Validate email
@@ -274,22 +331,22 @@ class DoctorRegistrationController extends GetxController {
 
       // Simulate API delay
       await Future.delayed(const Duration(seconds: 2));
+      await PatientSessionService.markRoleLoggedIn(
+        AppRole.doctor,
+        email: emailController.text,
+      );
 
-      registrationStatus.value = 'Pending Approval';
+      registrationStatus.value = 'Approved';
 
       Get.snackbar(
         'Success',
-        'Registration submitted for admin approval. Status: Pending Approval',
+        'Registration successful. Welcome to Plumedica!',
         snackPosition: SnackPosition.BOTTOM,
         duration: const Duration(seconds: 2),
       );
 
-      // Navigate to pending verification page after snackbar
       await Future.delayed(const Duration(milliseconds: 500));
-      Get.offNamed('/pending-verification', arguments: {
-        'registrationType': 'Doctor',
-        'userEmail': emailController.text,
-      });
+      Get.offAllNamed('/doctor_dashboard');
     } catch (e) {
       Get.snackbar(
         'Error',

@@ -1,4 +1,5 @@
 import 'package:get/get.dart';
+import '../../services/patient_session_service.dart';
 
 class PatientRegistrationController extends GetxController {
   final isLoading = false.obs;
@@ -13,7 +14,15 @@ class PatientRegistrationController extends GetxController {
   @override
   void onInit() {
     super.onInit();
+    _redirectIfAlreadyRegistered();
     loadDemoData();
+  }
+
+  Future<void> _redirectIfAlreadyRegistered() async {
+    final isRegistered = await PatientSessionService.isRegistered();
+    if (isRegistered) {
+      Get.offAllNamed('/patient/login');
+    }
   }
 
   void loadDemoData() {
@@ -30,20 +39,17 @@ class PatientRegistrationController extends GetxController {
     isLoading.value = true;
     try {
       await Future.delayed(const Duration(seconds: 1));
+      await PatientSessionService.markLoggedIn(email: email.value);
       
       Get.snackbar(
         'Success',
-        'Patient registration submitted. Status: Pending Verification',
+        'Registration successful. Welcome to Plumedica!',
         snackPosition: SnackPosition.BOTTOM,
         duration: const Duration(seconds: 2),
       );
       
-      // Navigate to pending verification page after snackbar
       await Future.delayed(const Duration(milliseconds: 500));
-      Get.offNamed('/pending-verification', arguments: {
-        'registrationType': 'Patient',
-        'userEmail': email.value,
-      });
+      Get.offAllNamed('/patient/dashboard');
     } catch (e) {
       Get.snackbar('Error', 'Registration failed');
     } finally {

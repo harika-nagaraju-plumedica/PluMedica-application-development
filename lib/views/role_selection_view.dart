@@ -3,9 +3,10 @@ import 'package:get/get.dart';
 import '../utils/colors.dart';
 import '../utils/fonts.dart';
 import '../utils/constants.dart';
+import '../services/patient_session_service.dart';
 
 class RoleSelectionView extends StatelessWidget {
-  const RoleSelectionView({Key? key}) : super(key: key);
+  const RoleSelectionView({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -37,7 +38,7 @@ class RoleSelectionView extends StatelessWidget {
               title: 'Pharmacy',
               description: 'Register pharmacy, manage inventory & process orders',
               color: AppColors.green,
-              onTap: () => Get.toNamed('/pharmacy/registration'),
+              onTap: () => _handleRoleTap(AppRole.pharmacy),
             ),
             const SizedBox(height: AppConstants.paddingLarge),
             // Doctor Role
@@ -46,7 +47,7 @@ class RoleSelectionView extends StatelessWidget {
               title: 'Doctor',
               description: 'Manage appointments, prescriptions & patient consultations',
               color: AppColors.primaryBlue,
-              onTap: () => Get.toNamed('/doctor_registration'),
+              onTap: () => _handleRoleTap(AppRole.doctor),
             ),
             const SizedBox(height: AppConstants.paddingLarge),
             // Patient Role
@@ -55,7 +56,7 @@ class RoleSelectionView extends StatelessWidget {
               title: 'Patient',
               description: 'Access health records, book consultations & manage medications',
               color: AppColors.lightBlue,
-              onTap: () => Get.toNamed('/patient/registration'),
+              onTap: () => _handleRoleTap(AppRole.patient),
             ),
             const SizedBox(height: AppConstants.paddingLarge),
             // Hospital Role
@@ -64,7 +65,7 @@ class RoleSelectionView extends StatelessWidget {
               title: 'Hospital',
               description: 'Manage admissions, consultants, emergencies & patient records',
               color: AppColors.gold,
-              onTap: () => Get.toNamed('/hospital/registration'),
+              onTap: () => _handleRoleTap(AppRole.hospital),
             ),
             const SizedBox(height: AppConstants.paddingLarge),
             // Insurance Partner Role
@@ -73,7 +74,7 @@ class RoleSelectionView extends StatelessWidget {
               title: 'Insurance Partner',
               description: 'Manage claims, policies, network hospitals & analytics',
               color: AppColors.purple,
-              onTap: () => Get.toNamed('/partner/registration'),
+              onTap: () => _handleRoleTap(AppRole.partner),
             ),
             const SizedBox(height: AppConstants.paddingLarge),
             // Job Seeker Role
@@ -82,7 +83,7 @@ class RoleSelectionView extends StatelessWidget {
               title: 'Job Seeker',
               description: 'Search jobs, apply for positions & track applications',
               color: AppColors.primaryDarkBlue,
-              onTap: () => Get.toNamed('/jobs/job-seeker/registration'),
+              onTap: () => _handleRoleTap(AppRole.jobSeeker),
             ),
             const SizedBox(height: AppConstants.paddingLarge),
             // Employer Role
@@ -91,7 +92,7 @@ class RoleSelectionView extends StatelessWidget {
               title: 'Employer',
               description: 'Post jobs, manage candidates & review applications',
               color: AppColors.lightPurple,
-              onTap: () => Get.toNamed('/jobs/employer/registration'),
+              onTap: () => _handleRoleTap(AppRole.employer),
             ),
             const SizedBox(height: AppConstants.paddingXLarge),
             // Already have account button
@@ -109,6 +110,11 @@ class RoleSelectionView extends StatelessWidget {
       ),
     );
   }
+
+  Future<void> _handleRoleTap(AppRole role) async {
+    final route = await PatientSessionService.getRoleEntryRoute(role);
+    Get.toNamed(route);
+  }
 }
 
 class _RoleCard extends StatelessWidget {
@@ -119,13 +125,12 @@ class _RoleCard extends StatelessWidget {
   final VoidCallback onTap;
 
   const _RoleCard({
-    Key? key,
     required this.icon,
     required this.title,
     required this.description,
     required this.color,
     required this.onTap,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -139,7 +144,7 @@ class _RoleCard extends StatelessWidget {
           borderRadius: BorderRadius.circular(AppConstants.borderRadiusLarge),
           boxShadow: [
             BoxShadow(
-              color: color.withOpacity(0.1),
+              color: color.withValues(alpha: 0.1),
               blurRadius: 8,
               offset: const Offset(0, 4),
             ),
@@ -150,7 +155,7 @@ class _RoleCard extends StatelessWidget {
             Container(
               padding: const EdgeInsets.all(AppConstants.paddingMedium),
               decoration: BoxDecoration(
-                color: color.withOpacity(0.1),
+                color: color.withValues(alpha: 0.1),
                 borderRadius: BorderRadius.circular(AppConstants.borderRadiusLarge),
               ),
               child: Icon(

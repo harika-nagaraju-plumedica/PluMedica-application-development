@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/gestures.dart';
 import 'package:get/get.dart';
 import '../controllers/pharmacy/pharmacy_login_controller.dart';
 import '../utils/colors.dart';
@@ -9,7 +8,7 @@ import '../widgets/app_button.dart';
 import '../widgets/app_text_field.dart';
 
 class PharmacyLoginView extends GetView<PharmacyLoginController> {
-  const PharmacyLoginView({Key? key}) : super(key: key);
+  const PharmacyLoginView({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -28,11 +27,11 @@ class PharmacyLoginView extends GetView<PharmacyLoginController> {
                     Container(
                       padding: const EdgeInsets.all(AppConstants.paddingMedium),
                       decoration: BoxDecoration(
-                        color: AppColors.green.withOpacity(0.1),
+                        color: AppColors.green.withValues(alpha: 0.1),
                         borderRadius: BorderRadius.circular(
                             AppConstants.borderRadiusLarge),
                         border: Border.all(
-                          color: AppColors.green.withOpacity(0.3),
+                          color: AppColors.green.withValues(alpha: 0.3),
                           width: 2,
                         ),
                       ),
@@ -125,39 +124,13 @@ class PharmacyLoginView extends GetView<PharmacyLoginController> {
                         isLoading: controller.isLoading.value,
                       ),
                     ),
-                    const SizedBox(height: 24),
-
-                    // Registration Link
-                    Center(
-                      child: RichText(
-                        text: TextSpan(
-                          text: 'Don\'t have an account? ',
-                          style: AppFonts.bodySmall.copyWith(
-                            color: AppColors.textSecondary,
-                          ),
-                          children: [
-                            TextSpan(
-                              text: 'Register here',
-                              style: AppFonts.bodySmall.copyWith(
-                                color: AppColors.green,
-                                fontWeight: FontWeight.bold,
-                              ),
-                              recognizer: TapGestureRecognizer()
-                                ..onTap = () {
-                                  Get.toNamed('/pharmacy/registration');
-                                },
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
                     const SizedBox(height: 32),
 
                     // Info Box
                     Container(
                       padding: const EdgeInsets.all(AppConstants.paddingMedium),
                       decoration: BoxDecoration(
-                        color: AppColors.success.withOpacity(0.1),
+                        color: AppColors.success.withValues(alpha: 0.1),
                         borderRadius: BorderRadius.circular(
                           AppConstants.borderRadiusMedium,
                         ),

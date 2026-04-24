@@ -14,7 +14,7 @@ class PatientProfileController extends GetxController {
   Future<void> logOut() async {
     // TODO: Clear user data
     // TODO: Clear authentication token
-    Get.offNamed('/patient/login');
+    Get.offAllNamed('/role_selection');
   }
 
   Future<void> editProfile() async {

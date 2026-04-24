@@ -380,50 +380,7 @@ class DoctorRegistrationView extends GetView<DoctorRegistrationController> {
                         ),
                         const SizedBox(height: 32),
 
-                        // Availability Days (Multi-select)
-                        Text(
-                          'Availability Days *',
-                          style: AppFonts.heading2.copyWith(
-                            color: AppColors.textPrimary,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                        const SizedBox(height: 12),
-                        Obx(
-                          () => Wrap(
-                            spacing: 8,
-                            runSpacing: 8,
-                            children: controller.daysList.map((day) {
-                              final isSelected =
-                                  controller.selectedAvailability.contains(day);
-                              return FilterChip(
-                                selected: isSelected,
-                                label: Text(day),
-                                selectedColor:
-                                    AppColors.primaryBlue.withOpacity(0.2),
-                                checkmarkColor: AppColors.primaryBlue,
-                                side: const BorderSide(
-                                  color: AppColors.lightGrey,
-                                ),
-                                onSelected: (_) =>
-                                    controller.toggleAvailabilityDay(day),
-                              );
-                            }).toList(),
-                          ),
-                        ),
-                        const SizedBox(height: 8),
-                        Obx(
-                          () => Text(
-                            'Selected: ${controller.selectedAvailability.isEmpty ? 'None' : controller.selectedAvailability.join(", ")}',
-                            style: AppFonts.bodySmall.copyWith(
-                              color: AppColors.primaryBlue,
-                              fontWeight: FontWeight.w500,
-                            ),
-                          ),
-                        ),
-                        const SizedBox(height: 24),
-
-                        // Day-wise Slots and Consultation Mode
+                        // Availability Slots (single-open day accordion)
                         Text(
                           'Availability Slots & Mode *',
                           style: AppFonts.heading2.copyWith(
@@ -431,79 +388,196 @@ class DoctorRegistrationView extends GetView<DoctorRegistrationController> {
                             fontWeight: FontWeight.bold,
                           ),
                         ),
+                        const SizedBox(height: 8),
+                        Text(
+                          'Tap a day to edit. Opening a day closes the previous one.',
+                          style: AppFonts.bodySmall.copyWith(
+                            color: AppColors.textSecondary,
+                          ),
+                        ),
                         const SizedBox(height: 12),
                         Obx(
-                          () {
-                            if (controller.selectedAvailability.isEmpty) {
-                              return Text(
-                                'Select at least one day to configure slots and consultation mode.',
-                                style: AppFonts.bodySmall.copyWith(
-                                  color: AppColors.textSecondary,
+                          () => Column(
+                            children: controller.daysList.map((day) {
+                              final isOpen =
+                                  controller.expandedAvailabilityDay.value == day;
+                              final isSelected =
+                                  controller.selectedAvailability.contains(day);
+                              final isConfigured =
+                                  controller.hasConfiguredAvailability(day);
+                              final dayKey = controller.getDaySectionKey(day);
+
+                              return AnimatedContainer(
+                              key: dayKey,
+                                duration: const Duration(milliseconds: 180),
+                                width: double.infinity,
+                                margin: const EdgeInsets.only(bottom: 8),
+                                decoration: BoxDecoration(
+                                  color: isConfigured
+                                      ? AppColors.primaryBlue.withOpacity(0.08)
+                                      : AppColors.white,
+                                  border: Border.all(
+                                    color: isOpen || isConfigured
+                                        ? AppColors.primaryBlue
+                                        : AppColors.lightGrey,
+                                    width: isOpen || isConfigured ? 1.4 : 1,
+                                  ),
+                                  borderRadius: BorderRadius.circular(
+                                    AppConstants.borderRadiusMedium,
+                                  ),
                                 ),
-                              );
-                            }
+                                child: Column(
+                                  children: [
+                                    InkWell(
+                                      borderRadius: BorderRadius.circular(
+                                        AppConstants.borderRadiusMedium,
+                                      ),
+                                      onTap: () {
+                                        final wasOpen =
+                                            controller.expandedAvailabilityDay.value ==
+                                                day;
+                                        controller.toggleAvailabilityPanel(day);
 
-                            final selectedDays = controller.daysList
-                                .where(controller.selectedAvailability.contains)
-                                .toList();
-
-                            return Column(
-                              children: selectedDays.map((day) {
-                                return Container(
-                                  width: double.infinity,
-                                  margin: const EdgeInsets.only(bottom: 12),
-                                  padding: const EdgeInsets.all(
-                                    AppConstants.paddingMedium,
-                                  ),
-                                  decoration: BoxDecoration(
-                                    border: Border.all(color: AppColors.lightGrey),
-                                    borderRadius: BorderRadius.circular(
-                                      AppConstants.borderRadiusMedium,
-                                    ),
-                                    color: AppColors.white,
-                                  ),
-                                  child: Column(
-                                    crossAxisAlignment: CrossAxisAlignment.start,
-                                    children: [
-                                      Text(
-                                        day,
-                                        style: AppFonts.heading3.copyWith(
-                                          color: AppColors.textPrimary,
-                                          fontWeight: FontWeight.w700,
+                                        if (!wasOpen) {
+                                          WidgetsBinding.instance
+                                              .addPostFrameCallback((_) {
+                                            final ctx = dayKey.currentContext;
+                                            if (ctx != null) {
+                                              Scrollable.ensureVisible(
+                                                ctx,
+                                                duration:
+                                                    const Duration(milliseconds: 260),
+                                                curve: Curves.easeOutCubic,
+                                                alignment: 0.08,
+                                              );
+                                            }
+                                          });
+                                        }
+                                      },
+                                      child: Padding(
+                                        padding: const EdgeInsets.symmetric(
+                                          horizontal: AppConstants.paddingMedium,
+                                          vertical: AppConstants.paddingSmall,
+                                        ),
+                                        child: Row(
+                                          children: [
+                                            Expanded(
+                                              child: Text(
+                                                day,
+                                                style: AppFonts.labelLarge.copyWith(
+                                                  color: isOpen || isConfigured
+                                                      ? AppColors.primaryBlue
+                                                      : AppColors.textPrimary,
+                                                  fontWeight: FontWeight.w700,
+                                                ),
+                                              ),
+                                            ),
+                                            if (isConfigured)
+                                              Container(
+                                                padding:
+                                                    const EdgeInsets.symmetric(
+                                                  horizontal: 6,
+                                                  vertical: 2,
+                                                ),
+                                                decoration: BoxDecoration(
+                                                  color: AppColors.success
+                                                      .withOpacity(0.15),
+                                                  borderRadius:
+                                                      BorderRadius.circular(10),
+                                                ),
+                                                child: Text(
+                                                  'Configured',
+                                                  style: AppFonts.labelSmall
+                                                      .copyWith(
+                                                    color: AppColors.success,
+                                                    fontWeight: FontWeight.w700,
+                                                  ),
+                                                ),
+                                              ),
+                                            if (isSelected) const SizedBox(width: 8),
+                                            if (isSelected)
+                                              GestureDetector(
+                                                onTap: () => controller
+                                                    .removeAvailabilityDay(day),
+                                                child: const Icon(
+                                                  Icons.close,
+                                                  size: 16,
+                                                  color: AppColors.textSecondary,
+                                                ),
+                                              ),
+                                            const SizedBox(width: 8),
+                                            Icon(
+                                              isOpen
+                                                  ? Icons.keyboard_arrow_up
+                                                  : Icons.keyboard_arrow_down,
+                                              color: AppColors.primaryBlue,
+                                              size: 20,
+                                            ),
+                                          ],
                                         ),
                                       ),
-                                      const SizedBox(height: 12),
-                                      _buildDropdownField(
-                                        hint: 'Select time slot',
-                                        value: controller.selectedDayTimeSlots[day],
-                                        items: controller.timeSlotsList,
-                                        onChanged: (value) {
-                                          if (value != null) {
-                                            controller.setDayTimeSlot(day, value);
-                                          }
-                                        },
+                                    ),
+                                    if (isOpen)
+                                      Padding(
+                                        padding: const EdgeInsets.fromLTRB(
+                                          AppConstants.paddingMedium,
+                                          0,
+                                          AppConstants.paddingMedium,
+                                          AppConstants.paddingSmall,
+                                        ),
+                                        child: Column(
+                                          children: [
+                                            _buildDropdownField(
+                                              hint: 'Select time slot',
+                                              value: controller
+                                                  .selectedDayTimeSlots[day],
+                                              items: controller.timeSlotsList,
+                                              onChanged: (value) {
+                                                if (value != null) {
+                                                  controller.setDayTimeSlot(
+                                                    day,
+                                                    value,
+                                                  );
+                                                }
+                                              },
+                                            ),
+                                            const SizedBox(height: 8),
+                                            _buildDropdownField(
+                                              hint:
+                                                  'Select mode (Virtual / In-Person)',
+                                              value: controller
+                                                      .selectedDayConsultationModes[
+                                                  day],
+                                              items:
+                                                  controller.consultationModesList,
+                                              onChanged: (value) {
+                                                if (value != null) {
+                                                  controller
+                                                      .setDayConsultationMode(
+                                                    day,
+                                                    value,
+                                                  );
+                                                }
+                                              },
+                                            ),
+                                          ],
+                                        ),
                                       ),
-                                      const SizedBox(height: 12),
-                                      _buildDropdownField(
-                                        hint: 'Select mode (Virtual / In-Person)',
-                                        value: controller
-                                            .selectedDayConsultationModes[day],
-                                        items: controller.consultationModesList,
-                                        onChanged: (value) {
-                                          if (value != null) {
-                                            controller.setDayConsultationMode(
-                                              day,
-                                              value,
-                                            );
-                                          }
-                                        },
-                                      ),
-                                    ],
-                                  ),
-                                );
-                              }).toList(),
-                            );
-                          },
+                                  ],
+                                ),
+                              );
+                            }).toList(),
+                          ),
+                        ),
+                        const SizedBox(height: 8),
+                        Obx(
+                          () => Text(
+                            'Configured days: ${controller.selectedAvailability.isEmpty ? 'None' : controller.selectedAvailability.join(', ')}',
+                            style: AppFonts.bodySmall.copyWith(
+                              color: AppColors.primaryBlue,
+                              fontWeight: FontWeight.w500,
+                            ),
+                          ),
                         ),
                         const SizedBox(height: 12),
 
@@ -649,8 +723,8 @@ class DoctorRegistrationView extends GetView<DoctorRegistrationController> {
   }) {
     return Container(
       padding: const EdgeInsets.symmetric(
-        horizontal: AppConstants.paddingMedium,
-        vertical: AppConstants.paddingSmall,
+        horizontal: AppConstants.paddingSmall,
+        vertical: 6,
       ),
       decoration: BoxDecoration(
         border: Border.all(
@@ -661,11 +735,12 @@ class DoctorRegistrationView extends GetView<DoctorRegistrationController> {
       ),
       child: DropdownButton<String>(
         isExpanded: true,
+        iconSize: 20,
         value: value,
         underline: const SizedBox(),
         hint: Text(
           hint,
-          style: AppFonts.labelMedium.copyWith(
+          style: AppFonts.bodySmall.copyWith(
             color: AppColors.textSecondary,
           ),
         ),
@@ -675,7 +750,7 @@ class DoctorRegistrationView extends GetView<DoctorRegistrationController> {
                 value: item,
                 child: Text(
                   item,
-                  style: AppFonts.labelMedium.copyWith(
+                  style: AppFonts.bodySmall.copyWith(
                     color: AppColors.textPrimary,
                   ),
                 ),
