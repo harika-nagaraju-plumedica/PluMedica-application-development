@@ -8,7 +8,7 @@ import '../../widgets/app_text_field.dart';
 import '../../widgets/app_dropdown.dart';
 
 class PatientProfileView extends GetView<PatientProfileController> {
-  const PatientProfileView({Key? key}) : super(key: key);
+  const PatientProfileView({super.key});
 
   @override
   Widget build(BuildContext context) {

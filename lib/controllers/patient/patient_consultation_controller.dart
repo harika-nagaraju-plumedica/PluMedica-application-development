@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 class PatientConsultationController extends GetxController {
@@ -232,7 +232,7 @@ class PatientConsultationController extends GetxController {
                               style: TextStyle(
                                 fontSize: 11,
                                 color: sentByYou
-                                    ? Colors.white.withOpacity(0.85)
+                                    ? Colors.white.withValues(alpha: 0.85)
                                     : const Color(0xFF6B7280),
                               ),
                             ),
@@ -434,3 +434,4 @@ class PatientConsultationController extends GetxController {
     super.onClose();
   }
 }
+

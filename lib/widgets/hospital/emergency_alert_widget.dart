@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import '../../utils/colors.dart';
 import '../../utils/fonts.dart';
 import '../../utils/constants.dart';
@@ -44,7 +44,7 @@ class EmergencyAlertWidgetItem extends StatelessWidget {
       padding: const EdgeInsets.all(AppConstants.paddingMedium),
       margin: const EdgeInsets.only(bottom: AppConstants.paddingMedium),
       decoration: BoxDecoration(
-        color: severityColor.withOpacity(0.05),
+        color: severityColor.withValues(alpha: 0.05),
         border: Border.all(color: severityColor),
         borderRadius: BorderRadius.circular(AppConstants.borderRadiusLarge),
       ),
@@ -88,7 +88,7 @@ class EmergencyAlertWidgetItem extends StatelessWidget {
                   vertical: 6,
                 ),
                 decoration: BoxDecoration(
-                  color: severityColor.withOpacity(0.2),
+                  color: severityColor.withValues(alpha: 0.2),
                   borderRadius:
                       BorderRadius.circular(AppConstants.borderRadiusSmall),
                 ),
@@ -149,3 +149,4 @@ class EmergencyAlertWidgetItem extends StatelessWidget {
     );
   }
 }
+

@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../../controllers/pharmacy/pharmacy_sales_controller.dart';
 import '../../utils/colors.dart';
@@ -35,7 +35,7 @@ class PharmacySalesView extends GetView<PharmacySalesController> {
               children: [
                 _buildRevenueCard(
                   'Total Revenue',
-                  '₹${controller.totalRevenue.value.toStringAsFixed(2)}',
+                  'â‚¹${controller.totalRevenue.value.toStringAsFixed(2)}',
                   Icons.trending_up,
                   AppColors.green,
                 ),
@@ -47,7 +47,7 @@ class PharmacySalesView extends GetView<PharmacySalesController> {
                 ),
                 _buildRevenueCard(
                   'Avg Order',
-                  '₹${controller.averageOrderValue.value.toStringAsFixed(2)}',
+                  'â‚¹${controller.averageOrderValue.value.toStringAsFixed(2)}',
                   Icons.receipt,
                   AppColors.purple,
                 ),
@@ -80,7 +80,7 @@ class PharmacySalesView extends GetView<PharmacySalesController> {
                             onSelected: (_) =>
                                 controller.updateTimeRange(range),
                             backgroundColor: Colors.white,
-                            selectedColor: AppColors.green.withOpacity(0.3),
+                            selectedColor: AppColors.green.withValues(alpha: 0.3),
                             labelStyle: AppFonts.bodySmall.copyWith(
                               color:
                                   controller.selectedTimeRange.value ==
@@ -151,7 +151,7 @@ class PharmacySalesView extends GetView<PharmacySalesController> {
                     BorderRadius.circular(AppConstants.borderRadiusMedium),
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.black.withOpacity(0.05),
+                    color: Colors.black.withValues(alpha: 0.05),
                     blurRadius: 8,
                     offset: const Offset(0, 2),
                   ),
@@ -177,7 +177,7 @@ class PharmacySalesView extends GetView<PharmacySalesController> {
                                       ),
                                     ),
                                     Text(
-                                      '₹${data['sales'].toStringAsFixed(2)}',
+                                      'â‚¹${data['sales'].toStringAsFixed(2)}',
                                       style: AppFonts.bodySmall.copyWith(
                                         color: AppColors.green,
                                         fontWeight: FontWeight.bold,
@@ -194,7 +194,7 @@ class PharmacySalesView extends GetView<PharmacySalesController> {
                                         .toDouble(),
                                     minHeight: 6,
                                     backgroundColor:
-                                        AppColors.green.withOpacity(0.1),
+                                        AppColors.green.withValues(alpha: 0.1),
                                     valueColor: AlwaysStoppedAnimation<Color>(
                                         AppColors.green),
                                   ),
@@ -225,7 +225,7 @@ class PharmacySalesView extends GetView<PharmacySalesController> {
         borderRadius: BorderRadius.circular(AppConstants.borderRadiusMedium),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.05),
+            color: Colors.black.withValues(alpha: 0.05),
             blurRadius: 8,
             offset: const Offset(0, 2),
           ),
@@ -268,7 +268,7 @@ class PharmacySalesView extends GetView<PharmacySalesController> {
         borderRadius: BorderRadius.circular(AppConstants.borderRadiusMedium),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.05),
+            color: Colors.black.withValues(alpha: 0.05),
             blurRadius: 8,
             offset: const Offset(0, 2),
           ),
@@ -301,7 +301,7 @@ class PharmacySalesView extends GetView<PharmacySalesController> {
                 ],
               ),
               Text(
-                '₹${category['revenue'].toStringAsFixed(2)}',
+                'â‚¹${category['revenue'].toStringAsFixed(2)}',
                 style: AppFonts.labelMedium.copyWith(
                   color: AppColors.green,
                   fontWeight: FontWeight.bold,
@@ -315,7 +315,7 @@ class PharmacySalesView extends GetView<PharmacySalesController> {
             child: LinearProgressIndicator(
               value: category['percentage'] / 100,
               minHeight: 6,
-              backgroundColor: AppColors.primaryBlue.withOpacity(0.1),
+              backgroundColor: AppColors.primaryBlue.withValues(alpha: 0.1),
               valueColor:
                   AlwaysStoppedAnimation<Color>(AppColors.primaryBlue),
             ),
@@ -342,7 +342,7 @@ class PharmacySalesView extends GetView<PharmacySalesController> {
         borderRadius: BorderRadius.circular(AppConstants.borderRadiusMedium),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.05),
+            color: Colors.black.withValues(alpha: 0.05),
             blurRadius: 8,
             offset: const Offset(0, 2),
           ),
@@ -375,7 +375,7 @@ class PharmacySalesView extends GetView<PharmacySalesController> {
                 ],
               ),
               Text(
-                '₹${method['amount'].toStringAsFixed(2)}',
+                'â‚¹${method['amount'].toStringAsFixed(2)}',
                 style: AppFonts.labelMedium.copyWith(
                   color: AppColors.green,
                   fontWeight: FontWeight.bold,
@@ -389,7 +389,7 @@ class PharmacySalesView extends GetView<PharmacySalesController> {
             child: LinearProgressIndicator(
               value: method['percentage'] / 100,
               minHeight: 6,
-              backgroundColor: AppColors.purple.withOpacity(0.1),
+              backgroundColor: AppColors.purple.withValues(alpha: 0.1),
               valueColor: AlwaysStoppedAnimation<Color>(AppColors.purple),
             ),
           ),
@@ -406,3 +406,4 @@ class PharmacySalesView extends GetView<PharmacySalesController> {
     );
   }
 }
+

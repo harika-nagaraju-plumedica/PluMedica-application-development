@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../../controllers/patient/patient_consultation_controller.dart';
 import '../../utils/colors.dart';
@@ -372,11 +372,11 @@ class PatientConsultationView
                     width: double.infinity,
                     padding: const EdgeInsets.all(12),
                     decoration: BoxDecoration(
-                      color: AppColors.primaryBlue.withOpacity(0.08),
+                      color: AppColors.primaryBlue.withValues(alpha: 0.08),
                       borderRadius:
                           BorderRadius.circular(AppConstants.borderRadiusMedium),
                       border: Border.all(
-                        color: AppColors.primaryBlue.withOpacity(0.25),
+                        color: AppColors.primaryBlue.withValues(alpha: 0.25),
                       ),
                     ),
                     child: Text(
@@ -548,3 +548,4 @@ class PatientConsultationView
     );
   }
 }
+

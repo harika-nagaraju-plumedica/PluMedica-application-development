@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import '../../utils/colors.dart';
 import '../../utils/fonts.dart';
 import '../../utils/constants.dart';
@@ -86,7 +86,7 @@ class AdmissionStatusWidgetItem extends StatelessWidget {
                     vertical: 6,
                   ),
                   decoration: BoxDecoration(
-                    color: _getStatusColor().withOpacity(0.1),
+                    color: _getStatusColor().withValues(alpha: 0.1),
                     borderRadius:
                         BorderRadius.circular(AppConstants.borderRadiusSmall),
                   ),
@@ -123,3 +123,4 @@ class AdmissionStatusWidgetItem extends StatelessWidget {
     );
   }
 }
+

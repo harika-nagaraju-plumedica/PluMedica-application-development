@@ -10,12 +10,12 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
   final bool showLogout;
 
   const CustomAppBar({
-    Key? key,
+    super.key,
     required this.title,
     this.onLogout,
     this.actions,
     this.showLogout = true,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../utils/colors.dart';
 import '../utils/fonts.dart';
@@ -74,7 +74,7 @@ class RegisterAsView extends StatelessWidget {
                             ),
                             decoration: BoxDecoration(
                               color: isSelected
-                                  ? AppColors.lightPurple.withOpacity(0.2)
+                                  ? AppColors.lightPurple.withValues(alpha: 0.2)
                                   : AppColors.veryLightGrey,
                               border: Border.all(
                                 color: isSelected
@@ -139,3 +139,4 @@ class RegisterAsView extends StatelessWidget {
     );
   }
 }
+

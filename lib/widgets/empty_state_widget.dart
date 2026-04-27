@@ -11,12 +11,12 @@ class EmptyStateWidget extends StatelessWidget {
   final String? retryButtonText;
 
   const EmptyStateWidget({
-    Key? key,
+    super.key,
     required this.message,
     this.icon = Icons.inbox,
     this.onRetry,
     this.retryButtonText,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

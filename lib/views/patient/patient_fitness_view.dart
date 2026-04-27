@@ -7,7 +7,7 @@ import '../../utils/constants.dart';
 import '../../widgets/patient/fitness_stat_widget.dart';
 
 class PatientFitnessView extends GetView<PatientFitnessController> {
-  const PatientFitnessView({Key? key}) : super(key: key);
+  const PatientFitnessView({super.key});
 
   @override
   Widget build(BuildContext context) {

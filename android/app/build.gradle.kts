@@ -28,24 +28,25 @@ android {
         targetSdk = flutter.targetSdkVersion
         versionCode = flutter.versionCode
         versionName = flutter.versionName
-        
-        // Configure supported ABIs - Only 64-bit architectures
-        // 32-bit ARM has AOT compiler issues on Windows, so we exclude it
-        // If 32-bit support is needed, build on Linux/Mac instead
+
+        // Force 64-bit ARM to avoid Windows AOT failures for armeabi-v7a.
         ndk {
-            abiFilters.clear()
-            abiFilters.add("arm64-v8a")  // 64-bit ARM devices (modern phones)
-            abiFilters.add("x86_64")      // 64-bit emulator support
+            abiFilters += listOf("arm64-v8a")
         }
+        
     }
 
     buildTypes {
         release {
-            // Enable resource shrinking for APK size reduction (safer than code minification)
+            // Enable resource shrinking for APK size reduction.
             isShrinkResources = true
-            
-            // Code minification disabled due to Flutter/Dart reflection requirements
-            // isMinifyEnabled = true
+
+            // Enable R8 minification for Android/Kotlin bytecode in release.
+            isMinifyEnabled = true
+            proguardFiles(
+                getDefaultProguardFile("proguard-android-optimize.txt"),
+                "proguard-rules.pro"
+            )
             
             // TODO: Add your own signing config for the release build.
             // Signing with the debug keys for now, so `flutter run --release` works.
@@ -57,6 +58,10 @@ android {
         // Exclude unnecessary files to reduce APK size
         resources.excludes.add("META-INF/proguard/androidx-*.pro")
         resources.excludes.add("META-INF/androidx.*.version")
+
+        // Keep only arm64 native libs in final APK.
+        jniLibs.excludes.add("**/armeabi-v7a/*.so")
+        jniLibs.excludes.add("**/x86_64/*.so")
     }
 }
 

@@ -15,14 +15,14 @@ abstract class BaseService {
   /// Print debug messages
   void debugLog(String message) {
     if (kDebugMode) {
-      print('${runtimeType}: $message');
+      print('$runtimeType: $message');
     }
   }
 
   /// Print error messages
   void errorLog(String message, [dynamic error, StackTrace? stackTrace]) {
     if (kDebugMode) {
-      print('ERROR ${runtimeType}: $message');
+      print('ERROR $runtimeType: $message');
       if (error != null) print('Error: $error');
       if (stackTrace != null) print('StackTrace: $stackTrace');
     }

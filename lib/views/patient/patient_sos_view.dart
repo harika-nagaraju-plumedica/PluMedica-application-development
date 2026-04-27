@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../../controllers/patient/patient_sos_controller.dart';
 import '../../utils/colors.dart';
@@ -29,7 +29,7 @@ class PatientSosView extends GetView<PatientSosController> {
               Container(
                 padding: const EdgeInsets.all(AppConstants.paddingLarge),
                 decoration: BoxDecoration(
-                  color: AppColors.error.withOpacity(0.1),
+                  color: AppColors.error.withValues(alpha: 0.1),
                   borderRadius:
                       BorderRadius.circular(AppConstants.borderRadiusLarge),
                   border: Border.all(color: AppColors.error),
@@ -143,7 +143,7 @@ class PatientSosView extends GetView<PatientSosController> {
                                     Text(
                                       contactRelation.isEmpty
                                           ? contactPhone
-                                          : '$contactPhone  •  $contactRelation',
+                                          : '$contactPhone  â€¢  $contactRelation',
                                       style: AppFonts.bodySmall
                                           .copyWith(
                                         color:
@@ -198,3 +198,4 @@ class PatientSosView extends GetView<PatientSosController> {
     );
   }
 }
+

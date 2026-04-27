@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import '../../utils/colors.dart';
 import '../../utils/fonts.dart';
 import '../../utils/constants.dart';
@@ -83,8 +83,8 @@ class ConsultantListTileWidget extends StatelessWidget {
                         ),
                         decoration: BoxDecoration(
                           color: isAvailable
-                              ? AppColors.success.withOpacity(0.1)
-                              : AppColors.warning.withOpacity(0.1),
+                              ? AppColors.success.withValues(alpha: 0.1)
+                              : AppColors.warning.withValues(alpha: 0.1),
                           borderRadius: BorderRadius.circular(
                               AppConstants.borderRadiusSmall),
                         ),
@@ -118,3 +118,4 @@ class ConsultantListTileWidget extends StatelessWidget {
     );
   }
 }
+

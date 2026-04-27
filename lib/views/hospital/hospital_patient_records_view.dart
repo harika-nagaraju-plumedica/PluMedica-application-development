@@ -8,7 +8,7 @@ import '../../widgets/app_text_field.dart';
 
 class HospitalPatientRecordsView
     extends GetView<HospitalPatientRecordsController> {
-  const HospitalPatientRecordsView({Key? key}) : super(key: key);
+  const HospitalPatientRecordsView({super.key});
 
   @override
   Widget build(BuildContext context) {

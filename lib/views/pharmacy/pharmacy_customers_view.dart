@@ -6,7 +6,7 @@ import '../../utils/fonts.dart';
 import '../../utils/constants.dart';
 
 class PharmacyCustomersView extends GetView<PharmacyCustomersController> {
-  const PharmacyCustomersView({Key? key}) : super(key: key);
+  const PharmacyCustomersView({super.key});
 
   void _handleBackNavigation() {
     final navigatorState = Get.key.currentState;
@@ -39,45 +39,84 @@ class PharmacyCustomersView extends GetView<PharmacyCustomersController> {
         ),
         body: Column(
           children: [
-            // Search Bar
             Padding(
               padding: const EdgeInsets.all(AppConstants.paddingMedium),
               child: TextField(
-                onChanged: (val) => controller.search(val),
+                onChanged: controller.search,
                 decoration: InputDecoration(
                   hintText: 'Search by name, email, or phone',
                   prefixIcon: const Icon(Icons.search),
                   border: OutlineInputBorder(
-                    borderRadius:
-                        BorderRadius.circular(AppConstants.borderRadiusMedium),
+                    borderRadius: BorderRadius.circular(
+                      AppConstants.borderRadiusMedium,
+                    ),
                   ),
-                  contentPadding:
-                      const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
+                  contentPadding: const EdgeInsets.symmetric(
+                    vertical: 12,
+                    horizontal: 16,
+                  ),
                 ),
               ),
             ),
-            // Customers List
-            Expanded(
-              child: Obx(
-                () => controller.filteredCustomers.isEmpty
-                    ? Center(
-                        child: Text(
-                          'No customers found',
-                          style: AppFonts.bodyMedium.copyWith(
-                            color: AppColors.textSecondary,
-                          ),
-                        ),
-                      )
-                    : ListView.builder(
-                        padding:
-                            const EdgeInsets.all(AppConstants.paddingMedium),
-                        itemCount: controller.filteredCustomers.length,
-                        itemBuilder: (context, index) {
-                          final customer = controller.filteredCustomers[index];
-                          return _buildCustomerCard(customer);
-                        },
-                      ),
+            Padding(
+              padding: const EdgeInsets.symmetric(
+                horizontal: AppConstants.paddingMedium,
               ),
+              child: Obx(
+                () => SingleChildScrollView(
+                  scrollDirection: Axis.horizontal,
+                  child: Row(
+                    children: PharmacyCustomersController.customerTypes
+                        .map(
+                          (type) => Padding(
+                            padding: const EdgeInsets.only(right: 8),
+                            child: FilterChip(
+                              label: Text(type),
+                              selected:
+                                  controller.selectedCustomerType.value == type,
+                              onSelected: (_) =>
+                                  controller.updateCustomerType(type),
+                              backgroundColor: Colors.white,
+                              selectedColor: AppColors.green.withOpacity(0.2),
+                              labelStyle: AppFonts.bodySmall.copyWith(
+                                color:
+                                    controller.selectedCustomerType.value == type
+                                    ? AppColors.green
+                                    : AppColors.textSecondary,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ),
+                        )
+                        .toList(growable: false),
+                  ),
+                ),
+              ),
+            ),
+            const SizedBox(height: 8),
+            Expanded(
+              child: Obx(() {
+                final filteredCustomers = controller.filteredCustomers;
+                if (filteredCustomers.isEmpty) {
+                  return Center(
+                    child: Text(
+                      'No customers found',
+                      style: AppFonts.bodyMedium.copyWith(
+                        color: AppColors.textSecondary,
+                      ),
+                    ),
+                  );
+                }
+
+                return ListView.builder(
+                  padding: const EdgeInsets.all(AppConstants.paddingMedium),
+                  itemCount: filteredCustomers.length,
+                  itemBuilder: (context, index) {
+                    final customer = filteredCustomers[index];
+                    return _buildCustomerCard(customer);
+                  },
+                );
+              }),
             ),
           ],
         ),
@@ -86,6 +125,9 @@ class PharmacyCustomersView extends GetView<PharmacyCustomersController> {
   }
 
   Widget _buildCustomerCard(Map<String, dynamic> customer) {
+    final customerType = customer['customerType']?.toString() ?? 'Unknown';
+    final isPlumedica = customerType == 'Plumedica';
+
     return Container(
       margin: const EdgeInsets.only(bottom: 12),
       padding: const EdgeInsets.all(AppConstants.paddingMedium),
@@ -111,7 +153,7 @@ class PharmacyCustomersView extends GetView<PharmacyCustomersController> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      customer['name'],
+                      customer['name']?.toString() ?? 'Unknown customer',
                       style: AppFonts.labelMedium.copyWith(
                         color: AppColors.textPrimary,
                         fontWeight: FontWeight.bold,
@@ -119,39 +161,59 @@ class PharmacyCustomersView extends GetView<PharmacyCustomersController> {
                     ),
                     const SizedBox(height: 2),
                     Text(
-                      customer['customerId'],
+                      customer['customerId']?.toString() ?? '-',
                       style: AppFonts.bodySmall.copyWith(
                         color: AppColors.textSecondary,
                         fontSize: 11,
                       ),
                     ),
+                    const SizedBox(height: 4),
+                    Container(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 8,
+                        vertical: 2,
+                      ),
+                      decoration: BoxDecoration(
+                        color: isPlumedica
+                            ? AppColors.green.withOpacity(0.1)
+                            : AppColors.primaryBlue.withOpacity(0.1),
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                      child: Text(
+                        customerType,
+                        style: AppFonts.bodySmall.copyWith(
+                          color: isPlumedica
+                              ? AppColors.green
+                              : AppColors.primaryBlue,
+                          fontWeight: FontWeight.bold,
+                          fontSize: 10,
+                        ),
+                      ),
+                    ),
                   ],
                 ),
               ),
-              Icon(
-                Icons.account_circle,
-                color: AppColors.green,
-                size: 40,
-              ),
+              Icon(Icons.account_circle, color: AppColors.green, size: 40),
             ],
           ),
           const SizedBox(height: 12),
           Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  _buildContactRow('📞', customer['phone']),
-                  const SizedBox(height: 4),
-                  _buildContactRow('✉️', customer['email']),
-                  const SizedBox(height: 4),
-                  _buildContactRow('📍', customer['city']),
-                ],
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    _buildContactRow(Icons.phone, customer['phone']),
+                    const SizedBox(height: 4),
+                    _buildContactRow(Icons.email, customer['email']),
+                    const SizedBox(height: 4),
+                    _buildContactRow(Icons.location_on, customer['city']),
+                  ],
+                ),
               ),
+              const SizedBox(width: 12),
               Container(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
+                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
                 decoration: BoxDecoration(
                   color: AppColors.green.withOpacity(0.1),
                   borderRadius: BorderRadius.circular(4),
@@ -167,7 +229,7 @@ class PharmacyCustomersView extends GetView<PharmacyCustomersController> {
                     ),
                     const SizedBox(height: 2),
                     Text(
-                      customer['joinDate'],
+                      customer['joinDate']?.toString() ?? '-',
                       style: AppFonts.bodySmall.copyWith(
                         color: AppColors.green,
                         fontWeight: FontWeight.bold,
@@ -199,7 +261,7 @@ class PharmacyCustomersView extends GetView<PharmacyCustomersController> {
                       ),
                     ),
                     Text(
-                      '${customer['totalOrders']}',
+                      '${customer['totalOrders'] ?? 0}',
                       style: AppFonts.labelMedium.copyWith(
                         color: AppColors.primaryBlue,
                         fontWeight: FontWeight.bold,
@@ -218,7 +280,7 @@ class PharmacyCustomersView extends GetView<PharmacyCustomersController> {
                       ),
                     ),
                     Text(
-                      '₹${customer['totalSpent'].toStringAsFixed(2)}',
+                      'Rs ${_asDouble(customer['totalSpent']).toStringAsFixed(2)}',
                       style: AppFonts.labelMedium.copyWith(
                         color: AppColors.green,
                         fontWeight: FontWeight.bold,
@@ -237,7 +299,7 @@ class PharmacyCustomersView extends GetView<PharmacyCustomersController> {
                       ),
                     ),
                     Text(
-                      customer['lastOrder'],
+                      customer['lastOrder']?.toString() ?? '-',
                       style: AppFonts.bodySmall.copyWith(
                         color: AppColors.textPrimary,
                         fontWeight: FontWeight.bold,
@@ -254,14 +316,14 @@ class PharmacyCustomersView extends GetView<PharmacyCustomersController> {
     );
   }
 
-  Widget _buildContactRow(String icon, String text) {
+  Widget _buildContactRow(IconData icon, dynamic text) {
     return Row(
       children: [
-        Text(icon),
+        Icon(icon, size: 14, color: AppColors.textSecondary),
         const SizedBox(width: 4),
-        Expanded(
+        Flexible(
           child: Text(
-            text,
+            text?.toString() ?? '-',
             style: AppFonts.bodySmall.copyWith(
               color: AppColors.textSecondary,
               fontSize: 12,
@@ -271,5 +333,12 @@ class PharmacyCustomersView extends GetView<PharmacyCustomersController> {
         ),
       ],
     );
+  }
+
+  double _asDouble(dynamic value) {
+    if (value is double) return value;
+    if (value is num) return value.toDouble();
+    if (value is String) return double.tryParse(value) ?? 0;
+    return 0;
   }
 }

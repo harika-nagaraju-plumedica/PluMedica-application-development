@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import '../../utils/colors.dart';
 import '../../utils/fonts.dart';
 import '../../utils/constants.dart';
@@ -50,7 +50,7 @@ class HealthMetricCardWidget extends StatelessWidget {
                 Container(
                   padding: const EdgeInsets.all(8),
                   decoration: BoxDecoration(
-                    color: iconColor.withOpacity(0.1),
+                    color: iconColor.withValues(alpha: 0.1),
                     borderRadius:
                         BorderRadius.circular(AppConstants.borderRadiusMedium),
                   ),
@@ -84,3 +84,4 @@ class HealthMetricCardWidget extends StatelessWidget {
     );
   }
 }
+

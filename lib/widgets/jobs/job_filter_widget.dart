@@ -9,12 +9,12 @@ class JobFilterWidgetItem extends StatelessWidget {
   final Function(String) onChanged;
 
   const JobFilterWidgetItem({
-    Key? key,
+    super.key,
     required this.label,
     required this.options,
     this.selectedValue,
     required this.onChanged,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

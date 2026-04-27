@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import '../utils/colors.dart';
 import '../utils/constants.dart';
 import '../utils/fonts.dart';
@@ -38,9 +38,9 @@ class DocumentUploadWidget extends StatelessWidget {
   String _getStatusText() {
     switch (uploadedStatus) {
       case 'verified':
-        return 'Verified ✓';
+        return 'Verified âœ“';
       case 'rejected':
-        return 'Rejected ✗';
+        return 'Rejected âœ—';
       case 'pending':
         return 'Pending Review...';
       default:
@@ -62,7 +62,7 @@ class DocumentUploadWidget extends StatelessWidget {
         borderRadius: BorderRadius.circular(
           AppConstants.borderRadiusMedium,
         ),
-        color: _getStatusColor().withOpacity(0.05),
+        color: _getStatusColor().withValues(alpha: 0.05),
       ),
       child: Column(
         children: [
@@ -110,7 +110,7 @@ class DocumentUploadWidget extends StatelessWidget {
             Container(
               padding: const EdgeInsets.all(8),
               decoration: BoxDecoration(
-                color: AppColors.error.withOpacity(0.1),
+                color: AppColors.error.withValues(alpha: 0.1),
                 borderRadius: BorderRadius.circular(4),
               ),
               child: Text(
@@ -165,3 +165,4 @@ class DocumentUploadWidget extends StatelessWidget {
     }
   }
 }
+

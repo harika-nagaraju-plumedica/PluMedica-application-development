@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import '../../utils/colors.dart';
 import '../../utils/fonts.dart';
 import '../../utils/constants.dart';
@@ -78,7 +78,7 @@ class PharmacyItemWidget extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Text(
-                      '₹$price',
+                      'â‚¹$price',
                       style: AppFonts.heading3.copyWith(
                         color: AppColors.green,
                       ),
@@ -90,8 +90,8 @@ class PharmacyItemWidget extends StatelessWidget {
                       ),
                       decoration: BoxDecoration(
                         color: inStock
-                            ? AppColors.success.withOpacity(0.1)
-                            : AppColors.error.withOpacity(0.1),
+                            ? AppColors.success.withValues(alpha: 0.1)
+                            : AppColors.error.withValues(alpha: 0.1),
                         borderRadius: BorderRadius.circular(
                             AppConstants.borderRadiusSmall),
                       ),
@@ -131,3 +131,4 @@ class PharmacyItemWidget extends StatelessWidget {
     );
   }
 }
+

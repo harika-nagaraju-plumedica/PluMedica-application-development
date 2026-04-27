@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import '../../utils/colors.dart';
 import '../../utils/fonts.dart';
 import '../../utils/constants.dart';
@@ -77,7 +77,7 @@ class PaymentInfoTileWidget extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.end,
                 children: [
                   Text(
-                    '₹$amount',
+                    'â‚¹$amount',
                     style: AppFonts.heading3.copyWith(
                       color: AppColors.textPrimary,
                     ),
@@ -88,7 +88,7 @@ class PaymentInfoTileWidget extends StatelessWidget {
                       vertical: 4,
                     ),
                     decoration: BoxDecoration(
-                      color: _getStatusColor().withOpacity(0.1),
+                      color: _getStatusColor().withValues(alpha: 0.1),
                       borderRadius: BorderRadius.circular(
                           AppConstants.borderRadiusSmall),
                     ),
@@ -139,3 +139,4 @@ class PaymentInfoTileWidget extends StatelessWidget {
     );
   }
 }
+

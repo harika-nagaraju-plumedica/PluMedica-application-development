@@ -4,7 +4,7 @@ import '../utils/fonts.dart';
 
 /// Example view screen
 class ExampleView extends StatefulWidget {
-  const ExampleView({Key? key}) : super(key: key);
+  const ExampleView({super.key});
 
   @override
   State<ExampleView> createState() => _ExampleViewState();

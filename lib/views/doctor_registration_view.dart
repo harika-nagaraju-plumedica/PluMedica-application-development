@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../controllers/doctor_registration_controller.dart';
 import '../utils/colors.dart';
@@ -61,7 +61,7 @@ class DoctorRegistrationView extends GetView<DoctorRegistrationController> {
                                   vertical: 4,
                                 ),
                                 decoration: BoxDecoration(
-                                  color: AppColors.warning.withOpacity(0.1),
+                                  color: AppColors.warning.withValues(alpha: 0.1),
                                   borderRadius: BorderRadius.circular(4),
                                 ),
                                 child: Text(
@@ -320,7 +320,7 @@ class DoctorRegistrationView extends GetView<DoctorRegistrationController> {
                               borderRadius: BorderRadius.circular(
                                 AppConstants.borderRadiusMedium,
                               ),
-                              color: AppColors.primaryBlue.withOpacity(0.05),
+                              color: AppColors.primaryBlue.withValues(alpha: 0.05),
                             ),
                             child: Column(
                               children: [
@@ -414,7 +414,7 @@ class DoctorRegistrationView extends GetView<DoctorRegistrationController> {
                                 margin: const EdgeInsets.only(bottom: 8),
                                 decoration: BoxDecoration(
                                   color: isConfigured
-                                      ? AppColors.primaryBlue.withOpacity(0.08)
+                                      ? AppColors.primaryBlue.withValues(alpha: 0.08)
                                       : AppColors.white,
                                   border: Border.all(
                                     color: isOpen || isConfigured
@@ -481,7 +481,7 @@ class DoctorRegistrationView extends GetView<DoctorRegistrationController> {
                                                 ),
                                                 decoration: BoxDecoration(
                                                   color: AppColors.success
-                                                      .withOpacity(0.15),
+                                                      .withValues(alpha: 0.15),
                                                   borderRadius:
                                                       BorderRadius.circular(10),
                                                 ),
@@ -620,9 +620,9 @@ class DoctorRegistrationView extends GetView<DoctorRegistrationController> {
                         Container(
                           padding: const EdgeInsets.all(AppConstants.paddingMedium),
                           decoration: BoxDecoration(
-                            color: AppColors.primaryBlue.withOpacity(0.1),
+                            color: AppColors.primaryBlue.withValues(alpha: 0.1),
                             border: Border.all(
-                              color: AppColors.primaryBlue.withOpacity(0.3),
+                              color: AppColors.primaryBlue.withValues(alpha: 0.3),
                             ),
                             borderRadius: BorderRadius.circular(
                               AppConstants.borderRadiusMedium,
@@ -640,16 +640,16 @@ class DoctorRegistrationView extends GetView<DoctorRegistrationController> {
                               ),
                               const SizedBox(height: 8),
                               _buildInfoPoint(
-                                '• Your registration will be marked as "Pending Approval" after submission.',
+                                'â€¢ Your registration will be marked as "Pending Approval" after submission.',
                               ),
                               _buildInfoPoint(
-                                '• Admin will verify your Medical License Number and uploaded document.',
+                                'â€¢ Admin will verify your Medical License Number and uploaded document.',
                               ),
                               _buildInfoPoint(
-                                '• Your profile will be activated once admin approves your credentials.',
+                                'â€¢ Your profile will be activated once admin approves your credentials.',
                               ),
                               _buildInfoPoint(
-                                '• You will receive approval/rejection updates via email.',
+                                'â€¢ You will receive approval/rejection updates via email.',
                               ),
                             ],
                           ),
@@ -762,3 +762,4 @@ class DoctorRegistrationView extends GetView<DoctorRegistrationController> {
     );
   }
 }
+

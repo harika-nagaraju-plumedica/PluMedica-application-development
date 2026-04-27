@@ -30,6 +30,11 @@ class AppColors {
   static const Color orange = Color(0xFFF5A623);
   static const Color info = primaryBlue;
 
+  // Stock status colors
+  static const Color stockFull = Color(0xFF2E7D32);
+  static const Color stockAverage = Color(0xFF0288D1);
+  static const Color stockLow = Color(0xFFFF7A00);
+
   // Background colors
   static const Color backgroundLight = white;
   static const Color backgroundDark = Color(0xFF121212);

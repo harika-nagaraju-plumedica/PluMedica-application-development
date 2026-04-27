@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import '../utils/colors.dart';
 import '../utils/constants.dart';
 import '../utils/fonts.dart';
@@ -86,7 +86,7 @@ class PatientHistoryCard extends StatelessWidget {
               width: double.infinity,
               padding: const EdgeInsets.all(8),
               decoration: BoxDecoration(
-                color: AppColors.primaryBlue.withOpacity(0.1),
+                color: AppColors.primaryBlue.withValues(alpha: 0.1),
                 borderRadius: BorderRadius.circular(8),
               ),
               child: Row(
@@ -116,3 +116,4 @@ class PatientHistoryCard extends StatelessWidget {
     );
   }
 }
+

@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../controllers/doctor_prescriptions_controller.dart';
 import '../utils/colors.dart';
@@ -23,7 +23,7 @@ class DoctorPrescriptionsView extends GetView<DoctorPrescriptionsController> {
           elevation: 0,
           bottom: TabBar(
             labelColor: AppColors.white,
-            unselectedLabelColor: AppColors.white.withOpacity(0.6),
+            unselectedLabelColor: AppColors.white.withValues(alpha: 0.6),
             indicatorColor: AppColors.white,
             tabs: const [
               Tab(text: 'New Prescription'),
@@ -254,7 +254,7 @@ class DoctorPrescriptionsView extends GetView<DoctorPrescriptionsController> {
                                                   decoration:
                                                       BoxDecoration(
                                                     color: AppColors.success
-                                                        .withOpacity(0.2),
+                                                        .withValues(alpha: 0.2),
                                                     borderRadius:
                                                         BorderRadius
                                                             .circular(12),
@@ -311,3 +311,4 @@ class DoctorPrescriptionsView extends GetView<DoctorPrescriptionsController> {
     );
   }
 }
+

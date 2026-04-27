@@ -11,13 +11,13 @@ class PartnerInfoCardWidget extends StatelessWidget {
   final VoidCallback? onTap;
 
   const PartnerInfoCardWidget({
-    Key? key,
+    super.key,
     required this.partnerName,
     required this.partnerType,
     required this.memberCount,
     this.logoImage,
     this.onTap,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../../controllers/hospital/hospital_emergency_services_controller.dart';
 import '../../utils/colors.dart';
@@ -35,7 +35,7 @@ class HospitalEmergencyServicesView
                       padding: const EdgeInsets.all(
                           AppConstants.paddingMedium),
                       decoration: BoxDecoration(
-                        color: AppColors.error.withOpacity(0.1),
+                        color: AppColors.error.withValues(alpha: 0.1),
                         borderRadius: BorderRadius.circular(
                             AppConstants.borderRadiusLarge),
                         border: Border.all(color: AppColors.error),
@@ -133,7 +133,7 @@ class HospitalEmergencyServicesView
                         padding: const EdgeInsets.all(
                             AppConstants.paddingMedium),
                         decoration: BoxDecoration(
-                          color: AppColors.success.withOpacity(0.1),
+                          color: AppColors.success.withValues(alpha: 0.1),
                           borderRadius: BorderRadius.circular(
                               AppConstants.borderRadiusLarge),
                         ),
@@ -176,3 +176,4 @@ class HospitalEmergencyServicesView
     );
   }
 }
+

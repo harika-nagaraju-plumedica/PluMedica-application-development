@@ -3,7 +3,7 @@
 import 'package:flutter/material.dart';
 
 class HospitalRegistrationView extends StatelessWidget {
-  const HospitalRegistrationView({Key? key}) : super(key: key);
+  const HospitalRegistrationView({super.key});
 
   @override
   Widget build(BuildContext context) {

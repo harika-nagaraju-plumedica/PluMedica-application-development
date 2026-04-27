@@ -8,7 +8,7 @@ import '../../widgets/patient/pharmacy_item_widget.dart';
 import '../../widgets/app_text_field.dart';
 
 class PatientPharmacyView extends GetView<PatientPharmacyController> {
-  const PatientPharmacyView({Key? key}) : super(key: key);
+  const PatientPharmacyView({super.key});
 
   @override
   Widget build(BuildContext context) {

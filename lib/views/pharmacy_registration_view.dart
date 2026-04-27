@@ -101,55 +101,72 @@ class PharmacyRegistrationView extends GetView<PharmacyRegistrationController> {
                         const SizedBox(height: 16),
 
                         // State Selection
+                        _buildLabel('State', required: true),
+                        const SizedBox(height: 8),
                         GetBuilder<PharmacyRegistrationController>(
-                          builder: (ctrl) => Container(
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: AppConstants.paddingMedium,
-                              vertical: AppConstants.paddingSmall,
-                            ),
-                            decoration: BoxDecoration(
-                              border: Border.all(color: AppColors.lightGrey),
-                              borderRadius: BorderRadius.circular(
-                                AppConstants.borderRadiusMedium,
+                          builder: (ctrl) => DropdownButtonFormField<String>(
+                            isExpanded: true,
+                            decoration: InputDecoration(
+                              contentPadding: const EdgeInsets.symmetric(
+                                horizontal: AppConstants.paddingMedium,
+                                vertical: AppConstants.paddingSmall,
                               ),
-                            ),
-                            child: DropdownButtonFormField<String>(
-                              isExpanded: true,
-                              decoration: const InputDecoration(
-                                border: InputBorder.none,
-                              ),
-                              hint: Text(
-                                'Select State',
-                                style: AppFonts.labelMedium.copyWith(
-                                  color: AppColors.textSecondary,
+                              border: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(
+                                  AppConstants.borderRadiusMedium,
+                                ),
+                                borderSide: const BorderSide(
+                                  color: AppColors.lightGrey,
                                 ),
                               ),
-                              value: ctrl.stateController.text.isEmpty
-                                  ? null
-                                  : ctrl.stateController.text,
-                              items: ctrl.statesList.map((String state) {
-                                return DropdownMenuItem<String>(
-                                  value: state,
-                                  child: Text(
-                                    state,
-                                    style: AppFonts.labelMedium,
-                                  ),
-                                );
-                              }).toList(),
-                              onChanged: (String? newValue) {
-                                if (newValue != null) {
-                                  ctrl.stateController.text = newValue;
-                                  ctrl.cityController.clear();
-                                  ctrl.selectedCities.value =
-                                      ctrl.getCitiesForState(newValue);
-                                  ctrl.update();
-                                }
-                              },
-                              validator: controller.validateState,
+                              enabledBorder: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(
+                                  AppConstants.borderRadiusMedium,
+                                ),
+                                borderSide: const BorderSide(
+                                  color: AppColors.lightGrey,
+                                ),
+                              ),
+                              focusedBorder: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(
+                                  AppConstants.borderRadiusMedium,
+                                ),
+                                borderSide: const BorderSide(
+                                  color: AppColors.primaryDarkBlue,
+                                  width: 1.2,
+                                ),
+                              ),
                             ),
+                            hint: Text(
+                              'Select State',
+                              style: AppFonts.labelMedium.copyWith(
+                                color: AppColors.textSecondary,
+                              ),
+                            ),
+                            value: ctrl.stateController.text.isEmpty
+                                ? null
+                                : ctrl.stateController.text,
+                            items: ctrl.statesList.map((String state) {
+                              return DropdownMenuItem<String>(
+                                value: state,
+                                child: Text(
+                                  state,
+                                  style: AppFonts.labelMedium,
+                                ),
+                              );
+                            }).toList(),
+                            onChanged: (String? newValue) {
+                              if (newValue != null) {
+                                ctrl.stateController.text = newValue;
+                                ctrl.cityController.clear();
+                                ctrl.selectedCities.value =
+                                    ctrl.getCitiesForState(newValue);
+                                ctrl.update();
+                              }
+                            },
+                            validator: controller.validateState,
                           ),
                         ),
-                        _buildLabel('State', required: true),
                         const SizedBox(height: 16),
 
                         // City - Manual Input
@@ -429,22 +446,22 @@ class PharmacyRegistrationView extends GetView<PharmacyRegistrationController> {
                               ),
                               const SizedBox(height: 12),
                               _buildInfoPoint(
-                                '• After submission, your pharmacy status will be "Pending Verification".',
+                                'G�� After submission, your pharmacy status will be "Pending Verification".',
                               ),
                               _buildInfoPoint(
-                                '• Admin will review your GSTIN and documents.',
+                                'G�� Admin will review your GSTIN and documents.',
                               ),
                               _buildInfoPoint(
-                                '• If Drug License is provided, it will also be verified.',
+                                'G�� If Drug License is provided, it will also be verified.',
                               ),
                               _buildInfoPoint(
-                                '• Your pharmacy will be marked as "Approved" only after admin verification.',
+                                'G�� Your pharmacy will be marked as "Approved" only after admin verification.',
                               ),
                               _buildInfoPoint(
-                                '• You will receive email notifications on status updates.',
+                                'G�� You will receive email notifications on status updates.',
                               ),
                               _buildInfoPoint(
-                                '• In case of rejection, you can resubmit after addressing the issues.',
+                                'G�� In case of rejection, you can resubmit after addressing the issues.',
                               ),
                             ],
                           ),

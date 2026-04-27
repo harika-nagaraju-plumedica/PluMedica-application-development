@@ -46,16 +46,27 @@ $cmd = $Command.ToLower()
 if ($cmd -eq "release") {
     Get-Header "Building RELEASE APK (arm64-v8a)"
     Write-Host "Platform: ARM64 (64-bit, Windows compatible)"
+    Write-Host "Optimizations: R8 shrink + obfuscation + split debug info"
     Write-Host ""
+
+    if (!(Test-Path "build/symbols")) {
+        New-Item -ItemType Directory -Path "build/symbols" | Out-Null
+    }
     
-    & flutter build apk --release --target-platform android-arm64 @AdditionalArgs
+    & flutter build apk --release --target-platform android-arm64 --obfuscate --split-debug-info=build/symbols @AdditionalArgs
     if ($LASTEXITCODE -eq 0) {
         Get-Header "BUILD SUCCESSFUL"
         Write-Host "APK Location: build\app\outputs\flutter-apk\app-release.apk"
+        Write-Host "Debug symbols: build\symbols"
         $apkPath = "build\app\outputs\flutter-apk\app-release.apk"
         if (Test-Path $apkPath) {
             $size = (Get-Item $apkPath).Length / 1MB
             Write-Host "APK Size: $([math]::Round($size, 1)) MB"
+            if ($size -lt 5 -or $size -gt 20) {
+                Write-Host "APK size must be between 5 MB and 20 MB" -ForegroundColor Red
+                exit 1
+            }
+            Write-Host "APK size check passed (5-20 MB)" -ForegroundColor Green
         }
         Write-Host ""
     }

@@ -8,7 +8,7 @@ import '../utils/fonts.dart';
 /// Doctor Patient History View
 class DoctorPatientHistoryView
     extends GetView<DoctorPatientHistoryController> {
-  const DoctorPatientHistoryView({Key? key}) : super(key: key);
+  const DoctorPatientHistoryView({super.key});
 
   @override
   Widget build(BuildContext context) {

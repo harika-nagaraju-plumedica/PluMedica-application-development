@@ -29,7 +29,21 @@ shift
 
 if "%CMD%"=="release" (
     echo Building optimized release APK for arm64...
-    call flutter build apk --release --target-platform android-arm64 %*
+    if not exist build\symbols mkdir build\symbols
+    call flutter build apk --release --target-platform android-arm64 --obfuscate --split-debug-info=build/symbols %*
+    if !errorlevel! neq 0 exit /b !errorlevel!
+    for %%I in (build\app\outputs\flutter-apk\app-release.apk) do set APK_SIZE_BYTES=%%~zI
+    set /a APK_SIZE_MB=!APK_SIZE_BYTES!/1024/1024
+    echo APK Size: !APK_SIZE_MB! MB
+    if !APK_SIZE_MB! LSS 5 (
+        echo APK size check failed: must be between 5 MB and 20 MB
+        exit /b 1
+    )
+    if !APK_SIZE_MB! GTR 20 (
+        echo APK size check failed: must be between 5 MB and 20 MB
+        exit /b 1
+    )
+    echo APK size check passed (5-20 MB)
     goto :end
 )
 

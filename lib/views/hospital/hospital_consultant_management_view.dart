@@ -8,7 +8,7 @@ import '../../widgets/hospital/consultant_list_tile_widget.dart';
 
 class HospitalConsultantManagementView
     extends GetView<HospitalConsultantManagementController> {
-  const HospitalConsultantManagementView({Key? key}) : super(key: key);
+  const HospitalConsultantManagementView({super.key});
 
   @override
   Widget build(BuildContext context) {

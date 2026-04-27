@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import '../../utils/colors.dart';
 import '../../utils/fonts.dart';
 import '../../utils/constants.dart';
@@ -76,7 +76,7 @@ class ClaimStatusWidgetItem extends StatelessWidget {
                   vertical: 6,
                 ),
                 decoration: BoxDecoration(
-                  color: _getStatusColor().withOpacity(0.1),
+                  color: _getStatusColor().withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(
                       AppConstants.borderRadiusSmall),
                 ),
@@ -104,7 +104,7 @@ class ClaimStatusWidgetItem extends StatelessWidget {
                     ),
                   ),
                   Text(
-                    '₹$amount',
+                    'â‚¹$amount',
                     style: AppFonts.heading3.copyWith(
                       color: AppColors.green,
                     ),
@@ -131,3 +131,4 @@ class ClaimStatusWidgetItem extends StatelessWidget {
     );
   }
 }
+

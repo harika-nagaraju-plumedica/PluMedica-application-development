@@ -7,7 +7,7 @@ import '../utils/fonts.dart';
 
 /// Doctor Appointments View
 class DoctorAppointmentsView extends GetView<DoctorAppointmentsController> {
-  const DoctorAppointmentsView({Key? key}) : super(key: key);
+  const DoctorAppointmentsView({super.key});
 
   @override
   Widget build(BuildContext context) {

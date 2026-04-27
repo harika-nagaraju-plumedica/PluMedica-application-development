@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../../controllers/patient/patient_health_records_controller.dart';
 import '../../utils/colors.dart';
@@ -31,7 +31,7 @@ class PatientHealthRecordsView
                     Container(
                       padding: const EdgeInsets.all(AppConstants.paddingMedium),
                       decoration: BoxDecoration(
-                        color: AppColors.lightBlue.withOpacity(0.1),
+                        color: AppColors.lightBlue.withValues(alpha: 0.1),
                         borderRadius:
                             BorderRadius.circular(AppConstants.borderRadiusLarge),
                         border: Border.all(color: AppColors.lightBlue),
@@ -104,7 +104,7 @@ class PatientHealthRecordsView
                                       padding: const EdgeInsets.all(8),
                                       decoration: BoxDecoration(
                                         color: AppColors.primaryBlue
-                                            .withOpacity(0.1),
+                                            .withValues(alpha: 0.1),
                                         borderRadius: BorderRadius.circular(
                                             AppConstants.borderRadiusMedium),
                                       ),
@@ -178,3 +178,4 @@ class PatientHealthRecordsView
     );
   }
 }
+

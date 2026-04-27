@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import '../../utils/colors.dart';
 import '../../utils/fonts.dart';
 
@@ -55,7 +55,7 @@ class _SosActionButtonWidgetState extends State<SosActionButtonWidget>
               height: 140,
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
-                color: AppColors.error.withOpacity(0.2),
+                color: AppColors.error.withValues(alpha: 0.2),
               ),
             ),
           ),
@@ -69,14 +69,14 @@ class _SosActionButtonWidgetState extends State<SosActionButtonWidget>
                 gradient: LinearGradient(
                   colors: [
                     AppColors.error,
-                    AppColors.error.withOpacity(0.8),
+                    AppColors.error.withValues(alpha: 0.8),
                   ],
                   begin: Alignment.topLeft,
                   end: Alignment.bottomRight,
                 ),
                 boxShadow: [
                   BoxShadow(
-                    color: AppColors.error.withOpacity(0.4),
+                    color: AppColors.error.withValues(alpha: 0.4),
                     blurRadius: 20,
                     spreadRadius: 5,
                   ),
@@ -116,14 +116,14 @@ class _SosActionButtonWidgetState extends State<SosActionButtonWidget>
           gradient: LinearGradient(
             colors: [
               AppColors.error,
-              AppColors.error.withOpacity(0.7),
+              AppColors.error.withValues(alpha: 0.7),
             ],
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
           ),
           boxShadow: [
             BoxShadow(
-              color: AppColors.error.withOpacity(0.3),
+              color: AppColors.error.withValues(alpha: 0.3),
               blurRadius: 15,
               spreadRadius: 3,
             ),
@@ -151,3 +151,4 @@ class _SosActionButtonWidgetState extends State<SosActionButtonWidget>
     );
   }
 }
+

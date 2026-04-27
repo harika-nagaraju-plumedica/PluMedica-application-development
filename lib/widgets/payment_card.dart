@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import '../models/payment_model.dart';
 import '../utils/colors.dart';
 import '../utils/constants.dart';
@@ -74,7 +74,7 @@ class PaymentCard extends StatelessWidget {
                     vertical: 6,
                   ),
                   decoration: BoxDecoration(
-                    color: _getStatusColor().withOpacity(0.1),
+                    color: _getStatusColor().withValues(alpha: 0.1),
                     borderRadius: BorderRadius.circular(12),
                   ),
                   child: Text(
@@ -95,7 +95,7 @@ class PaymentCard extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      '₹${payment.amount.toStringAsFixed(2)}',
+                      'â‚¹${payment.amount.toStringAsFixed(2)}',
                       style: AppFonts.heading3.copyWith(
                         color: AppColors.primaryDarkBlue,
                       ),
@@ -154,3 +154,4 @@ class PaymentCard extends StatelessWidget {
     );
   }
 }
+

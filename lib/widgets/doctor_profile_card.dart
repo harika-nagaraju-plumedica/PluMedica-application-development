@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import '../models/doctor_model.dart';
 import '../utils/colors.dart';
 import '../utils/constants.dart';
@@ -53,7 +53,7 @@ class DoctorProfileCard extends StatelessWidget {
                     Text(
                       doctor.specialization ?? 'Medical Professional',
                       style: AppFonts.bodySmall.copyWith(
-                        color: AppColors.white.withOpacity(0.9),
+                        color: AppColors.white.withValues(alpha: 0.9),
                       ),
                     ),
                     const SizedBox(height: 4),
@@ -84,3 +84,4 @@ class DoctorProfileCard extends StatelessWidget {
     );
   }
 }
+

@@ -14,7 +14,8 @@ class PharmacyNotificationsController extends GetxController {
     {
       'id': 2,
       'title': 'New Order',
-      'message': 'Order #ORD-2026-0451 has been delivered successfully',
+      'message':
+          'Order #ORD-2026-0451 for Patient ID PT-100451 was delivered successfully',
       'type': 'success',
       'timestamp': '1 hour ago',
       'read': false,
@@ -23,7 +24,8 @@ class PharmacyNotificationsController extends GetxController {
     {
       'id': 3,
       'title': 'Payment Received',
-      'message': 'Payment of ₹2,500 received from Rajesh Kumar',
+      'message':
+          'Payment of ₹2,500 received for Patient ID PT-100451 (TXN-2026-0451-7312)',
       'type': 'info',
       'timestamp': '45 minutes ago',
       'read': true,

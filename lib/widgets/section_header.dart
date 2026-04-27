@@ -9,11 +9,11 @@ class SectionHeader extends StatelessWidget {
   final VoidCallback? onViewAll;
 
   const SectionHeader({
-    Key? key,
+    super.key,
     required this.title,
     this.subtitle,
     this.onViewAll,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

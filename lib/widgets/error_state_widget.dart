@@ -12,12 +12,12 @@ class ErrorStateWidget extends StatelessWidget {
   final IconData icon;
 
   const ErrorStateWidget({
-    Key? key,
+    super.key,
     required this.message,
     this.onRetry,
     this.retryButtonText = 'Retry',
     this.icon = Icons.error_outline,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

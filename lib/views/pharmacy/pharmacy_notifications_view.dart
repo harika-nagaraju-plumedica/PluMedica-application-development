@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../../controllers/pharmacy/pharmacy_notifications_controller.dart';
 import '../../utils/colors.dart';
@@ -129,17 +129,17 @@ class PharmacyNotificationsView
         margin: const EdgeInsets.only(bottom: 12),
         padding: const EdgeInsets.all(AppConstants.paddingMedium),
         decoration: BoxDecoration(
-          color: notif['read'] ? Colors.white : backgroundColor.withOpacity(0.05),
+          color: notif['read'] ? Colors.white : backgroundColor.withValues(alpha: 0.05),
           borderRadius: BorderRadius.circular(AppConstants.borderRadiusMedium),
           border: Border.all(
             color: notif['read']
                 ? Colors.transparent
-                : backgroundColor.withOpacity(0.3),
+                : backgroundColor.withValues(alpha: 0.3),
             width: notif['read'] ? 0 : 1,
           ),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.05),
+              color: Colors.black.withValues(alpha: 0.05),
               blurRadius: 8,
               offset: const Offset(0, 2),
             ),
@@ -154,7 +154,7 @@ class PharmacyNotificationsView
                 Container(
                   padding: const EdgeInsets.all(8),
                   decoration: BoxDecoration(
-                    color: backgroundColor.withOpacity(0.1),
+                    color: backgroundColor.withValues(alpha: 0.1),
                     borderRadius: BorderRadius.circular(8),
                   ),
                   child: Icon(
@@ -230,7 +230,7 @@ class PharmacyNotificationsView
                   width: double.infinity,
                   child: TextButton(
                     style: TextButton.styleFrom(
-                      backgroundColor: backgroundColor.withOpacity(0.1),
+                      backgroundColor: backgroundColor.withValues(alpha: 0.1),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(4),
                       ),
@@ -291,3 +291,4 @@ class PharmacyNotificationsView
     }
   }
 }
+

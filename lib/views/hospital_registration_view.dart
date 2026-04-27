@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../controllers/hospital/hospital_registration_controller.dart';
 import '../utils/colors.dart';
@@ -68,7 +68,7 @@ class HospitalRegistrationView extends GetView<HospitalRegistrationController> {
                                   vertical: 4,
                                 ),
                                 decoration: BoxDecoration(
-                                  color: AppColors.warning.withOpacity(0.1),
+                                  color: AppColors.warning.withValues(alpha: 0.1),
                                   borderRadius: BorderRadius.circular(4),
                                 ),
                                 child: Text(
@@ -257,9 +257,9 @@ class HospitalRegistrationView extends GetView<HospitalRegistrationController> {
                         Container(
                           padding: const EdgeInsets.all(AppConstants.paddingMedium),
                           decoration: BoxDecoration(
-                            color: AppColors.primaryBlue.withOpacity(0.1),
+                            color: AppColors.primaryBlue.withValues(alpha: 0.1),
                             border: Border.all(
-                              color: AppColors.primaryBlue.withOpacity(0.3),
+                              color: AppColors.primaryBlue.withValues(alpha: 0.3),
                             ),
                             borderRadius: BorderRadius.circular(
                               AppConstants.borderRadiusMedium,
@@ -277,16 +277,16 @@ class HospitalRegistrationView extends GetView<HospitalRegistrationController> {
                               ),
                               const SizedBox(height: 8),
                               _buildInfoPoint(
-                                '• Your registration will be marked as "Pending Verification" after submission.',
+                                'â€¢ Your registration will be marked as "Pending Verification" after submission.',
                               ),
                               _buildInfoPoint(
-                                '• Admin will verify GSTIN and CE documents separately.',
+                                'â€¢ Admin will verify GSTIN and CE documents separately.',
                               ),
                               _buildInfoPoint(
-                                '• Hospital can be marked active only after both verifications are completed.',
+                                'â€¢ Hospital can be marked active only after both verifications are completed.',
                               ),
                               _buildInfoPoint(
-                                '• You will receive updates on verification status via email.',
+                                'â€¢ You will receive updates on verification status via email.',
                               ),
                             ],
                           ),
@@ -352,3 +352,4 @@ class HospitalRegistrationView extends GetView<HospitalRegistrationController> {
     );
   }
 }
+

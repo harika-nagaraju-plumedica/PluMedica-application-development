@@ -7,7 +7,7 @@ import '../widgets/index.dart';
 
 /// Doctor Dashboard View
 class DoctorDashboardView extends GetView<DoctorDashboardController> {
-  const DoctorDashboardView({Key? key}) : super(key: key);
+  const DoctorDashboardView({super.key});
 
   @override
   Widget build(BuildContext context) {

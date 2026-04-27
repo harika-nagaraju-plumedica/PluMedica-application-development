@@ -9,10 +9,10 @@ class LoadingStateWidget extends StatelessWidget {
   final bool fullScreen;
 
   const LoadingStateWidget({
-    Key? key,
+    super.key,
     this.message,
     this.fullScreen = true,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

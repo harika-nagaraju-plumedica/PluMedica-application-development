@@ -6,7 +6,7 @@ import '../../utils/fonts.dart';
 import '../../utils/constants.dart';
 
 class PharmacyInventoryView extends GetView<PharmacyInventoryController> {
-  const PharmacyInventoryView({Key? key}) : super(key: key);
+  const PharmacyInventoryView({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -22,28 +22,27 @@ class PharmacyInventoryView extends GetView<PharmacyInventoryController> {
       ),
       body: Column(
         children: [
-          // Category Filter
           Padding(
             padding: const EdgeInsets.all(AppConstants.paddingMedium),
             child: SingleChildScrollView(
               scrollDirection: Axis.horizontal,
               child: Row(
-                children: ['All', 'Analgesic', 'Respiratory', 'Supplements', 'GI Health']
+                children: PharmacyInventoryController.allowedCategories
                     .map(
                       (category) => Obx(
                         () => Padding(
                           padding: const EdgeInsets.only(right: 8),
                           child: FilterChip(
                             label: Text(category),
-                            selected:
-                                controller.selectedCategory.value == category,
-                            onSelected: (_) =>
-                                controller.updateCategory(category),
+                            selected: controller.selectedCategory.value == category,
+                            onSelected: (isSelected) {
+                              if (!isSelected) return;
+                              controller.updateCategory(category);
+                            },
                             backgroundColor: Colors.white,
-                            selectedColor: AppColors.green.withOpacity(0.3),
+                            selectedColor: AppColors.green.withValues(alpha: 0.3),
                             labelStyle: AppFonts.bodySmall.copyWith(
-                              color: controller.selectedCategory.value ==
-                                      category
+                              color: controller.selectedCategory.value == category
                                   ? AppColors.green
                                   : AppColors.textSecondary,
                               fontWeight: FontWeight.bold,
@@ -52,31 +51,33 @@ class PharmacyInventoryView extends GetView<PharmacyInventoryController> {
                         ),
                       ),
                     )
-                    .toList(),
+                    .toList(growable: false),
               ),
             ),
           ),
-          // Inventory List
           Expanded(
-            child: Obx(
-              () => controller.filteredInventory.isEmpty
-                  ? Center(
-                      child: Text(
-                        'No items found',
-                        style: AppFonts.bodyMedium.copyWith(
-                          color: AppColors.textSecondary,
-                        ),
-                      ),
-                    )
-                  : ListView.builder(
-                      padding: const EdgeInsets.all(AppConstants.paddingMedium),
-                      itemCount: controller.filteredInventory.length,
-                      itemBuilder: (context, index) {
-                        final item = controller.filteredInventory[index];
-                        return _buildInventoryCard(item);
-                      },
+            child: Obx(() {
+              final filteredItems = controller.filteredInventory;
+              if (filteredItems.isEmpty) {
+                return Center(
+                  child: Text(
+                    'No items found',
+                    style: AppFonts.bodyMedium.copyWith(
+                      color: AppColors.textSecondary,
                     ),
-            ),
+                  ),
+                );
+              }
+
+              return ListView.builder(
+                padding: const EdgeInsets.all(AppConstants.paddingMedium),
+                itemCount: filteredItems.length,
+                itemBuilder: (context, index) {
+                  final item = filteredItems[index];
+                  return _buildInventoryCard(item);
+                },
+              );
+            }),
           ),
         ],
       ),
@@ -84,8 +85,18 @@ class PharmacyInventoryView extends GetView<PharmacyInventoryController> {
   }
 
   Widget _buildInventoryCard(Map<String, dynamic> item) {
-    final isLowStock = item['stock'] < item['minStock'];
-    final stockPercentage = (item['stock'] / item['maxStock']).clamp(0.0, 1.0);
+    final remainingStock = _asInt(item['remainingStock'] ?? item['stock']);
+    final meanLimit = _asInt(item['meanLimit'] ?? item['minStock']);
+    final maxLimit = _asInt(item['maxLimit'] ?? item['maxStock']);
+    final fallbackTotal = maxLimit > 0 ? maxLimit : 1;
+    final totalStock = _asInt(item['totalStock'] ?? fallbackTotal).clamp(1, 1 << 30);
+    final safeRemaining = remainingStock.clamp(0, totalStock);
+    final soldStock = (totalStock - safeRemaining).clamp(0, totalStock);
+    final status = controller.stockStatus(item);
+    final statusColor = controller.getStockStatusColor(item);
+    final isLowStock = status == 'Low';
+    final stockPercentage = safeRemaining / totalStock;
+    final price = _asDouble(item['price']);
 
     return Container(
       margin: const EdgeInsets.only(bottom: 12),
@@ -95,13 +106,15 @@ class PharmacyInventoryView extends GetView<PharmacyInventoryController> {
         borderRadius: BorderRadius.circular(AppConstants.borderRadiusMedium),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.05),
+            color: Colors.black.withValues(alpha: 0.05),
             blurRadius: 8,
             offset: const Offset(0, 2),
           ),
         ],
         border: Border.all(
-          color: isLowStock ? AppColors.orange.withOpacity(0.3) : Colors.transparent,
+          color: isLowStock
+              ? AppColors.stockLow.withValues(alpha: 0.3)
+              : Colors.transparent,
           width: isLowStock ? 1 : 0,
         ),
       ),
@@ -116,7 +129,7 @@ class PharmacyInventoryView extends GetView<PharmacyInventoryController> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      item['name'],
+                      item['name']?.toString() ?? 'Unknown medicine',
                       style: AppFonts.labelMedium.copyWith(
                         color: AppColors.textPrimary,
                         fontWeight: FontWeight.bold,
@@ -124,7 +137,7 @@ class PharmacyInventoryView extends GetView<PharmacyInventoryController> {
                     ),
                     const SizedBox(height: 2),
                     Text(
-                      item['manufacturer'],
+                      item['manufacturer']?.toString() ?? 'Unknown manufacturer',
                       style: AppFonts.bodySmall.copyWith(
                         color: AppColors.textSecondary,
                         fontSize: 11,
@@ -137,13 +150,13 @@ class PharmacyInventoryView extends GetView<PharmacyInventoryController> {
                 Container(
                   padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
                   decoration: BoxDecoration(
-                    color: AppColors.orange.withOpacity(0.1),
+                    color: AppColors.stockLow.withValues(alpha: 0.1),
                     borderRadius: BorderRadius.circular(3),
                   ),
                   child: Text(
                     'Low Stock',
                     style: AppFonts.bodySmall.copyWith(
-                      color: AppColors.orange,
+                      color: AppColors.stockLow,
                       fontSize: 10,
                       fontWeight: FontWeight.bold,
                     ),
@@ -157,9 +170,19 @@ class PharmacyInventoryView extends GetView<PharmacyInventoryController> {
             child: LinearProgressIndicator(
               value: stockPercentage,
               minHeight: 8,
-              backgroundColor: AppColors.primaryBlue.withOpacity(0.1),
-              valueColor: AlwaysStoppedAnimation<Color>(
-                isLowStock ? AppColors.orange : AppColors.primaryBlue,
+              backgroundColor: AppColors.primaryBlue.withValues(alpha: 0.1),
+              valueColor: AlwaysStoppedAnimation<Color>(statusColor),
+            ),
+          ),
+          const SizedBox(height: 4),
+          Align(
+            alignment: Alignment.centerRight,
+            child: Text(
+              '$status Stock',
+              style: AppFonts.bodySmall.copyWith(
+                color: statusColor,
+                fontSize: 10,
+                fontWeight: FontWeight.bold,
               ),
             ),
           ),
@@ -168,14 +191,14 @@ class PharmacyInventoryView extends GetView<PharmacyInventoryController> {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(
-                '${item['stock']} / ${item['maxStock']} ${item['unit']}',
+                '$safeRemaining / $totalStock ${item['unit'] ?? 'units'}',
                 style: AppFonts.bodySmall.copyWith(
                   color: AppColors.textPrimary,
                   fontWeight: FontWeight.bold,
                 ),
               ),
               Text(
-                '₹${item['price']}',
+                'Rs ${price.toStringAsFixed(2)}',
                 style: AppFonts.bodySmall.copyWith(
                   color: AppColors.green,
                   fontWeight: FontWeight.bold,
@@ -183,19 +206,35 @@ class PharmacyInventoryView extends GetView<PharmacyInventoryController> {
               ),
             ],
           ),
+          const SizedBox(height: 6),
+          Text(
+            'Remaining: $safeRemaining | Sold: $soldStock',
+            style: AppFonts.bodySmall.copyWith(
+              color: AppColors.textSecondary,
+              fontSize: 11,
+            ),
+          ),
+          const SizedBox(height: 6),
+          Text(
+            'Mean limit: $meanLimit | Max limit: $maxLimit',
+            style: AppFonts.bodySmall.copyWith(
+              color: AppColors.textSecondary,
+              fontSize: 11,
+            ),
+          ),
           const SizedBox(height: 8),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(
-                'Expires: ${item['expiryDate']}',
+                'Expires: ${item['expiryDate']?.toString() ?? '-'}',
                 style: AppFonts.bodySmall.copyWith(
                   color: AppColors.textSecondary,
                   fontSize: 11,
                 ),
               ),
               Text(
-                item['itemId'],
+                item['itemId']?.toString() ?? '-',
                 style: AppFonts.bodySmall.copyWith(
                   color: AppColors.textSecondary,
                   fontSize: 11,
@@ -206,5 +245,19 @@ class PharmacyInventoryView extends GetView<PharmacyInventoryController> {
         ],
       ),
     );
+  }
+
+  int _asInt(dynamic value) {
+    if (value is int) return value;
+    if (value is num) return value.toInt();
+    if (value is String) return int.tryParse(value) ?? 0;
+    return 0;
+  }
+
+  double _asDouble(dynamic value) {
+    if (value is double) return value;
+    if (value is num) return value.toDouble();
+    if (value is String) return double.tryParse(value) ?? 0;
+    return 0;
   }
 }

@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import '../utils/colors.dart';
 import '../utils/fonts.dart';
 
@@ -111,7 +111,7 @@ class _AppTextFieldState extends State<AppTextField> {
               borderSide: const BorderSide(color: AppColors.error),
             ),
             filled: true,
-            fillColor: AppColors.lightGrey.withOpacity(0.1),
+            fillColor: AppColors.lightGrey.withValues(alpha: 0.1),
             suffixIcon: widget.obscureText
                 ? IconButton(
                     icon: Icon(
@@ -135,3 +135,4 @@ class _AppTextFieldState extends State<AppTextField> {
     );
   }
 }
+

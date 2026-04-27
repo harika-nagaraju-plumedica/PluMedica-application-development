@@ -16,7 +16,7 @@ class AppDropdown extends StatelessWidget {
   final bool enabled;
 
   const AppDropdown({
-    Key? key,
+    super.key,
     required this.label,
     this.hint,
     this.value,
@@ -26,7 +26,7 @@ class AppDropdown extends StatelessWidget {
     this.isRequired = false,
     this.errorText,
     this.enabled = true,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

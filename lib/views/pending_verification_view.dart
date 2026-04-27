@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../utils/colors.dart';
 import '../utils/constants.dart';
@@ -87,7 +87,7 @@ class _PendingVerificationViewState extends State<PendingVerificationView> {
                   Container(
                     padding: const EdgeInsets.all(16),
                     decoration: BoxDecoration(
-                      color: AppColors.warning.withOpacity(0.1),
+                      color: AppColors.warning.withValues(alpha: 0.1),
                       borderRadius: BorderRadius.circular(100),
                     ),
                     child: Icon(
@@ -126,7 +126,7 @@ class _PendingVerificationViewState extends State<PendingVerificationView> {
                       vertical: 12,
                     ),
                     decoration: BoxDecoration(
-                      color: AppColors.warning.withOpacity(0.1),
+                      color: AppColors.warning.withValues(alpha: 0.1),
                       borderRadius: BorderRadius.circular(
                         AppConstants.borderRadiusMedium,
                       ),
@@ -163,9 +163,9 @@ class _PendingVerificationViewState extends State<PendingVerificationView> {
                   Container(
                     padding: const EdgeInsets.all(AppConstants.paddingMedium),
                     decoration: BoxDecoration(
-                      color: AppColors.primaryBlue.withOpacity(0.05),
+                      color: AppColors.primaryBlue.withValues(alpha: 0.05),
                       border: Border.all(
-                        color: AppColors.primaryBlue.withOpacity(0.3),
+                        color: AppColors.primaryBlue.withValues(alpha: 0.3),
                       ),
                       borderRadius: BorderRadius.circular(
                         AppConstants.borderRadiusMedium,
@@ -204,7 +204,7 @@ class _PendingVerificationViewState extends State<PendingVerificationView> {
                     Container(
                       padding: const EdgeInsets.all(AppConstants.paddingMedium),
                       decoration: BoxDecoration(
-                        color: AppColors.success.withOpacity(0.1),
+                        color: AppColors.success.withValues(alpha: 0.1),
                         borderRadius: BorderRadius.circular(
                           AppConstants.borderRadiusMedium,
                         ),
@@ -296,7 +296,7 @@ class _PendingVerificationViewState extends State<PendingVerificationView> {
                   Container(
                     padding: const EdgeInsets.all(AppConstants.paddingMedium),
                     decoration: BoxDecoration(
-                      color: AppColors.primaryBlue.withOpacity(0.1),
+                      color: AppColors.primaryBlue.withValues(alpha: 0.1),
                       borderRadius: BorderRadius.circular(
                         AppConstants.borderRadiusMedium,
                       ),
@@ -332,7 +332,7 @@ class _PendingVerificationViewState extends State<PendingVerificationView> {
                           child: LinearProgressIndicator(
                             value: _secondsRemaining / 5,
                             minHeight: 6,
-                            backgroundColor: AppColors.primaryBlue.withOpacity(0.2),
+                            backgroundColor: AppColors.primaryBlue.withValues(alpha: 0.2),
                             valueColor: AlwaysStoppedAnimation<Color>(
                               AppColors.primaryBlue,
                             ),
@@ -347,7 +347,7 @@ class _PendingVerificationViewState extends State<PendingVerificationView> {
                   Container(
                     padding: const EdgeInsets.all(AppConstants.paddingMedium),
                     decoration: BoxDecoration(
-                      color: AppColors.primaryBlue.withOpacity(0.1),
+                      color: AppColors.primaryBlue.withValues(alpha: 0.1),
                       borderRadius: BorderRadius.circular(
                         AppConstants.borderRadiusMedium,
                       ),
@@ -470,3 +470,4 @@ class _PendingVerificationViewState extends State<PendingVerificationView> {
     );
   }
 }
+

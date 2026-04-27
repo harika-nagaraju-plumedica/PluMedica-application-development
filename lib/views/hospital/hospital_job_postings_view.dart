@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../../controllers/hospital/hospital_job_postings_controller.dart';
 import '../../utils/colors.dart';
@@ -128,7 +128,7 @@ class HospitalJobPostingsView
                                                     BoxDecoration(
                                                   color: AppColors
                                                       .success
-                                                      .withOpacity(
+                                                      .withValues(alpha: 
                                                           0.1),
                                                   borderRadius:
                                                       BorderRadius.circular(
@@ -196,3 +196,4 @@ class HospitalJobPostingsView
     );
   }
 }
+

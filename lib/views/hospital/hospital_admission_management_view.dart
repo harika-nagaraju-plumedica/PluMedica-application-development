@@ -9,8 +9,8 @@ import '../../widgets/hospital/admission_status_widget.dart';
 class HospitalAdmissionManagementView
     extends GetView<HospitalAdmissionManagementController> {
   const HospitalAdmissionManagementView({
-    Key? key,
-  }) : super(key: key);
+    super.key,
+  });
 
   @override
   Widget build(BuildContext context) {

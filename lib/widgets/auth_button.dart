@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import '../utils/colors.dart';
 import '../utils/fonts.dart';
 import '../utils/constants.dart';
@@ -77,7 +77,7 @@ class _AuthButtonState extends State<AuthButton> {
               boxShadow: _isPressed && widget.isPrimary && widget.isEnabled
                   ? [
                       BoxShadow(
-                        color: AppColors.purple.withOpacity(0.4),
+                        color: AppColors.purple.withValues(alpha: 0.4),
                         blurRadius: 12,
                         offset: const Offset(0, 6),
                       ),
@@ -116,3 +116,4 @@ class _AuthButtonState extends State<AuthButton> {
     );
   }
 }
+

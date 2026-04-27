@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../controllers/doctor_payments_controller.dart';
 import '../utils/colors.dart';
@@ -49,13 +49,13 @@ class DoctorPaymentsView extends GetView<DoctorPaymentsController> {
                             Text(
                               'Total Earnings',
                               style: AppFonts.labelLarge.copyWith(
-                                color: AppColors.white.withOpacity(0.9),
+                                color: AppColors.white.withValues(alpha: 0.9),
                               ),
                             ),
                             const SizedBox(height: 8),
                             Obx(
                               () => Text(
-                                '₹${controller.totalEarnings.value.toStringAsFixed(2)}',
+                                'â‚¹${controller.totalEarnings.value.toStringAsFixed(2)}',
                                 style: AppFonts.heading2.copyWith(
                                   color: AppColors.white,
                                 ),
@@ -236,7 +236,7 @@ class DoctorPaymentsView extends GetView<DoctorPaymentsController> {
                                                               .end,
                                                       children: [
                                                         Text(
-                                                          '₹${payment.amount.toStringAsFixed(2)}',
+                                                          'â‚¹${payment.amount.toStringAsFixed(2)}',
                                                           style: AppFonts
                                                               .labelLarge
                                                               .copyWith(
@@ -347,3 +347,4 @@ class DoctorPaymentsView extends GetView<DoctorPaymentsController> {
     );
   }
 }
+

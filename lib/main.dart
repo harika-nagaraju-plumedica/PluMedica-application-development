@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'utils/colors.dart';
 import 'utils/fonts.dart';
@@ -109,6 +109,11 @@ class MyApp extends StatelessWidget {
       theme: _buildTheme(),
       home: const SplashView(),
       getPages: _buildPages(),
+      unknownRoute: GetPage(
+        name: '/not-found',
+        page: () => const SplashView(),
+        transition: Transition.fadeIn,
+      ),
       debugShowCheckedModeBanner: false,
     );
   }
@@ -466,9 +471,9 @@ class MyApp extends StatelessWidget {
   ThemeData _buildTheme() {
     return ThemeData(
       useMaterial3: true,
-      hoverColor: AppColors.primaryBlue.withOpacity(0.06),
-      highlightColor: AppColors.primaryBlue.withOpacity(0.08),
-      splashColor: AppColors.primaryBlue.withOpacity(0.10),
+      hoverColor: AppColors.primaryBlue.withValues(alpha: 0.06),
+      highlightColor: AppColors.primaryBlue.withValues(alpha: 0.08),
+      splashColor: AppColors.primaryBlue.withValues(alpha: 0.10),
       colorScheme: ColorScheme.fromSeed(
         seedColor: AppColors.primaryDarkBlue,
         primary: AppColors.primaryDarkBlue,
@@ -519,7 +524,7 @@ class MyApp extends StatelessWidget {
           borderRadius: BorderRadius.circular(8),
         ),
         selectedColor: AppColors.primaryDarkBlue,
-        selectedTileColor: AppColors.primaryBlue.withOpacity(0.12),
+        selectedTileColor: AppColors.primaryBlue.withValues(alpha: 0.12),
         iconColor: AppColors.textSecondary,
         textColor: AppColors.textPrimary,
         tileColor: Colors.transparent,
@@ -564,3 +569,4 @@ class MyApp extends StatelessWidget {
   }
 }
   
+

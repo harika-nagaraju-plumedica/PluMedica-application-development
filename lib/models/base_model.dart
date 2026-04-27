@@ -13,7 +13,7 @@ abstract class BaseModel {
   /// Debug print
   void debugLog(String message) {
     if (kDebugMode) {
-      print('${runtimeType}: $message');
+      print('$runtimeType: $message');
     }
   }
 }

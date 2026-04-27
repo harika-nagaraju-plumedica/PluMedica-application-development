@@ -1,0 +1,55 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "Flutter: Build Release APK (ARM64)",
+      "type": "shell",
+      "command": "flutter",
+      "args": [
+        "build",
+        "apk",
+        "--release",
+        "--target-platform",
+        "android-arm64"
+      ],
+      "group": {
+        "kind": "build",
+        "isDefault": true
+      },
+      "problemMatcher": []
+    },
+    {
+      "label": "Flutter: Clean + Pub Get",
+      "type": "shell",
+      "dependsOrder": "sequence",
+      "dependsOn": [
+        "Flutter: Clean",
+        "Flutter: Pub Get"
+      ],
+      "command": "echo",
+      "args": [
+        "Done"
+      ],
+      "problemMatcher": []
+    },
+    {
+      "label": "Flutter: Clean",
+      "type": "shell",
+      "command": "flutter",
+      "args": [
+        "clean"
+      ],
+      "problemMatcher": []
+    },
+    {
+      "label": "Flutter: Pub Get",
+      "type": "shell",
+      "command": "flutter",
+      "args": [
+        "pub",
+        "get"
+      ],
+      "problemMatcher": []
+    }
+  ]
+}

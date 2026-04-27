@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import '../../utils/colors.dart';
 import '../../utils/fonts.dart';
 import '../../utils/constants.dart';
@@ -83,7 +83,7 @@ class CandidateProfileTileWidget extends StatelessWidget {
                     vertical: 4,
                   ),
                   decoration: BoxDecoration(
-                    color: AppColors.success.withOpacity(0.1),
+                    color: AppColors.success.withValues(alpha: 0.1),
                     borderRadius: BorderRadius.circular(
                         AppConstants.borderRadiusSmall),
                   ),
@@ -109,3 +109,4 @@ class CandidateProfileTileWidget extends StatelessWidget {
     );
   }
 }
+

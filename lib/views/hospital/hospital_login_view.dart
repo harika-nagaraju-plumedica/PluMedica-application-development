@@ -8,7 +8,7 @@ import '../../widgets/app_button.dart';
 import '../../widgets/app_text_field.dart';
 
 class HospitalLoginView extends GetView<HospitalLoginController> {
-  const HospitalLoginView({Key? key}) : super(key: key);
+  const HospitalLoginView({super.key});
 
   @override
   Widget build(BuildContext context) {

@@ -7,7 +7,7 @@ class NavigationController extends GetxController {
   /// Observable variable to track current screen
   final Rx<int> currentScreen = 0.obs;
 
-  /// Navigate to role selection screen
+  /// Navigate to role selection screen2
   void goToRoleSelection() {
     currentScreen.value = 0;
     Get.offAll(

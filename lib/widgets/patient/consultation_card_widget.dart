@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import '../../utils/colors.dart';
 import '../../utils/fonts.dart';
 import '../../utils/constants.dart';
@@ -98,7 +98,7 @@ class ConsultationCardWidget extends StatelessWidget {
                   vertical: 4,
                 ),
                 decoration: BoxDecoration(
-                  color: statusColor.withOpacity(0.1),
+                  color: statusColor.withValues(alpha: 0.1),
                   borderRadius:
                       BorderRadius.circular(AppConstants.borderRadiusSmall),
                 ),
@@ -151,8 +151,8 @@ class ConsultationCardWidget extends StatelessWidget {
                 padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                 decoration: BoxDecoration(
                   color: paymentStatus.toLowerCase() == 'paid'
-                      ? AppColors.success.withOpacity(0.12)
-                      : AppColors.warning.withOpacity(0.12),
+                      ? AppColors.success.withValues(alpha: 0.12)
+                      : AppColors.warning.withValues(alpha: 0.12),
                   borderRadius: BorderRadius.circular(AppConstants.borderRadiusSmall),
                 ),
                 child: Text(
@@ -238,3 +238,4 @@ class ConsultationCardWidget extends StatelessWidget {
     );
   }
 }
+

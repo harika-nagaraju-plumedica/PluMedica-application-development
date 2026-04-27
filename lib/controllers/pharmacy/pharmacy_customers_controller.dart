@@ -1,10 +1,17 @@
 import 'package:get/get.dart';
 
 class PharmacyCustomersController extends GetxController {
+  static const List<String> customerTypes = [
+    'All',
+    'Plumedica',
+    'Non-Plumedica',
+  ];
+
   final customers = RxList<Map<String, dynamic>>([
     {
       'customerId': 'CUST-001',
       'name': 'Rajesh Kumar',
+      'customerType': 'Plumedica',
       'phone': '+91 98765 43210',
       'email': 'rajesh@email.com',
       'joinDate': '15 Jan 2026',
@@ -17,6 +24,7 @@ class PharmacyCustomersController extends GetxController {
     {
       'customerId': 'CUST-002',
       'name': 'Priya Singh',
+      'customerType': 'Non-Plumedica',
       'phone': '+91 98765 43211',
       'email': 'priya@email.com',
       'joinDate': '22 Feb 2026',
@@ -29,6 +37,7 @@ class PharmacyCustomersController extends GetxController {
     {
       'customerId': 'CUST-003',
       'name': 'Amit Patel',
+      'customerType': 'Plumedica',
       'phone': '+91 98765 43212',
       'email': 'amit@email.com',
       'joinDate': '10 Mar 2026',
@@ -41,6 +50,7 @@ class PharmacyCustomersController extends GetxController {
     {
       'customerId': 'CUST-004',
       'name': 'Neha Gupta',
+      'customerType': 'Non-Plumedica',
       'phone': '+91 98765 43213',
       'email': 'neha@email.com',
       'joinDate': '05 Apr 2026',
@@ -53,6 +63,7 @@ class PharmacyCustomersController extends GetxController {
     {
       'customerId': 'CUST-005',
       'name': 'Vikram Sharma',
+      'customerType': 'Plumedica',
       'phone': '+91 98765 43214',
       'email': 'vikram@email.com',
       'joinDate': '12 Jan 2026',
@@ -62,25 +73,306 @@ class PharmacyCustomersController extends GetxController {
       'address': '555 Birch Lane, City',
       'city': 'Hyderabad',
     },
+    {
+      'customerId': 'CUST-006',
+      'name': 'Sneha Reddy',
+      'customerType': 'Plumedica',
+      'phone': '+91 98765 43215',
+      'email': 'sneha.reddy@email.com',
+      'joinDate': '28 Feb 2026',
+      'totalOrders': 9,
+      'totalSpent': 14990.00,
+      'lastOrder': '22 Apr 2026',
+      'address': '14 Lake View Rd, City',
+      'city': 'Chennai',
+    },
+    {
+      'customerId': 'CUST-007',
+      'name': 'Karan Malhotra',
+      'customerType': 'Non-Plumedica',
+      'phone': '+91 98765 43216',
+      'email': 'karan.m@email.com',
+      'joinDate': '04 Mar 2026',
+      'totalOrders': 6,
+      'totalSpent': 8125.50,
+      'lastOrder': '21 Apr 2026',
+      'address': '79 Hill Park, City',
+      'city': 'Ahmedabad',
+    },
+    {
+      'customerId': 'CUST-008',
+      'name': 'Fatima Khan',
+      'customerType': 'Plumedica',
+      'phone': '+91 98765 43217',
+      'email': 'fatima.khan@email.com',
+      'joinDate': '19 Apr 2026',
+      'totalOrders': 2,
+      'totalSpent': 2750.00,
+      'lastOrder': '24 Apr 2026',
+      'address': '8 Central Market, City',
+      'city': 'Lucknow',
+    },
+    {
+      'customerId': 'CUST-009',
+      'name': 'Arjun Nair',
+      'customerType': 'Non-Plumedica',
+      'phone': '+91 98765 43218',
+      'email': 'arjun.nair@email.com',
+      'joinDate': '07 Jan 2026',
+      'totalOrders': 14,
+      'totalSpent': 23140.25,
+      'lastOrder': '23 Apr 2026',
+      'address': '2 River Side, City',
+      'city': 'Kochi',
+    },
+    {
+      'customerId': 'CUST-010',
+      'name': 'Meera Joshi',
+      'customerType': 'Plumedica',
+      'phone': '+91 98765 43219',
+      'email': 'meera.j@email.com',
+      'joinDate': '02 Apr 2026',
+      'totalOrders': 5,
+      'totalSpent': 6980.00,
+      'lastOrder': '25 Apr 2026',
+      'address': '44 Garden Street, City',
+      'city': 'Jaipur',
+    },
+    {
+      'customerId': 'CUST-011',
+      'name': 'Rohit Verma',
+      'customerType': 'Plumedica',
+      'phone': '+91 98765 43220',
+      'email': 'rohit.verma@email.com',
+      'joinDate': '16 Mar 2026',
+      'totalOrders': 11,
+      'totalSpent': 16740.00,
+      'lastOrder': '25 Apr 2026',
+      'address': '18 MG Road, City',
+      'city': 'Indore',
+    },
+    {
+      'customerId': 'CUST-012',
+      'name': 'Ananya Das',
+      'customerType': 'Non-Plumedica',
+      'phone': '+91 98765 43221',
+      'email': 'ananya.d@email.com',
+      'joinDate': '11 Feb 2026',
+      'totalOrders': 7,
+      'totalSpent': 10125.75,
+      'lastOrder': '24 Apr 2026',
+      'address': '52 Market Square, City',
+      'city': 'Kolkata',
+    },
+    {
+      'customerId': 'CUST-013',
+      'name': 'Saurabh Jain',
+      'customerType': 'Plumedica',
+      'phone': '+91 98765 43222',
+      'email': 'saurabh.j@email.com',
+      'joinDate': '08 Jan 2026',
+      'totalOrders': 18,
+      'totalSpent': 30580.20,
+      'lastOrder': '23 Apr 2026',
+      'address': '9 Residency Area, City',
+      'city': 'Bhopal',
+    },
+    {
+      'customerId': 'CUST-014',
+      'name': 'Nisha Iyer',
+      'customerType': 'Plumedica',
+      'phone': '+91 98765 43223',
+      'email': 'nisha.iyer@email.com',
+      'joinDate': '26 Apr 2026',
+      'totalOrders': 1,
+      'totalSpent': 890.00,
+      'lastOrder': '26 Apr 2026',
+      'address': '103 Palm Enclave, City',
+      'city': 'Coimbatore',
+    },
+    {
+      'customerId': 'CUST-015',
+      'name': 'Deepak Yadav',
+      'customerType': 'Non-Plumedica',
+      'phone': '+91 98765 43224',
+      'email': 'deepak.y@email.com',
+      'joinDate': '20 Mar 2026',
+      'totalOrders': 4,
+      'totalSpent': 5120.00,
+      'lastOrder': '22 Apr 2026',
+      'address': '67 Station Road, City',
+      'city': 'Patna',
+    },
+    {
+      'customerId': 'CUST-016',
+      'name': 'Pooja Bansal',
+      'customerType': 'Plumedica',
+      'phone': '+91 98765 43225',
+      'email': 'pooja.b@email.com',
+      'joinDate': '13 Feb 2026',
+      'totalOrders': 10,
+      'totalSpent': 15400.90,
+      'lastOrder': '21 Apr 2026',
+      'address': '32 Sector 21, City',
+      'city': 'Chandigarh',
+    },
+    {
+      'customerId': 'CUST-017',
+      'name': 'Harsh Mehta',
+      'customerType': 'Non-Plumedica',
+      'phone': '+91 98765 43226',
+      'email': 'harsh.m@email.com',
+      'joinDate': '31 Jan 2026',
+      'totalOrders': 13,
+      'totalSpent': 19999.99,
+      'lastOrder': '20 Apr 2026',
+      'address': '6 Ring Road, City',
+      'city': 'Surat',
+    },
+    {
+      'customerId': 'CUST-018',
+      'name': 'Isha Kapoor',
+      'customerType': 'Plumedica',
+      'phone': '+91 98765 43227',
+      'email': 'isha.k@email.com',
+      'joinDate': '02 Mar 2026',
+      'totalOrders': 8,
+      'totalSpent': 11320.40,
+      'lastOrder': '19 Apr 2026',
+      'address': '73 College Road, City',
+      'city': 'Nagpur',
+    },
+    {
+      'customerId': 'CUST-019',
+      'name': 'Rakesh Tiwari',
+      'customerType': 'Non-Plumedica',
+      'phone': '+91 98765 43228',
+      'email': 'rakesh.t@email.com',
+      'joinDate': '14 Apr 2026',
+      'totalOrders': 3,
+      'totalSpent': 4205.00,
+      'lastOrder': '26 Apr 2026',
+      'address': '11 Civil Lines, City',
+      'city': 'Kanpur',
+    },
+    {
+      'customerId': 'CUST-020',
+      'name': 'Bhavna Shah',
+      'customerType': 'Plumedica',
+      'phone': '+91 98765 43229',
+      'email': 'bhavna.s@email.com',
+      'joinDate': '06 Feb 2026',
+      'totalOrders': 16,
+      'totalSpent': 26860.30,
+      'lastOrder': '24 Apr 2026',
+      'address': '88 University Street, City',
+      'city': 'Vadodara',
+    },
+    {
+      'customerId': 'CUST-021',
+      'name': 'Imran Ali',
+      'customerType': 'Non-Plumedica',
+      'phone': '+91 98765 43230',
+      'email': 'imran.ali@email.com',
+      'joinDate': '27 Mar 2026',
+      'totalOrders': 5,
+      'totalSpent': 7340.60,
+      'lastOrder': '23 Apr 2026',
+      'address': '27 Clock Tower Rd, City',
+      'city': 'Mysuru',
+    },
+    {
+      'customerId': 'CUST-022',
+      'name': 'Tanvi Sinha',
+      'customerType': 'Plumedica',
+      'phone': '+91 98765 43231',
+      'email': 'tanvi.s@email.com',
+      'joinDate': '01 Apr 2026',
+      'totalOrders': 4,
+      'totalSpent': 5890.00,
+      'lastOrder': '25 Apr 2026',
+      'address': '40 Lake Colony, City',
+      'city': 'Ranchi',
+    },
+    {
+      'customerId': 'CUST-023',
+      'name': 'Kavya Menon',
+      'customerType': 'Plumedica',
+      'phone': '+91 98765 43232',
+      'email': 'kavya.m@email.com',
+      'joinDate': '18 Jan 2026',
+      'totalOrders': 17,
+      'totalSpent': 28765.00,
+      'lastOrder': '22 Apr 2026',
+      'address': '15 Temple Street, City',
+      'city': 'Thiruvananthapuram',
+    },
+    {
+      'customerId': 'CUST-024',
+      'name': 'Manish Chawla',
+      'customerType': 'Non-Plumedica',
+      'phone': '+91 98765 43233',
+      'email': 'manish.c@email.com',
+      'joinDate': '09 Feb 2026',
+      'totalOrders': 9,
+      'totalSpent': 13210.00,
+      'lastOrder': '21 Apr 2026',
+      'address': '58 Old Court Rd, City',
+      'city': 'Ludhiana',
+    },
+    {
+      'customerId': 'CUST-025',
+      'name': 'Shruti Kulkarni',
+      'customerType': 'Plumedica',
+      'phone': '+91 98765 43234',
+      'email': 'shruti.k@email.com',
+      'joinDate': '03 Mar 2026',
+      'totalOrders': 12,
+      'totalSpent': 17880.80,
+      'lastOrder': '26 Apr 2026',
+      'address': '24 Green Park, City',
+      'city': 'Nashik',
+    },
   ]);
 
   final searchQuery = RxString('');
+  final selectedCustomerType = RxString('All');
 
   List<Map<String, dynamic>> get filteredCustomers {
-    if (searchQuery.value.isEmpty) return customers;
     return customers
-        .where((customer) =>
-            customer['name']
-                .toLowerCase()
-                .contains(searchQuery.value.toLowerCase()) ||
-            customer['phone'].contains(searchQuery.value) ||
-            customer['email']
-                .toLowerCase()
-                .contains(searchQuery.value.toLowerCase()))
-        .toList();
+        .where(
+          (customer) => _matchesCustomerType(
+            customer,
+            selectedCustomerType.value,
+          ),
+        )
+        .where(_matchesSearch)
+        .toList(growable: false);
+  }
+
+  bool _matchesCustomerType(Map<String, dynamic> customer, String type) {
+    if (type == 'All') return true;
+    return (customer['customerType'] ?? '').toString() == type;
+  }
+
+  bool _matchesSearch(Map<String, dynamic> customer) {
+    if (searchQuery.value.isEmpty) return true;
+    final query = searchQuery.value.toLowerCase();
+
+    return (customer['name'] ?? '').toString().toLowerCase().contains(query) ||
+        (customer['phone'] ?? '').toString().contains(searchQuery.value) ||
+        (customer['email'] ?? '').toString().toLowerCase().contains(query) ||
+        (customer['customerType'] ?? '').toString().toLowerCase().contains(
+          query,
+        );
   }
 
   void search(String query) {
     searchQuery.value = query;
+  }
+
+  void updateCustomerType(String customerType) {
+    if (!customerTypes.contains(customerType)) return;
+    selectedCustomerType.value = customerType;
   }
 }

@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../controllers/pharmacy/pharmacy_dashboard_controller.dart';
 import '../utils/colors.dart';
@@ -34,7 +34,7 @@ class PharmacyDashboardView extends GetView<PharmacyDashboardController> {
             // Header Section
             Container(
               padding: const EdgeInsets.all(AppConstants.paddingLarge),
-              color: AppColors.green.withOpacity(0.1),
+              color: AppColors.green.withValues(alpha: 0.1),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -272,7 +272,7 @@ class PharmacyDashboardView extends GetView<PharmacyDashboardController> {
         borderRadius: BorderRadius.circular(AppConstants.borderRadiusMedium),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.05),
+            color: Colors.black.withValues(alpha: 0.05),
             blurRadius: 8,
             offset: const Offset(0, 2),
           ),
@@ -285,7 +285,7 @@ class PharmacyDashboardView extends GetView<PharmacyDashboardController> {
           Container(
             padding: const EdgeInsets.all(8),
             decoration: BoxDecoration(
-              color: color.withOpacity(0.1),
+              color: color.withValues(alpha: 0.1),
               borderRadius: BorderRadius.circular(8),
             ),
             child: Icon(icon, color: color, size: 20),
@@ -301,7 +301,7 @@ class PharmacyDashboardView extends GetView<PharmacyDashboardController> {
           Obx(
             () => Text(
               isAmount
-                  ? '₹${(value as Rx<double>).value.toStringAsFixed(2)}'
+                  ? 'â‚¹${(value as Rx<double>).value.toStringAsFixed(2)}'
                   : '${(value as Rx<int>).value}',
               style: AppFonts.heading2.copyWith(
                 color: color,
@@ -325,9 +325,9 @@ class PharmacyDashboardView extends GetView<PharmacyDashboardController> {
       child: Container(
         padding: const EdgeInsets.all(AppConstants.paddingMedium),
         decoration: BoxDecoration(
-          color: color.withOpacity(0.1),
+          color: color.withValues(alpha: 0.1),
           borderRadius: BorderRadius.circular(AppConstants.borderRadiusMedium),
-          border: Border.all(color: color.withOpacity(0.3), width: 1),
+          border: Border.all(color: color.withValues(alpha: 0.3), width: 1),
         ),
         child: Column(
           children: [
@@ -356,7 +356,7 @@ class PharmacyDashboardView extends GetView<PharmacyDashboardController> {
         borderRadius: BorderRadius.circular(AppConstants.borderRadiusMedium),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.05),
+            color: Colors.black.withValues(alpha: 0.05),
             blurRadius: 8,
             offset: const Offset(0, 2),
           ),
@@ -379,7 +379,7 @@ class PharmacyDashboardView extends GetView<PharmacyDashboardController> {
                 padding:
                     const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                 decoration: BoxDecoration(
-                  color: statusColor.withOpacity(0.1),
+                  color: statusColor.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(4),
                 ),
                 child: Text(
@@ -416,7 +416,7 @@ class PharmacyDashboardView extends GetView<PharmacyDashboardController> {
                 ],
               ),
               Text(
-                '₹${order['amount'].toStringAsFixed(2)}',
+                'â‚¹${order['amount'].toStringAsFixed(2)}',
                 style: AppFonts.labelMedium.copyWith(
                   color: AppColors.green,
                   fontWeight: FontWeight.bold,
@@ -438,7 +438,7 @@ class PharmacyDashboardView extends GetView<PharmacyDashboardController> {
         borderRadius: BorderRadius.circular(AppConstants.borderRadiusMedium),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.05),
+            color: Colors.black.withValues(alpha: 0.05),
             blurRadius: 8,
             offset: const Offset(0, 2),
           ),
@@ -474,7 +474,7 @@ class PharmacyDashboardView extends GetView<PharmacyDashboardController> {
             child: LinearProgressIndicator(
               value: medicine['popularity'] / 100,
               minHeight: 6,
-              backgroundColor: AppColors.primaryBlue.withOpacity(0.1),
+              backgroundColor: AppColors.primaryBlue.withValues(alpha: 0.1),
               valueColor: AlwaysStoppedAnimation<Color>(AppColors.primaryBlue),
             ),
           ),
@@ -483,7 +483,7 @@ class PharmacyDashboardView extends GetView<PharmacyDashboardController> {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(
-                '₹${medicine['revenue'].toStringAsFixed(2)}',
+                'â‚¹${medicine['revenue'].toStringAsFixed(2)}',
                 style: AppFonts.bodySmall.copyWith(
                   color: AppColors.textSecondary,
                 ),
@@ -515,3 +515,4 @@ class PharmacyDashboardView extends GetView<PharmacyDashboardController> {
     }
   }
 }
+

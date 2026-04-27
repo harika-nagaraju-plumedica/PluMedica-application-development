@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import '../../utils/colors.dart';
 import '../../utils/fonts.dart';
 import '../../utils/constants.dart';
@@ -47,7 +47,7 @@ class HospitalHeaderWidget extends StatelessWidget {
                 Text(
                   'Welcome Back',
                   style: AppFonts.bodyMedium.copyWith(
-                    color: AppColors.white.withOpacity(0.8),
+                    color: AppColors.white.withValues(alpha: 0.8),
                   ),
                   overflow: TextOverflow.ellipsis,
                 ),
@@ -77,3 +77,4 @@ class HospitalHeaderWidget extends StatelessWidget {
     );
   }
 }
+

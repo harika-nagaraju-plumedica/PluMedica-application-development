@@ -8,7 +8,7 @@ import '../../widgets/patient/medical_history_tile_widget.dart';
 
 class PatientMedicalHistoryView
     extends GetView<PatientMedicalHistoryController> {
-  const PatientMedicalHistoryView({Key? key}) : super(key: key);
+  const PatientMedicalHistoryView({super.key});
 
   @override
   Widget build(BuildContext context) {

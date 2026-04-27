@@ -8,7 +8,7 @@ import '../widgets/app_text_field.dart';
 
 /// Patient registration form view
 class PatientRegistrationView extends StatefulWidget {
-  const PatientRegistrationView({Key? key}) : super(key: key);
+  const PatientRegistrationView({super.key});
 
   @override
   State<PatientRegistrationView> createState() =>

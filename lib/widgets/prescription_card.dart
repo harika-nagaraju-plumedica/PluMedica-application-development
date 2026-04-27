@@ -13,13 +13,13 @@ class PrescriptionCard extends StatelessWidget {
   final bool isEditable;
 
   const PrescriptionCard({
-    Key? key,
+    super.key,
     required this.prescription,
     required this.onTap,
     this.onEdit,
     this.onDelete,
     this.isEditable = false,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

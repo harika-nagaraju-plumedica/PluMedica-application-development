@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../../controllers/hospital/hospital_payment_summary_controller.dart';
 import '../../utils/colors.dart';
@@ -50,12 +50,12 @@ class HospitalPaymentSummaryView
                                 style: AppFonts.bodyMedium
                                     .copyWith(
                                   color: AppColors.white
-                                      .withOpacity(0.8),
+                                      .withValues(alpha: 0.8),
                                 ),
                               ),
                               const SizedBox(height: 8),
                               Text(
-                                '₹${controller.totalRevenue.value.toStringAsFixed(0)}',
+                                'â‚¹${controller.totalRevenue.value.toStringAsFixed(0)}',
                                 style: AppFonts.heading2
                                     .copyWith(
                                   color: AppColors.white,
@@ -168,3 +168,4 @@ class HospitalPaymentSummaryView
     );
   }
 }
+

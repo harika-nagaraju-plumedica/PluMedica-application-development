@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import '../../utils/colors.dart';
 import '../../utils/fonts.dart';
 import '../../utils/constants.dart';
@@ -66,7 +66,7 @@ class JobCardWidgetItem extends StatelessWidget {
                     vertical: 4,
                   ),
                   decoration: BoxDecoration(
-                    color: AppColors.primaryBlue.withOpacity(0.1),
+                    color: AppColors.primaryBlue.withValues(alpha: 0.1),
                     borderRadius: BorderRadius.circular(
                         AppConstants.borderRadiusSmall),
                   ),
@@ -112,7 +112,7 @@ class JobCardWidgetItem extends StatelessWidget {
                         color: AppColors.primaryBlue,
                       ),
                       backgroundColor:
-                          AppColors.lightBlue.withOpacity(0.1),
+                          AppColors.lightBlue.withValues(alpha: 0.1),
                       side: BorderSide.none,
                       padding: EdgeInsets.zero,
                     ),
@@ -125,3 +125,4 @@ class JobCardWidgetItem extends StatelessWidget {
     );
   }
 }
+
