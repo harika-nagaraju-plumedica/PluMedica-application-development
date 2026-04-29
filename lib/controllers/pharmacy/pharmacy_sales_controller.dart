@@ -138,6 +138,12 @@ class PharmacySalesController extends GetxController {
     _recalculateForSelection();
   }
 
+  void applyDayWiseFilter(DateTime date) {
+    selectedDate.value = DateTime(date.year, date.month, date.day);
+    selectedTimeRange.value = 'Daily';
+    _recalculateForSelection();
+  }
+
   void setPaymentMethodSpecificDay(bool enabled) {
     paymentMethodSpecificDayEnabled.value = enabled;
     _recalculatePaymentMethods();

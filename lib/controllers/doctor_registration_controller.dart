@@ -1,9 +1,24 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import '../services/admin_identity_service.dart';
+import '../services/clinical_data_service.dart';
 import '../services/patient_session_service.dart';
 
 /// Controller for doctor registration flow
 class DoctorRegistrationController extends GetxController {
+  final _clinicalDataService = Get.isRegistered<ClinicalDataService>()
+      ? Get.find<ClinicalDataService>()
+      : Get.put(ClinicalDataService(), permanent: true);
+  final _adminIdentityService = Get.isRegistered<AdminIdentityService>()
+    ? Get.find<AdminIdentityService>()
+    : Get.put(AdminIdentityService(), permanent: true);
+
+  String get _currentDoctorId =>
+    _adminIdentityService.getPrimaryId(AppRole.doctor);
+
+  String get _currentDoctorName =>
+    _adminIdentityService.getPrimaryName(AppRole.doctor);
+
   // Form controllers
   final fullNameController = TextEditingController();
   final emailController = TextEditingController();
@@ -22,10 +37,13 @@ class DoctorRegistrationController extends GetxController {
   final registrationFormKey = GlobalKey<FormState>();
   final selectedAvailability = <String>[].obs;
   final selectedDayTimeSlots = <String, String>{}.obs;
+  final selectedDaySlotStatus = <String, String>{}.obs;
+  final daySlotStatuses = <String, List<Map<String, String>>>{}.obs;
   final selectedDayConsultationModes = <String, String>{}.obs;
   final expandedAvailabilityDay = Rx<String?>(null);
+  final selectedArea = 'North Zone'.obs;
+  final isAvailabilityActive = true.obs;
   final daySectionKeys = <String, GlobalKey>{};
-  final offersHomeTreatment = false.obs;
   final medicalLicenseFileName = Rx<String?>(null); // Renamed from resumeFileName
   final registrationStatus = Rx<String>('Pending Approval');
 
@@ -51,6 +69,22 @@ class DoctorRegistrationController extends GetxController {
     'Dentistry',
   ];
 
+  final List<String> areaList = [
+    'North Zone',
+    'Central Zone',
+    'South Zone',
+    'East Zone',
+    'West Zone',
+  ];
+
+  final Map<String, List<String>> specializationByArea = {
+    'North Zone': ['General Medicine', 'Pediatrics', 'Orthopedics'],
+    'Central Zone': ['Cardiology', 'Neurology', 'ENT'],
+    'South Zone': ['Dermatology', 'Psychiatry', 'Dentistry'],
+    'East Zone': ['General Medicine', 'Ophthalmology', 'Pediatrics'],
+    'West Zone': ['Cardiology', 'Orthopedics', 'Dermatology'],
+  };
+
   final List<String> daysList = [
     'Monday',
     'Tuesday',
@@ -70,6 +104,7 @@ class DoctorRegistrationController extends GetxController {
   final List<String> consultationModesList = [
     'Virtual',
     'In-Person',
+    'Home Service',
   ];
 
   @override
@@ -107,6 +142,36 @@ class DoctorRegistrationController extends GetxController {
       selectedAvailability.add(day);
     }
     selectedDayTimeSlots[day] = slot;
+    final slots = List<Map<String, String>>.from(daySlotStatuses[day] ?? []);
+    if (!slots.any((item) => item['slot'] == slot)) {
+      slots.add({'slot': slot, 'status': 'Free'});
+      daySlotStatuses[day] = slots;
+    }
+  }
+
+  void addDaySlot({
+    required String day,
+    required String slot,
+    required String status,
+  }) {
+    if (!selectedAvailability.contains(day)) {
+      selectedAvailability.add(day);
+    }
+    final slots = List<Map<String, String>>.from(daySlotStatuses[day] ?? []);
+    if (slots.any((item) => item['slot'] == slot)) {
+      return;
+    }
+    slots.add({'slot': slot, 'status': status});
+    daySlotStatuses[day] = slots;
+  }
+
+  void removeDaySlot({required String day, required int index}) {
+    final slots = List<Map<String, String>>.from(daySlotStatuses[day] ?? []);
+    if (index < 0 || index >= slots.length) {
+      return;
+    }
+    slots.removeAt(index);
+    daySlotStatuses[day] = slots;
   }
 
   /// Update selected consultation mode for a given day
@@ -134,6 +199,8 @@ class DoctorRegistrationController extends GetxController {
   void removeAvailabilityDay(String day) {
     selectedAvailability.remove(day);
     selectedDayTimeSlots.remove(day);
+    selectedDaySlotStatus.remove(day);
+    daySlotStatuses.remove(day);
     selectedDayConsultationModes.remove(day);
     if (expandedAvailabilityDay.value == day) {
       expandedAvailabilityDay.value = null;
@@ -143,8 +210,9 @@ class DoctorRegistrationController extends GetxController {
   /// Whether a day already has complete availability data configured
   bool hasConfiguredAvailability(String day) {
     return selectedAvailability.contains(day) &&
-        (selectedDayTimeSlots[day]?.isNotEmpty ?? false) &&
-        (selectedDayConsultationModes[day]?.isNotEmpty ?? false);
+        ((daySlotStatuses[day]?.isNotEmpty ?? false) ||
+            (selectedDayTimeSlots[day]?.isNotEmpty ?? false)) &&
+      (selectedDayConsultationModes[day]?.isNotEmpty ?? false);
   }
 
   /// Stable key for each day card so UI can scroll it into view when expanded
@@ -281,13 +349,21 @@ class DoctorRegistrationController extends GetxController {
       return;
     }
 
+    if (!isAvailabilityActive.value) {
+      selectedAvailability.clear();
+      daySlotStatuses.clear();
+      selectedDayTimeSlots.clear();
+      selectedDayConsultationModes.clear();
+    }
+
     for (final day in selectedAvailability) {
       final selectedSlot = selectedDayTimeSlots[day];
+      final daySlots = daySlotStatuses[day] ?? const [];
       final selectedMode = selectedDayConsultationModes[day];
-      if (selectedSlot == null || selectedSlot.isEmpty) {
+      if ((selectedSlot == null || selectedSlot.isEmpty) && daySlots.isEmpty) {
         Get.snackbar(
           'Validation Error',
-          'Please select a time slot for $day',
+          'Please add at least one slot for $day',
           snackPosition: SnackPosition.BOTTOM,
         );
         return;
@@ -300,6 +376,7 @@ class DoctorRegistrationController extends GetxController {
         );
         return;
       }
+
     }
 
     isLoading.value = true;
@@ -324,13 +401,34 @@ class DoctorRegistrationController extends GetxController {
       //   availability: selectedAvailability.toList(),
       //   dayTimeSlots: selectedDayTimeSlots,
       //   dayConsultationModes: selectedDayConsultationModes,
-      //   offersHomeTreatment: offersHomeTreatment.value,
       //   status: 'Pending Approval',
       //   createdAt: DateTime.now(),
       // );
 
       // Simulate API delay
       await Future.delayed(const Duration(seconds: 2));
+
+      final weeklySlots = <String, List<Map<String, String>>>{};
+      for (final day in selectedAvailability) {
+        final slots = List<Map<String, String>>.from(daySlotStatuses[day] ?? const []);
+        if (slots.isNotEmpty) {
+          weeklySlots[day] = slots;
+        }
+      }
+
+      _clinicalDataService.upsertDoctorDirectory({
+        'id': _currentDoctorId,
+        'name': fullNameController.text.trim().isEmpty
+            ? _currentDoctorName
+            : fullNameController.text.trim(),
+        'specialization': specializationController.text.trim().isEmpty
+            ? 'General Medicine'
+            : specializationController.text.trim(),
+        'area': selectedArea.value,
+        'isActive': isAvailabilityActive.value,
+        'availabilitySlots': weeklySlots,
+      });
+
       await PatientSessionService.markRoleLoggedIn(
         AppRole.doctor,
         email: emailController.text,

@@ -1,4 +1,4 @@
-﻿import 'package:flutter/material.dart';
+import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../controllers/doctor_registration_controller.dart';
 import '../utils/colors.dart';
@@ -579,41 +579,6 @@ class DoctorRegistrationView extends GetView<DoctorRegistrationController> {
                             ),
                           ),
                         ),
-                        const SizedBox(height: 12),
-
-                        // Home Treatment Availability
-                        Obx(
-                          () => Container(
-                            decoration: BoxDecoration(
-                              border: Border.all(color: AppColors.lightGrey),
-                              borderRadius: BorderRadius.circular(
-                                AppConstants.borderRadiusMedium,
-                              ),
-                              color: AppColors.white,
-                            ),
-                            child: CheckboxListTile(
-                              value: controller.offersHomeTreatment.value,
-                              activeColor: AppColors.primaryBlue,
-                              title: Text(
-                                'Available for Home Treatment',
-                                style: AppFonts.labelLarge.copyWith(
-                                  color: AppColors.textPrimary,
-                                  fontWeight: FontWeight.w600,
-                                ),
-                              ),
-                              subtitle: Text(
-                                'Check if you can visit patients at home.',
-                                style: AppFonts.bodySmall.copyWith(
-                                  color: AppColors.textSecondary,
-                                ),
-                              ),
-                              controlAffinity: ListTileControlAffinity.leading,
-                              onChanged: (value) =>
-                                  controller.offersHomeTreatment.value =
-                                      value ?? false,
-                            ),
-                          ),
-                        ),
                         const SizedBox(height: 32),
 
                         // Information Box
@@ -640,16 +605,16 @@ class DoctorRegistrationView extends GetView<DoctorRegistrationController> {
                               ),
                               const SizedBox(height: 8),
                               _buildInfoPoint(
-                                'â€¢ Your registration will be marked as "Pending Approval" after submission.',
+                                '• Your registration will be marked as "Pending Approval" after submission.',
                               ),
                               _buildInfoPoint(
-                                'â€¢ Admin will verify your Medical License Number and uploaded document.',
+                                '• Admin will verify your Medical License Number and uploaded document.',
                               ),
                               _buildInfoPoint(
-                                'â€¢ Your profile will be activated once admin approves your credentials.',
+                                '• Your profile will be activated once admin approves your credentials.',
                               ),
                               _buildInfoPoint(
-                                'â€¢ You will receive approval/rejection updates via email.',
+                                '• You will receive approval/rejection updates via email.',
                               ),
                             ],
                           ),

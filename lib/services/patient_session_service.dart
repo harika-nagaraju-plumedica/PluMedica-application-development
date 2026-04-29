@@ -1,6 +1,15 @@
 import 'package:shared_preferences/shared_preferences.dart';
 
-enum AppRole { patient, doctor, hospital, pharmacy, partner, jobSeeker, employer }
+enum AppRole {
+  patient,
+  doctor,
+  hospital,
+  pharmacy,
+  diagnostics,
+  partner,
+  jobSeeker,
+  employer,
+}
 
 class PatientSessionService {
   static const String _lastRoleKey = 'last_active_role';
@@ -15,6 +24,8 @@ class PatientSessionService {
         return 'hospital';
       case AppRole.pharmacy:
         return 'pharmacy';
+      case AppRole.diagnostics:
+        return 'diagnostics';
       case AppRole.partner:
         return 'partner';
       case AppRole.jobSeeker:
@@ -24,9 +35,11 @@ class PatientSessionService {
     }
   }
 
-  static String _registeredKeyForRole(AppRole role) => '${_roleName(role)}_is_registered';
+  static String _registeredKeyForRole(AppRole role) =>
+      '${_roleName(role)}_is_registered';
 
-  static String _loggedInKeyForRole(AppRole role) => '${_roleName(role)}_is_logged_in';
+  static String _loggedInKeyForRole(AppRole role) =>
+      '${_roleName(role)}_is_logged_in';
 
   static String _emailKeyForRole(AppRole role) => '${_roleName(role)}_email';
 
@@ -40,6 +53,8 @@ class PatientSessionService {
         return '/hospital/dashboard';
       case AppRole.pharmacy:
         return '/pharmacy/dashboard';
+      case AppRole.diagnostics:
+        return '/diagnostics/dashboard';
       case AppRole.partner:
         return '/partner/dashboard';
       case AppRole.jobSeeker:
@@ -59,6 +74,8 @@ class PatientSessionService {
         return '/hospital/login';
       case AppRole.pharmacy:
         return '/pharmacy/login';
+      case AppRole.diagnostics:
+        return '/diagnostics/login';
       case AppRole.partner:
         return '/partner/login';
       case AppRole.jobSeeker:
@@ -78,6 +95,8 @@ class PatientSessionService {
         return '/hospital/registration';
       case AppRole.pharmacy:
         return '/pharmacy/registration';
+      case AppRole.diagnostics:
+        return '/diagnostics/registration';
       case AppRole.partner:
         return '/partner/registration';
       case AppRole.jobSeeker:

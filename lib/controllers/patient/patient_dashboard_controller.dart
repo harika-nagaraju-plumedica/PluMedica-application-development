@@ -108,6 +108,10 @@ class PatientDashboardController extends GetxController {
     Get.toNamed('/patient/health_records');
   }
 
+  Future<void> navigateToReferrals() async {
+    Get.toNamed('/patient/referrals');
+  }
+
   Future<void> navigateToPharmacy() async {
     Get.toNamed('/patient/pharmacy');
   }

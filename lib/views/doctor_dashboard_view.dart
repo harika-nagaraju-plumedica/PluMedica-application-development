@@ -46,9 +46,9 @@ class DoctorDashboardView extends GetView<DoctorDashboardController> {
                           const SizedBox(width: 12),
                           Expanded(
                             child: StatCard(
-                              label: 'Pending',
-                              value:
-                                  controller.pendingAppointments.length.toString(),
+                              label: 'Waiting',
+                              value: controller.pendingAppointments.length
+                                  .toString(),
                               icon: Icons.schedule,
                               backgroundColor: AppColors.warning,
                             ),
@@ -70,7 +70,7 @@ class DoctorDashboardView extends GetView<DoctorDashboardController> {
                           const SizedBox(width: 12),
                           Expanded(
                             child: StatCard(
-                              label: 'Earnings',
+                              label: 'Fee Received',
                               value:
                                   '₹${controller.totalEarnings.value.toStringAsFixed(0)}',
                               icon: Icons.attach_money,
@@ -81,14 +81,12 @@ class DoctorDashboardView extends GetView<DoctorDashboardController> {
                       ),
                       const SizedBox(height: 24),
 
-                      // Pending Appointments Section
-                      SectionHeader(
-                        title: 'Pending Appointments',
-                      ),
+                      // Waiting Appointments Section
+                      SectionHeader(title: 'Waiting Appointments'),
                       const SizedBox(height: 12),
                       if (controller.pendingAppointments.isEmpty)
                         const EmptyStateWidget(
-                          message: 'No pending appointments',
+                          message: 'No waiting appointments',
                           icon: Icons.calendar_today,
                         )
                       else
@@ -106,12 +104,18 @@ class DoctorDashboardView extends GetView<DoctorDashboardController> {
                       const SizedBox(height: 24),
 
                       // Quick Actions
-                      SectionHeader(
-                        title: 'Quick Actions',
-                      ),
+                      SectionHeader(title: 'Quick Actions'),
                       const SizedBox(height: 12),
                       Column(
                         children: [
+                          AppButton(
+                            text: 'Doctor Workflow Guide',
+                            onPressed: controller.viewWorkflowGuide,
+                            width: double.infinity,
+                            height: 45,
+                            backgroundColor: AppColors.warning,
+                          ),
+                          const SizedBox(height: 12),
                           AppButton(
                             text: 'View All Appointments',
                             onPressed: controller.viewAppointments,
@@ -142,6 +146,15 @@ class DoctorDashboardView extends GetView<DoctorDashboardController> {
                             width: double.infinity,
                             height: 45,
                             backgroundColor: AppColors.success,
+                          ),
+                          const SizedBox(height: 12),
+                          AppButton(
+                            text: 'Diagnostics Management',
+                            onPressed: () =>
+                                Get.toNamed('/diagnostics/dashboard'),
+                            width: double.infinity,
+                            height: 45,
+                            backgroundColor: AppColors.primaryDarkBlue,
                           ),
                         ],
                       ),

@@ -1,4 +1,8 @@
 import 'package:get/get.dart';
+import '../models/referral_model.dart';
+import '../services/admin_identity_service.dart';
+import '../services/clinical_data_service.dart';
+import '../services/patient_session_service.dart';
 
 /// Model for patient history
 class PatientHistoryItem {
@@ -23,9 +27,25 @@ class PatientHistoryItem {
 
 /// Controller for doctor patient history
 class DoctorPatientHistoryController extends GetxController {
+  final _clinicalDataService = Get.put(ClinicalDataService(), permanent: true);
+  final _adminIdentityService = Get.isRegistered<AdminIdentityService>()
+    ? Get.find<AdminIdentityService>()
+    : Get.put(AdminIdentityService(), permanent: true);
+
+  String get _currentDoctorId =>
+    _adminIdentityService.getPrimaryId(AppRole.doctor);
+
+  String get _currentDoctorName =>
+    _adminIdentityService.getPrimaryName(AppRole.doctor);
+
   final isLoading = false.obs;
   final patientHistoryList = <PatientHistoryItem>[].obs;
   final filteredHistoryList = <PatientHistoryItem>[].obs;
+
+  final selectedDoctorIdForReferral = Rx<String?>(null);
+  final referralReason = ''.obs;
+  final referralDescription = ''.obs;
+  final referralAttachment = ''.obs;
 
   final selectedPatient = Rx<String?>(null);
   final selectedYear = Rx<String?>(null);
@@ -142,5 +162,67 @@ class DoctorPatientHistoryController extends GetxController {
     selectedPatient.value = null;
     selectedYear.value = null;
     filteredHistoryList.value = patientHistoryList;
+  }
+
+  List<Map<String, dynamic>> get referralDoctorOptions {
+    return _clinicalDataService.doctorDirectory
+      .where((item) => item['id'] != _currentDoctorId)
+        .toList();
+  }
+
+  void clearReferralDraft() {
+    selectedDoctorIdForReferral.value = null;
+    referralReason.value = '';
+    referralDescription.value = '';
+    referralAttachment.value = '';
+  }
+
+  Future<void> submitReferralFromPatientHistory({
+    required PatientHistoryItem patient,
+  }) async {
+    final selectedDoctorId = selectedDoctorIdForReferral.value;
+    if (patient.patientId.trim().isEmpty ||
+        patient.patientName.trim().isEmpty ||
+        selectedDoctorId == null ||
+        selectedDoctorId.trim().isEmpty ||
+        referralReason.value.trim().isEmpty ||
+        referralDescription.value.trim().isEmpty) {
+      Get.snackbar(
+        'Validation Error',
+        'Patient ID, patient name, doctor ID, reason and description are required',
+        snackPosition: SnackPosition.BOTTOM,
+      );
+      return;
+    }
+
+    final selectedDoctor = referralDoctorOptions.firstWhereOrNull(
+      (item) => item['id'] == selectedDoctorId,
+    );
+    if (selectedDoctor == null) {
+      Get.snackbar('Error', 'Selected doctor not found');
+      return;
+    }
+
+    _clinicalDataService.addReferral(
+      DoctorReferral(
+        id: 'REF-${DateTime.now().millisecondsSinceEpoch}',
+        patientId: patient.patientId,
+        patientName: patient.patientName,
+        referredDoctorId: selectedDoctorId,
+        referredDoctorName: selectedDoctor['name'] as String,
+        referringDoctorId: _currentDoctorId,
+        referringDoctorName: _currentDoctorName,
+        reason: referralReason.value.trim(),
+        description: referralDescription.value.trim(),
+        attachmentName: referralAttachment.value.trim().isEmpty
+            ? null
+            : referralAttachment.value.trim(),
+        createdAt: DateTime.now(),
+      ),
+    );
+
+    clearReferralDraft();
+    Get.back();
+    Get.snackbar('Success', 'Referral submitted from patient details');
   }
 }

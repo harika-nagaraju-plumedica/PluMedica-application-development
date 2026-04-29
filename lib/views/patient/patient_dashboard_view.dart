@@ -40,7 +40,9 @@ class PatientDashboardView extends GetView<PatientDashboardController> {
                   child: Column(
                     children: [
                       Padding(
-                        padding: const EdgeInsets.all(AppConstants.paddingMedium),
+                        padding: const EdgeInsets.all(
+                          AppConstants.paddingMedium,
+                        ),
                         child: PatientHeaderWidget(
                           patientName: controller.patientName.value,
                           profileImage: controller.profileImage.value,
@@ -86,7 +88,9 @@ class PatientDashboardView extends GetView<PatientDashboardController> {
                       ),
                       const SizedBox(height: AppConstants.paddingMedium),
                       Padding(
-                        padding: const EdgeInsets.all(AppConstants.paddingMedium),
+                        padding: const EdgeInsets.all(
+                          AppConstants.paddingMedium,
+                        ),
                         child: GridView.count(
                           crossAxisCount: 2,
                           crossAxisSpacing: AppConstants.paddingMedium,
@@ -118,11 +122,26 @@ class PatientDashboardView extends GetView<PatientDashboardController> {
                               backgroundColor: AppColors.purple,
                               onTap: controller.navigateToConsultation,
                             ),
+                            QuickActionTileWidget(
+                              label: 'Referral Doctors',
+                              icon: Icons.forward_to_inbox,
+                              backgroundColor: AppColors.lightBlue,
+                              onTap: controller.navigateToReferrals,
+                            ),
+                            QuickActionTileWidget(
+                              label: 'Diagnostics',
+                              icon: Icons.biotech,
+                              backgroundColor: AppColors.primaryDarkBlue,
+                              onTap: () =>
+                                  Get.toNamed('/diagnostics/dashboard'),
+                            ),
                           ],
                         ),
                       ),
                       Padding(
-                        padding: const EdgeInsets.all(AppConstants.paddingMedium),
+                        padding: const EdgeInsets.all(
+                          AppConstants.paddingMedium,
+                        ),
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
@@ -145,7 +164,9 @@ class PatientDashboardView extends GetView<PatientDashboardController> {
                                   value: '120',
                                   unit: 'mmHg',
                                   icon: Icons.favorite,
-                                  backgroundColor: AppColors.error.withValues(alpha: 0.1),
+                                  backgroundColor: AppColors.error.withValues(
+                                    alpha: 0.1,
+                                  ),
                                   iconColor: AppColors.error,
                                 ),
                                 HealthMetricCardWidget(
@@ -153,7 +174,9 @@ class PatientDashboardView extends GetView<PatientDashboardController> {
                                   value: '75',
                                   unit: 'bpm',
                                   icon: Icons.favorite,
-                                  backgroundColor: AppColors.warning.withValues(alpha: 0.1),
+                                  backgroundColor: AppColors.warning.withValues(
+                                    alpha: 0.1,
+                                  ),
                                   iconColor: AppColors.warning,
                                 ),
                                 HealthMetricCardWidget(
@@ -161,7 +184,9 @@ class PatientDashboardView extends GetView<PatientDashboardController> {
                                   value: '72',
                                   unit: 'kg',
                                   icon: Icons.fitness_center,
-                                  backgroundColor: AppColors.green.withValues(alpha: 0.1),
+                                  backgroundColor: AppColors.green.withValues(
+                                    alpha: 0.1,
+                                  ),
                                   iconColor: AppColors.green,
                                 ),
                                 HealthMetricCardWidget(
@@ -169,7 +194,8 @@ class PatientDashboardView extends GetView<PatientDashboardController> {
                                   value: '98',
                                   unit: '%',
                                   icon: Icons.air,
-                                  backgroundColor: AppColors.lightBlue.withValues(alpha: 0.1),
+                                  backgroundColor: AppColors.lightBlue
+                                      .withValues(alpha: 0.1),
                                   iconColor: AppColors.lightBlue,
                                 ),
                               ],

@@ -20,6 +20,8 @@ import 'views/doctor_appointments_view.dart';
 import 'views/doctor_patient_history_view.dart';
 import 'views/doctor_prescriptions_view.dart';
 import 'views/doctor_payments_view.dart';
+import 'views/doctor_live_call_view.dart';
+import 'views/doctor_workflow_view.dart';
 
 // Patient Flow Imports
 import 'bindings/patient/patient_registration_binding.dart';
@@ -32,6 +34,7 @@ import 'bindings/patient/patient_consultation_binding.dart';
 import 'bindings/patient/patient_pharmacy_binding.dart';
 import 'bindings/patient/patient_sos_binding.dart';
 import 'bindings/patient/patient_profile_binding.dart';
+import 'bindings/patient/patient_clinical_records_binding.dart';
 import 'views/patient/patient_registration_view.dart';
 import 'views/patient/patient_login_view.dart';
 import 'views/patient/patient_dashboard_view.dart';
@@ -42,6 +45,9 @@ import 'views/patient/patient_consultation_view.dart';
 import 'views/patient/patient_pharmacy_view.dart';
 import 'views/patient/patient_sos_view.dart';
 import 'views/patient/patient_profile_view.dart';
+import 'views/patient/patient_prescriptions_view.dart';
+import 'views/patient/patient_followups_view.dart';
+import 'views/patient/patient_referrals_view.dart';
 
 // Hospital Flow Imports
 import 'bindings/hospital/hospital_registration_binding.dart';
@@ -64,6 +70,9 @@ import 'bindings/pharmacy/pharmacy_inventory_binding.dart';
 import 'bindings/pharmacy/pharmacy_customers_binding.dart';
 import 'bindings/pharmacy/pharmacy_sales_binding.dart';
 import 'bindings/pharmacy/pharmacy_notifications_binding.dart';
+import 'bindings/diagnostics/diagnostics_dashboard_binding.dart';
+import 'bindings/diagnostics/diagnostics_login_binding.dart';
+import 'bindings/diagnostics/diagnostics_registration_binding.dart';
 import 'views/pharmacy_registration_view.dart';
 import 'views/pharmacy_login_view.dart';
 import 'views/pharmacy_dashboard_view.dart';
@@ -81,6 +90,9 @@ import 'views/hospital/hospital_emergency_services_view.dart';
 import 'views/hospital/hospital_patient_records_view.dart';
 import 'views/hospital/hospital_payment_summary_view.dart';
 import 'views/hospital/hospital_job_postings_view.dart';
+import 'views/diagnostics/diagnostics_dashboard_view.dart';
+import 'views/diagnostics/diagnostics_login_view.dart';
+import 'views/diagnostics/diagnostics_registration_view.dart';
 
 // Partner Flow Imports
 import 'bindings/partner/partner_bindings.dart';
@@ -139,7 +151,7 @@ class MyApp extends StatelessWidget {
         },
         transition: Transition.fadeIn,
       ),
-      
+
       // Doctor Flow Routes
       GetPage(
         name: '/doctor_registration',
@@ -181,6 +193,16 @@ class MyApp extends StatelessWidget {
         name: '/doctor_payments',
         page: () => const DoctorPaymentsView(),
         binding: DoctorPaymentsBinding(),
+        transition: Transition.rightToLeft,
+      ),
+      GetPage(
+        name: '/doctor_live_call',
+        page: () => const DoctorLiveCallView(),
+        transition: Transition.rightToLeft,
+      ),
+      GetPage(
+        name: '/doctor_workflow',
+        page: () => const DoctorWorkflowView(),
         transition: Transition.rightToLeft,
       ),
 
@@ -243,6 +265,24 @@ class MyApp extends StatelessWidget {
         name: '/patient/profile',
         page: () => const PatientProfileView(),
         binding: PatientProfileBinding(),
+        transition: Transition.rightToLeft,
+      ),
+      GetPage(
+        name: '/patient/prescriptions',
+        page: () => const PatientPrescriptionsView(),
+        binding: PatientClinicalRecordsBinding(),
+        transition: Transition.rightToLeft,
+      ),
+      GetPage(
+        name: '/patient/followups',
+        page: () => const PatientFollowUpsView(),
+        binding: PatientClinicalRecordsBinding(),
+        transition: Transition.rightToLeft,
+      ),
+      GetPage(
+        name: '/patient/referrals',
+        page: () => const PatientReferralsView(),
+        binding: PatientClinicalRecordsBinding(),
         transition: Transition.rightToLeft,
       ),
 
@@ -349,6 +389,26 @@ class MyApp extends StatelessWidget {
         name: '/pharmacy/notifications',
         page: () => const PharmacyNotificationsView(),
         binding: PharmacyNotificationsBinding(),
+        transition: Transition.rightToLeft,
+      ),
+
+      // Diagnostics Module Route
+      GetPage(
+        name: '/diagnostics/registration',
+        page: () => const DiagnosticsRegistrationView(),
+        binding: DiagnosticsRegistrationBinding(),
+        transition: Transition.rightToLeft,
+      ),
+      GetPage(
+        name: '/diagnostics/login',
+        page: () => const DiagnosticsLoginView(),
+        binding: DiagnosticsLoginBinding(),
+        transition: Transition.rightToLeft,
+      ),
+      GetPage(
+        name: '/diagnostics/dashboard',
+        page: () => const DiagnosticsDashboardView(),
+        binding: DiagnosticsDashboardBinding(),
         transition: Transition.rightToLeft,
       ),
 
@@ -492,14 +552,22 @@ class MyApp extends StatelessWidget {
       ),
       textTheme: TextTheme(
         headlineLarge: AppFonts.heading1.copyWith(color: AppColors.textPrimary),
-        headlineMedium: AppFonts.heading2.copyWith(color: AppColors.textPrimary),
+        headlineMedium: AppFonts.heading2.copyWith(
+          color: AppColors.textPrimary,
+        ),
         headlineSmall: AppFonts.heading3.copyWith(color: AppColors.textPrimary),
         bodyLarge: AppFonts.bodyLarge.copyWith(color: AppColors.textPrimary),
-        bodyMedium: AppFonts.bodyMedium.copyWith(color: AppColors.textSecondary),
+        bodyMedium: AppFonts.bodyMedium.copyWith(
+          color: AppColors.textSecondary,
+        ),
         bodySmall: AppFonts.bodySmall.copyWith(color: AppColors.textSecondary),
         labelLarge: AppFonts.labelLarge.copyWith(color: AppColors.textPrimary),
-        labelMedium: AppFonts.labelMedium.copyWith(color: AppColors.textSecondary),
-        labelSmall: AppFonts.labelSmall.copyWith(color: AppColors.textSecondary),
+        labelMedium: AppFonts.labelMedium.copyWith(
+          color: AppColors.textSecondary,
+        ),
+        labelSmall: AppFonts.labelSmall.copyWith(
+          color: AppColors.textSecondary,
+        ),
       ),
       elevatedButtonTheme: ElevatedButtonThemeData(
         style: ElevatedButton.styleFrom(
@@ -507,9 +575,7 @@ class MyApp extends StatelessWidget {
           foregroundColor: AppColors.white,
           textStyle: AppFonts.labelLarge,
           padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(8),
-          ),
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
         ),
       ),
       textButtonTheme: TextButtonThemeData(
@@ -520,9 +586,7 @@ class MyApp extends StatelessWidget {
       ),
       listTileTheme: ListTileThemeData(
         dense: false,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(8),
-        ),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
         selectedColor: AppColors.primaryDarkBlue,
         selectedTileColor: AppColors.primaryBlue.withValues(alpha: 0.12),
         iconColor: AppColors.textSecondary,
@@ -549,7 +613,10 @@ class MyApp extends StatelessWidget {
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(8),
-          borderSide: const BorderSide(color: AppColors.primaryDarkBlue, width: 2),
+          borderSide: const BorderSide(
+            color: AppColors.primaryDarkBlue,
+            width: 2,
+          ),
         ),
         errorBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(8),
@@ -561,12 +628,8 @@ class MyApp extends StatelessWidget {
       floatingActionButtonTheme: FloatingActionButtonThemeData(
         backgroundColor: AppColors.primaryDarkBlue,
         foregroundColor: AppColors.white,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(12),
-        ),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       ),
     );
   }
 }
-  
-

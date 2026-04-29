@@ -2,10 +2,25 @@ import 'package:get/get.dart';
 import '../models/appointment_model.dart';
 import '../models/doctor_model.dart';
 import '../models/prescription_model.dart';
+import '../services/admin_identity_service.dart';
+import '../services/clinical_data_service.dart';
 import '../services/patient_session_service.dart';
 
 /// Controller for doctor dashboard
 class DoctorDashboardController extends GetxController {
+  final _clinicalDataService = Get.isRegistered<ClinicalDataService>()
+      ? Get.find<ClinicalDataService>()
+      : Get.put(ClinicalDataService(), permanent: true);
+  final _adminIdentityService = Get.isRegistered<AdminIdentityService>()
+    ? Get.find<AdminIdentityService>()
+    : Get.put(AdminIdentityService(), permanent: true);
+
+  String get _currentDoctorId =>
+    _adminIdentityService.getPrimaryId(AppRole.doctor);
+
+  String get _currentDoctorName =>
+    _adminIdentityService.getPrimaryName(AppRole.doctor);
+
   final isLoading = false.obs;
   final doctor = Rx<Doctor?>(null);
   final pendingAppointments = <Appointment>[].obs;
@@ -27,12 +42,12 @@ class DoctorDashboardController extends GetxController {
     try {
       // TODO: Fetch doctor profile
       doctor.value = Doctor(
-        id: '1',
-        fullName: 'Dr. John Doe',
-        email: 'john@example.com',
+        id: _currentDoctorId,
+        fullName: _currentDoctorName,
+        email: 'priya@example.com',
         mobileNumber: '9876543210',
         qualification: 'MBBS',
-        specialization: 'Cardiology',
+        specialization: 'General Medicine',
         yearsOfExperience: 10,
         clinicAddress: '123 Medical Street, City',
         licenseNumber: 'LIC123456',
@@ -41,49 +56,20 @@ class DoctorDashboardController extends GetxController {
         createdAt: DateTime.now(),
       );
 
-      // TODO: Fetch pending appointments
-      pendingAppointments.value = [
-        Appointment(
-          id: '1',
-          doctorId: '1',
-          patientId: 'P1',
-          patientName: 'Patient One',
-          mode: 'Virtual',
-          appointmentDate: DateTime.now().add(const Duration(days: 1)),
-          timeSlot: '10:00 AM - 10:30 AM',
-          status: 'Pending',
-          createdAt: DateTime.now(),
-        ),
-        Appointment(
-          id: '2',
-          doctorId: '1',
-          patientId: 'P2',
-          patientName: 'Patient Two',
-          mode: 'In-Person',
-          appointmentDate: DateTime.now().add(const Duration(days: 2)),
-          timeSlot: '02:00 PM - 02:30 PM',
-          status: 'Pending',
-          createdAt: DateTime.now(),
-        ),
-      ];
+      final doctorAppointments =
+          _clinicalDataService.getAppointmentsForDoctor(_currentDoctorId);
 
-      // TODO: Fetch completed appointments
-      completedAppointments.value = [
-        Appointment(
-          id: '3',
-          doctorId: '1',
-          patientId: 'P3',
-          patientName: 'Patient Three',
-          mode: 'Virtual',
-          appointmentDate: DateTime.now().subtract(const Duration(days: 5)),
-          timeSlot: '09:00 AM - 09:30 AM',
-          status: 'Completed',
-          createdAt: DateTime.now().subtract(const Duration(days: 5)),
-        ),
-      ];
+      pendingAppointments.assignAll(
+        doctorAppointments.where((item) => item.status == 'Waiting').toList(),
+      );
+      completedAppointments.assignAll(
+        doctorAppointments.where((item) => item.status == 'Completed').toList(),
+      );
 
-      totalPatients.value = 45;
-      totalEarnings.value = 15000.0;
+      totalPatients.value =
+          doctorAppointments.map((item) => item.patientId).toSet().length;
+      totalEarnings.value = pendingAppointments.length * 700.0 +
+          completedAppointments.length * 700.0;
     } catch (e) {
       Get.snackbar(
         'Error',
@@ -108,6 +94,11 @@ class DoctorDashboardController extends GetxController {
   /// Navigate to prescriptions screen
   void viewPrescriptions() {
     Get.toNamed('/doctor_prescriptions');
+  }
+
+  /// Navigate to doctor workflow guide screen
+  void viewWorkflowGuide() {
+    Get.toNamed('/doctor_workflow');
   }
 
   /// Navigate to payments screen

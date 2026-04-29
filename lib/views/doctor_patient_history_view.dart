@@ -154,10 +154,7 @@ class DoctorPatientHistoryView
                                 children: controller.filteredHistoryList
                                     .map(
                                       (history) =>
-                                          GestureDetector(
-                                        // TODO: Implement patient details view
-                                        onTap: () {},
-                                        child: Container(
+                                          Container(
                                           margin: const EdgeInsets.only(
                                             bottom: 12,
                                           ),
@@ -219,19 +216,34 @@ class DoctorPatientHistoryView
                                                 ],
                                               ),
                                               const SizedBox(height: 12),
-                                              Align(
-                                                alignment:
-                                                    Alignment.centerRight,
-                                                child: Icon(
-                                                  Icons.chevron_right,
-                                                  color:
-                                                      AppColors.primaryBlue,
-                                                ),
+                                              Row(
+                                                children: [
+                                                  Expanded(
+                                                    child: OutlinedButton(
+                                                      onPressed: () {
+                                                        Get.toNamed(
+                                                          '/doctor_prescriptions',
+                                                          arguments: {
+                                                            'patientId': history.patientId,
+                                                            'patientName': history.patientName,
+                                                          },
+                                                        );
+                                                      },
+                                                      child: const Text('Create Prescription'),
+                                                    ),
+                                                  ),
+                                                  const SizedBox(width: 8),
+                                                  Expanded(
+                                                    child: ElevatedButton(
+                                                      onPressed: () => _openReferralSheet(history),
+                                                      child: const Text('Refer Doctor'),
+                                                    ),
+                                                  ),
+                                                ],
                                               ),
                                             ],
                                           ),
                                         ),
-                                      ),
                                     )
                                     .toList(),
                               ),
@@ -241,6 +253,93 @@ class DoctorPatientHistoryView
                 ),
               ),
       ),
+    );
+  }
+
+  void _openReferralSheet(PatientHistoryItem patient) {
+    controller.clearReferralDraft();
+    Get.bottomSheet(
+      Container(
+        padding: const EdgeInsets.all(AppConstants.paddingMedium),
+        decoration: const BoxDecoration(
+          color: AppColors.white,
+          borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
+        ),
+        child: SingleChildScrollView(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                'Refer Doctor - ${patient.patientName}',
+                style: AppFonts.labelLarge.copyWith(color: AppColors.textPrimary),
+              ),
+              const SizedBox(height: 4),
+              Text(
+                'Patient ID: ${patient.patientId}',
+                style: AppFonts.bodySmall.copyWith(color: AppColors.textSecondary),
+              ),
+              const SizedBox(height: 12),
+              Obx(
+                () => DropdownButtonFormField<String>(
+                  value: controller.selectedDoctorIdForReferral.value,
+                  decoration: const InputDecoration(
+                    labelText: 'Select Doctor ID (mandatory)',
+                    border: OutlineInputBorder(),
+                  ),
+                  items: controller.referralDoctorOptions
+                      .map(
+                        (doctor) => DropdownMenuItem<String>(
+                          value: doctor['id'] as String,
+                          child: Text(
+                            '${doctor['id']} - ${doctor['name']}',
+                          ),
+                        ),
+                      )
+                      .toList(),
+                  onChanged: (value) => controller.selectedDoctorIdForReferral.value = value,
+                ),
+              ),
+              const SizedBox(height: 12),
+              TextField(
+                decoration: const InputDecoration(
+                  labelText: 'Reason for referral',
+                  border: OutlineInputBorder(),
+                ),
+                onChanged: (value) => controller.referralReason.value = value,
+              ),
+              const SizedBox(height: 12),
+              TextField(
+                maxLines: 3,
+                decoration: const InputDecoration(
+                  labelText: 'Detailed description',
+                  border: OutlineInputBorder(),
+                ),
+                onChanged: (value) => controller.referralDescription.value = value,
+              ),
+              const SizedBox(height: 12),
+              TextField(
+                decoration: const InputDecoration(
+                  labelText: 'File/Image attachment (optional)',
+                  border: OutlineInputBorder(),
+                ),
+                onChanged: (value) => controller.referralAttachment.value = value,
+              ),
+              const SizedBox(height: 12),
+              SizedBox(
+                width: double.infinity,
+                child: ElevatedButton(
+                  onPressed: () => controller.submitReferralFromPatientHistory(
+                    patient: patient,
+                  ),
+                  child: const Text('Refer'),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+      isScrollControlled: true,
     );
   }
 }

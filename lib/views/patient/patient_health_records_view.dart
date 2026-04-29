@@ -1,13 +1,17 @@
-﻿import 'package:flutter/material.dart';
+import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+
 import '../../controllers/patient/patient_health_records_controller.dart';
 import '../../utils/colors.dart';
-import '../../utils/fonts.dart';
 import '../../utils/constants.dart';
+import '../../utils/fonts.dart';
 
-class PatientHealthRecordsView
-    extends GetView<PatientHealthRecordsController> {
-  const PatientHealthRecordsView({Key? key}) : super(key: key);
+class PatientHealthRecordsView extends GetView<PatientHealthRecordsController> {
+  const PatientHealthRecordsView({super.key});
+
+  static const _actionView = 'view';
+  static const _actionDownload = 'download';
+  static const _actionShare = 'share';
 
   @override
   Widget build(BuildContext context) {
@@ -70,7 +74,8 @@ class PatientHealthRecordsView
                                   color: AppColors.lightGrey,
                                 ),
                                 const SizedBox(
-                                    height: AppConstants.paddingMedium),
+                                  height: AppConstants.paddingMedium,
+                                ),
                                 Text(
                                   'No records found',
                                   style: AppFonts.bodyMedium.copyWith(
@@ -86,27 +91,34 @@ class PatientHealthRecordsView
                             itemCount: controller.healthRecords.length,
                             itemBuilder: (context, index) {
                               final record = controller.healthRecords[index];
+                              final recordId = (record['id'] ?? '').toString();
+
                               return Container(
                                 margin: const EdgeInsets.only(
-                                    bottom: AppConstants.paddingMedium),
+                                  bottom: AppConstants.paddingMedium,
+                                ),
                                 padding: const EdgeInsets.all(
-                                    AppConstants.paddingMedium),
+                                  AppConstants.paddingMedium,
+                                ),
                                 decoration: BoxDecoration(
                                   color: AppColors.white,
-                                  border: Border.all(
-                                      color: AppColors.veryLightGrey),
+                                  border:
+                                      Border.all(color: AppColors.veryLightGrey),
                                   borderRadius: BorderRadius.circular(
-                                      AppConstants.borderRadiusLarge),
+                                    AppConstants.borderRadiusLarge,
+                                  ),
                                 ),
                                 child: Row(
                                   children: [
                                     Container(
                                       padding: const EdgeInsets.all(8),
                                       decoration: BoxDecoration(
-                                        color: AppColors.primaryBlue
-                                            .withValues(alpha: 0.1),
+                                        color: AppColors.primaryBlue.withValues(
+                                          alpha: 0.1,
+                                        ),
                                         borderRadius: BorderRadius.circular(
-                                            AppConstants.borderRadiusMedium),
+                                          AppConstants.borderRadiusMedium,
+                                        ),
                                       ),
                                       child: const Icon(
                                         Icons.picture_as_pdf,
@@ -114,50 +126,52 @@ class PatientHealthRecordsView
                                       ),
                                     ),
                                     const SizedBox(
-                                        width: AppConstants.paddingMedium),
+                                      width: AppConstants.paddingMedium,
+                                    ),
                                     Expanded(
                                       child: Column(
                                         crossAxisAlignment:
                                             CrossAxisAlignment.start,
                                         children: [
                                           Text(
-                                            'Lab Report',
-                                            style: AppFonts.labelLarge
-                                                .copyWith(
-                                              color:
-                                                  AppColors.textPrimary,
+                                            (record['title'] ?? 'Medical Record')
+                                                .toString(),
+                                            style: AppFonts.labelLarge.copyWith(
+                                              color: AppColors.textPrimary,
                                             ),
                                           ),
                                           const SizedBox(height: 2),
                                           Text(
-                                            'Jan 15, 2026',
-                                            style: AppFonts.bodySmall
-                                                .copyWith(
-                                              color:
-                                                  AppColors.textSecondary,
+                                            (record['date'] ?? '').toString(),
+                                            style: AppFonts.bodySmall.copyWith(
+                                              color: AppColors.textSecondary,
                                             ),
                                           ),
                                         ],
                                       ),
                                     ),
-                                    PopupMenuButton(
-                                      itemBuilder: (context) => [
-                                        PopupMenuItem(
-                                          onTap: () =>
-                                              controller.viewRecord(record),
-                                          child: const Text('View'),
+                                    PopupMenuButton<String>(
+                                      onSelected: (action) {
+                                        if (action == _actionView) {
+                                          controller.viewRecord(recordId);
+                                        } else if (action == _actionDownload) {
+                                          controller.downloadRecord(recordId);
+                                        } else if (action == _actionShare) {
+                                          controller.shareRecord(recordId);
+                                        }
+                                      },
+                                      itemBuilder: (context) => const [
+                                        PopupMenuItem<String>(
+                                          value: _actionView,
+                                          child: Text('View'),
                                         ),
-                                        PopupMenuItem(
-                                          onTap: () =>
-                                              controller.downloadRecord(
-                                                  record),
-                                          child:
-                                              const Text('Download'),
+                                        PopupMenuItem<String>(
+                                          value: _actionDownload,
+                                          child: Text('Download'),
                                         ),
-                                        PopupMenuItem(
-                                          onTap: () =>
-                                              controller.shareRecord(record),
-                                          child: const Text('Share'),
+                                        PopupMenuItem<String>(
+                                          value: _actionShare,
+                                          child: Text('Share'),
                                         ),
                                       ],
                                     ),
@@ -178,4 +192,3 @@ class PatientHealthRecordsView
     );
   }
 }
-

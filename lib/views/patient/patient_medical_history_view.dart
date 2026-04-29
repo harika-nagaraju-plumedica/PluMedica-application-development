@@ -78,13 +78,15 @@ class PatientMedicalHistoryView
                                   .map(
                                     (item) =>
                                         MedicalHistoryTileWidget(
-                                          title: 'Checkup',
-                                          description: 'Regular health checkup',
-                                          date: 'Jan 15, 2026',
-                                          doctorName: 'Smith',
-                                          icon: Icons.health_and_safety,
+                                          title: item['title'] as String,
+                                          description: item['description'] as String,
+                                          date: item['date'] as String,
+                                          doctorName: item['doctorName'] as String?,
+                                          icon: _categoryIcon(
+                                            item['category'] as String,
+                                          ),
                                           onTap: () =>
-                                              controller.viewDetails(item),
+                                              controller.viewDetails(item['id'] as String),
                                         ),
                                   )
                                   .toList(),
@@ -95,5 +97,18 @@ class PatientMedicalHistoryView
               ),
       ),
     );
+  }
+
+  IconData _categoryIcon(String category) {
+    switch (category) {
+      case 'Appointments':
+        return Icons.event_note;
+      case 'Medications':
+        return Icons.medication;
+      case 'Tests':
+        return Icons.biotech;
+      default:
+        return Icons.history;
+    }
   }
 }

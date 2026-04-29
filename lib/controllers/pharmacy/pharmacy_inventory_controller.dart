@@ -242,6 +242,68 @@ class PharmacyInventoryController extends GetxController {
     selectedDate.value = DateTime(date.year, date.month, date.day);
   }
 
+  void addInStockEntry({
+    required String itemId,
+    required int quantity,
+    required DateTime receivedAt,
+  }) {
+    if (quantity <= 0) {
+      Get.snackbar(
+        'Invalid Quantity',
+        'Please enter a quantity greater than 0',
+        snackPosition: SnackPosition.BOTTOM,
+      );
+      return;
+    }
+
+    final index = inventoryItems.indexWhere((item) => item['itemId'] == itemId);
+    if (index == -1) {
+      Get.snackbar(
+        'Item Not Found',
+        'Unable to add stock for selected item',
+        snackPosition: SnackPosition.BOTTOM,
+      );
+      return;
+    }
+
+    final item = Map<String, dynamic>.from(inventoryItems[index]);
+    final currentRemaining = _toInt(item['remainingStock']);
+    final currentTotal = _toInt(item['totalStock']);
+
+    final timelineRaw = item['timeline'];
+    final timeline = timelineRaw is List
+        ? timelineRaw
+              .whereType<Map>()
+              .map((event) => Map<String, dynamic>.from(event))
+              .toList()
+        : <Map<String, dynamic>>[];
+
+    timeline.add({
+      'type': 'In-stock entry',
+      'quantity': quantity,
+      'dateTime': DateTime(
+        receivedAt.year,
+        receivedAt.month,
+        receivedAt.day,
+        receivedAt.hour,
+        receivedAt.minute,
+      ),
+    });
+
+    item['remainingStock'] = currentRemaining + quantity;
+    item['totalStock'] = currentTotal + quantity;
+    item['timeline'] = timeline;
+
+    inventoryItems[index] = item;
+    inventoryItems.refresh();
+
+    Get.snackbar(
+      'Stock Added',
+      '$quantity units added to ${item['name']}',
+      snackPosition: SnackPosition.BOTTOM,
+    );
+  }
+
   void updateStockLimits({
     required String itemId,
     required int meanLimit,

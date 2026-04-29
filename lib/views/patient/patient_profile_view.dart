@@ -143,6 +143,40 @@ class PatientProfileView extends GetView<PatientProfileController> {
                     ),
                     const SizedBox(height: AppConstants.paddingLarge),
                     Text(
+                      'Care Records',
+                      style: AppFonts.heading3.copyWith(
+                        color: AppColors.textPrimary,
+                      ),
+                    ),
+                    const SizedBox(height: AppConstants.paddingMedium),
+                    SizedBox(
+                      width: double.infinity,
+                      child: OutlinedButton.icon(
+                        onPressed: controller.openPrescriptionHistory,
+                        icon: const Icon(Icons.receipt_long_outlined),
+                        label: const Text('Prescription History'),
+                      ),
+                    ),
+                    const SizedBox(height: AppConstants.paddingSmall),
+                    SizedBox(
+                      width: double.infinity,
+                      child: OutlinedButton.icon(
+                        onPressed: controller.openFollowUpTimeline,
+                        icon: const Icon(Icons.timeline),
+                        label: const Text('Follow-up Timeline'),
+                      ),
+                    ),
+                    const SizedBox(height: AppConstants.paddingSmall),
+                    SizedBox(
+                      width: double.infinity,
+                      child: OutlinedButton.icon(
+                        onPressed: controller.openReferralHistory,
+                        icon: const Icon(Icons.mark_email_unread_outlined),
+                        label: const Text('Referral History / Inbox'),
+                      ),
+                    ),
+                    const SizedBox(height: AppConstants.paddingLarge),
+                    Text(
                       'Security',
                       style: AppFonts.heading3.copyWith(
                         color: AppColors.textPrimary,

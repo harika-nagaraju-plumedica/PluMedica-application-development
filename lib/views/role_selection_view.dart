@@ -36,7 +36,8 @@ class RoleSelectionView extends StatelessWidget {
             _RoleCard(
               icon: Icons.local_pharmacy,
               title: 'Pharmacy',
-              description: 'Register pharmacy, manage inventory & process orders',
+              description:
+                  'Register pharmacy, manage inventory & process orders',
               color: AppColors.green,
               onTap: () => _handleRoleTap(AppRole.pharmacy),
             ),
@@ -45,7 +46,8 @@ class RoleSelectionView extends StatelessWidget {
             _RoleCard(
               icon: Icons.local_hospital,
               title: 'Doctor',
-              description: 'Manage appointments, prescriptions & patient consultations',
+              description:
+                  'Manage appointments, prescriptions & patient consultations',
               color: AppColors.primaryBlue,
               onTap: () => _handleRoleTap(AppRole.doctor),
             ),
@@ -54,7 +56,8 @@ class RoleSelectionView extends StatelessWidget {
             _RoleCard(
               icon: Icons.person_outline,
               title: 'Patient',
-              description: 'Access health records, book consultations & manage medications',
+              description:
+                  'Access health records, book consultations & manage medications',
               color: AppColors.lightBlue,
               onTap: () => _handleRoleTap(AppRole.patient),
             ),
@@ -63,16 +66,28 @@ class RoleSelectionView extends StatelessWidget {
             _RoleCard(
               icon: Icons.local_hospital,
               title: 'Hospital',
-              description: 'Manage admissions, consultants, emergencies & patient records',
+              description:
+                  'Manage admissions, consultants, emergencies & patient records',
               color: AppColors.gold,
               onTap: () => _handleRoleTap(AppRole.hospital),
+            ),
+            const SizedBox(height: AppConstants.paddingLarge),
+            // Diagnostics Role
+            _RoleCard(
+              icon: Icons.biotech,
+              title: 'Diagnostics',
+              description:
+                  'Manage test requests, lab workflow, reports and payments',
+              color: AppColors.primaryDarkBlue,
+              onTap: () => _handleRoleTap(AppRole.diagnostics),
             ),
             const SizedBox(height: AppConstants.paddingLarge),
             // Insurance Partner Role
             _RoleCard(
               icon: Icons.health_and_safety,
               title: 'Insurance Partner',
-              description: 'Manage claims, policies, network hospitals & analytics',
+              description:
+                  'Manage claims, policies, network hospitals & analytics',
               color: AppColors.purple,
               onTap: () => _handleRoleTap(AppRole.partner),
             ),
@@ -81,7 +96,8 @@ class RoleSelectionView extends StatelessWidget {
             _RoleCard(
               icon: Icons.work_outline,
               title: 'Job Seeker',
-              description: 'Search jobs, apply for positions & track applications',
+              description:
+                  'Search jobs, apply for positions & track applications',
               color: AppColors.primaryDarkBlue,
               onTap: () => _handleRoleTap(AppRole.jobSeeker),
             ),
@@ -156,13 +172,11 @@ class _RoleCard extends StatelessWidget {
               padding: const EdgeInsets.all(AppConstants.paddingMedium),
               decoration: BoxDecoration(
                 color: color.withValues(alpha: 0.1),
-                borderRadius: BorderRadius.circular(AppConstants.borderRadiusLarge),
+                borderRadius: BorderRadius.circular(
+                  AppConstants.borderRadiusLarge,
+                ),
               ),
-              child: Icon(
-                icon,
-                color: color,
-                size: 32,
-              ),
+              child: Icon(icon, color: color, size: 32),
             ),
             const SizedBox(width: AppConstants.paddingMedium),
             Expanded(
@@ -188,11 +202,7 @@ class _RoleCard extends StatelessWidget {
               ),
             ),
             const SizedBox(width: AppConstants.paddingMedium),
-            Icon(
-              Icons.arrow_forward_ios,
-              color: color,
-              size: 20,
-            ),
+            Icon(Icons.arrow_forward_ios, color: color, size: 20),
           ],
         ),
       ),

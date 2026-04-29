@@ -43,4 +43,16 @@ class PatientProfileController extends GetxController {
     // TODO: Show confirmation dialog
     // TODO: Delete account endpoint
   }
+
+  void openPrescriptionHistory() {
+    Get.toNamed('/patient/prescriptions');
+  }
+
+  void openFollowUpTimeline() {
+    Get.toNamed('/patient/followups');
+  }
+
+  void openReferralHistory() {
+    Get.toNamed('/patient/referrals');
+  }
 }

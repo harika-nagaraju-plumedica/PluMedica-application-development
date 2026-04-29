@@ -97,6 +97,7 @@ class PharmacyInventoryView extends GetView<PharmacyInventoryController> {
     final isLowStock = status == 'Low';
     final stockPercentage = safeRemaining / totalStock;
     final price = _asDouble(item['price']);
+    final timelineEvents = controller.timelineForItem(item);
 
     return Container(
       margin: const EdgeInsets.only(bottom: 12),
@@ -242,7 +243,217 @@ class PharmacyInventoryView extends GetView<PharmacyInventoryController> {
               ),
             ],
           ),
+          const SizedBox(height: 12),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(
+                'Stock Timeline',
+                style: AppFonts.labelMedium.copyWith(
+                  color: AppColors.textPrimary,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              TextButton.icon(
+                onPressed: () => _showAddInStockDialog(item),
+                icon: const Icon(Icons.add, size: 16),
+                label: const Text('Add In-stock'),
+                style: TextButton.styleFrom(
+                  foregroundColor: AppColors.green,
+                  visualDensity: VisualDensity.compact,
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 6),
+          if (timelineEvents.isEmpty)
+            Text(
+              'No stock movement recorded',
+              style: AppFonts.bodySmall.copyWith(
+                color: AppColors.textSecondary,
+              ),
+            )
+          else
+            Column(
+              children: timelineEvents
+                  .take(6)
+                  .map((event) => _buildTimelineEventRow(event))
+                  .toList(growable: false),
+            ),
         ],
+      ),
+    );
+  }
+
+  Widget _buildTimelineEventRow(Map<String, dynamic> event) {
+    final type = event['type']?.toString() ?? 'Stock update';
+    final quantity = _asInt(event['quantity']);
+    final dateTime = event['dateTime'] is DateTime
+        ? event['dateTime'] as DateTime
+        : DateTime.tryParse(event['dateTime']?.toString() ?? '') ??
+              DateTime(1970, 1, 1);
+
+    final isInStock = type.toLowerCase().contains('in-stock');
+    final isSold = type.toLowerCase().contains('sold');
+    final isOutStock = type.toLowerCase().contains('out-of-stock');
+
+    final Color color = isInStock
+        ? AppColors.green
+        : isSold
+        ? AppColors.primaryBlue
+        : isOutStock
+        ? AppColors.stockLow
+        : AppColors.textSecondary;
+
+    final IconData icon = isInStock
+        ? Icons.south_west
+        : isSold
+        ? Icons.north_east
+        : isOutStock
+        ? Icons.warning_amber_rounded
+        : Icons.sync_alt;
+
+    final quantityLabel = quantity > 0 ? '$quantity units' : '-';
+
+    return Container(
+      width: double.infinity,
+      margin: const EdgeInsets.only(bottom: 6),
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
+      decoration: BoxDecoration(
+        color: color.withValues(alpha: 0.08),
+        borderRadius: BorderRadius.circular(8),
+      ),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Icon(icon, size: 16, color: color),
+          const SizedBox(width: 8),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  type,
+                  style: AppFonts.bodySmall.copyWith(
+                    color: color,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                const SizedBox(height: 2),
+                Text(
+                  '$quantityLabel | ${controller.formatDateTime(dateTime)}',
+                  style: AppFonts.bodySmall.copyWith(
+                    color: AppColors.textSecondary,
+                    fontSize: 11,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _showAddInStockDialog(Map<String, dynamic> item) {
+    final quantityController = TextEditingController();
+    DateTime selectedDateTime = DateTime.now();
+
+    Get.dialog(
+      StatefulBuilder(
+        builder: (context, setState) {
+          return AlertDialog(
+            title: Text(
+              'Add In-stock',
+              style: AppFonts.labelLarge.copyWith(
+                color: AppColors.textPrimary,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            content: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  item['name']?.toString() ?? '-',
+                  style: AppFonts.bodySmall.copyWith(
+                    color: AppColors.textSecondary,
+                  ),
+                ),
+                const SizedBox(height: 12),
+                TextField(
+                  controller: quantityController,
+                  keyboardType: TextInputType.number,
+                  decoration: const InputDecoration(
+                    labelText: 'Quantity received',
+                    border: OutlineInputBorder(),
+                  ),
+                ),
+                const SizedBox(height: 12),
+                OutlinedButton.icon(
+                  onPressed: () async {
+                    final pickedDate = await showDatePicker(
+                      context: context,
+                      initialDate: selectedDateTime,
+                      firstDate: DateTime(2020),
+                      lastDate: DateTime(2035),
+                    );
+                    if (pickedDate == null) {
+                      return;
+                    }
+
+                    final pickedTime = await showTimePicker(
+                      context: context,
+                      initialTime: TimeOfDay.fromDateTime(selectedDateTime),
+                    );
+                    if (pickedTime == null) {
+                      return;
+                    }
+
+                    setState(() {
+                      selectedDateTime = DateTime(
+                        pickedDate.year,
+                        pickedDate.month,
+                        pickedDate.day,
+                        pickedTime.hour,
+                        pickedTime.minute,
+                      );
+                    });
+                  },
+                  icon: const Icon(Icons.calendar_month, size: 16),
+                  label: Text(controller.formatDateTime(selectedDateTime)),
+                ),
+              ],
+            ),
+            actions: [
+              TextButton(
+                onPressed: Get.back,
+                child: const Text('Cancel'),
+              ),
+              ElevatedButton(
+                onPressed: () {
+                  final quantity = int.tryParse(quantityController.text.trim());
+                  if (quantity == null || quantity <= 0) {
+                    Get.snackbar(
+                      'Invalid Quantity',
+                      'Enter a valid quantity greater than 0',
+                      snackPosition: SnackPosition.BOTTOM,
+                    );
+                    return;
+                  }
+
+                  controller.addInStockEntry(
+                    itemId: item['itemId']?.toString() ?? '',
+                    quantity: quantity,
+                    receivedAt: selectedDateTime,
+                  );
+                  Get.back();
+                },
+                child: const Text('Save'),
+              ),
+            ],
+          );
+        },
       ),
     );
   }
