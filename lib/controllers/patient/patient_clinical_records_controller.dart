@@ -1,4 +1,5 @@
 import 'package:get/get.dart';
+import 'package:flutter/material.dart';
 
 import '../../models/follow_up_model.dart';
 import '../../models/prescription_model.dart';
@@ -19,6 +20,7 @@ class PatientClinicalRecordsController extends GetxController {
   final prescriptions = <Prescription>[].obs;
   final followUps = <FollowUpRecord>[].obs;
   final referrals = <DoctorReferral>[].obs;
+  final patientNotifications = <Map<String, dynamic>>[].obs;
 
   @override
   void onInit() {
@@ -34,33 +36,67 @@ class PatientClinicalRecordsController extends GetxController {
           .where((item) => item.patientId == _currentPatientId)
           .toList(),
     );
+    patientNotifications.assignAll(
+      _clinicalDataService.getPatientNotifications(_currentPatientId),
+    );
   }
 
-  void acceptReferral(String referralId) {
+  void viewReferralDetails(DoctorReferral referral) {
+    final date = referral.requestedDate?.toString().split(' ').first ?? '-';
+    Get.dialog(
+      AlertDialog(
+        title: const Text('Referral Details'),
+        content: Text(
+          'Assigned Doctor: ${referral.referredDoctorName}\n'
+          'Specialization: ${referral.doctorSpecialization ?? '-'}\n'
+          'Date: $date\n'
+          'Time: ${referral.requestedTimeSlot ?? '-'}\n'
+          'Visit Type: ${referral.visitType}\n'
+          'Hospital/Clinic: ${referral.hospitalOrClinic ?? '-'}\n'
+          'Status: ${referral.status}',
+        ),
+        actions: [
+          TextButton(
+            onPressed: Get.back,
+            child: const Text('Close'),
+          ),
+        ],
+      ),
+    );
+  }
+
+  void requestReschedule(String referralId) {
     final isUpdated = _clinicalDataService.updateReferralStatus(
       referralId: referralId,
-      status: 'Accepted',
+      status: 'Pending',
       patientId: _currentPatientId,
     );
     if (!isUpdated) {
       Get.snackbar('Invalid Referral', 'Referral ID is not valid for this patient.');
       return;
     }
+    patientNotifications.insert(0, {
+      'id': 'PRN-${DateTime.now().millisecondsSinceEpoch}',
+      'patientId': _currentPatientId,
+      'referralId': referralId,
+      'status': 'Pending',
+      'message': 'Reschedule requested for referral $referralId.',
+      'createdAt': DateTime.now().toIso8601String(),
+    });
     loadRecords();
-    Get.snackbar('Referral Accepted', 'Referral accepted by ID: $referralId');
+    Get.snackbar('Reschedule Requested', 'Doctor will respond with a new time.');
   }
 
-  void ignoreReferral(String referralId) {
-    final isUpdated = _clinicalDataService.updateReferralStatus(
-      referralId: referralId,
-      status: 'Ignored',
-      patientId: _currentPatientId,
-    );
-    if (!isUpdated) {
-      Get.snackbar('Invalid Referral', 'Referral ID is not valid for this patient.');
-      return;
+  Color statusColor(String status) {
+    switch (status) {
+      case 'Accepted':
+        return Colors.green;
+      case 'Rejected':
+        return Colors.red;
+      case 'Completed':
+        return Colors.blue;
+      default:
+        return Colors.orange;
     }
-    loadRecords();
-    Get.snackbar('Referral Ignored', 'Referral ignored by ID: $referralId');
   }
 }

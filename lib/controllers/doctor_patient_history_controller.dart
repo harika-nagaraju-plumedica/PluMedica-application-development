@@ -203,7 +203,7 @@ class DoctorPatientHistoryController extends GetxController {
       return;
     }
 
-    _clinicalDataService.addReferral(
+    _clinicalDataService.createReferralRequest(
       DoctorReferral(
         id: 'REF-${DateTime.now().millisecondsSinceEpoch}',
         patientId: patient.patientId,
@@ -223,6 +223,9 @@ class DoctorPatientHistoryController extends GetxController {
 
     clearReferralDraft();
     Get.back();
-    Get.snackbar('Success', 'Referral submitted from patient details');
+    Get.snackbar(
+      'Success',
+      'Referral submitted from patient details. Diagnostics has been notified.',
+    );
   }
 }

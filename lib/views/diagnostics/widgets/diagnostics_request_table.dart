@@ -31,7 +31,7 @@ class DiagnosticsRequestTable extends StatelessWidget {
             child: Row(
               children: [
                 Text(
-                  'Incoming Requests from Doctors / Hospitals',
+                  'Incoming Requests from Doctors / Hospitals / Pharmacies / Patients',
                   style: AppFonts.labelLarge,
                 ),
               ],
@@ -54,7 +54,8 @@ class DiagnosticsRequestTable extends StatelessWidget {
               columns: const [
                 DataColumn(label: Text('Patient Name')),
                 DataColumn(label: Text('Patient ID')),
-                DataColumn(label: Text('Doctor Name')),
+                DataColumn(label: Text('Source')),
+                DataColumn(label: Text('Requested By')),
                 DataColumn(label: Text('Test Requested')),
                 DataColumn(label: Text('Status')),
                 DataColumn(label: Text('Actions')),
@@ -65,6 +66,7 @@ class DiagnosticsRequestTable extends StatelessWidget {
                       cells: [
                         DataCell(Text(row.patientName)),
                         DataCell(Text(row.patientId)),
+                        DataCell(Text(row.source)),
                         DataCell(Text(row.doctorName)),
                         DataCell(Text(row.testRequested)),
                         DataCell(DiagnosticsStatusBadge(status: row.status)),

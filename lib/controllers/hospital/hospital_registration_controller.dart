@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../../utils/validation_utils.dart';
+import '../../utils/file_pick_utils.dart';
 import '../../services/patient_session_service.dart';
 
 /// Hospital Registration Controller
@@ -172,15 +173,25 @@ class HospitalRegistrationController extends GetxController {
 
   /// Upload GST Certificate
   Future<void> uploadGSTCertificate() async {
-    // TODO: Implement actual file picker
-    // Simulate file selection dialog
-    await Future.delayed(const Duration(milliseconds: 300));
-    
-    gstCertificateFileName.value = 'gst_certificate_${DateTime.now().millisecondsSinceEpoch}.pdf';
-    
+    final fileName = await FilePickUtils.pickSingleFileName(
+      dialogTitle: 'Select GST Certificate',
+      allowedExtensions: ['pdf', 'jpg', 'jpeg', 'png'],
+    );
+
+    if (fileName == null) {
+      Get.snackbar(
+        'Upload Cancelled',
+        'No file selected.',
+        snackPosition: SnackPosition.BOTTOM,
+      );
+      return;
+    }
+
+    gstCertificateFileName.value = fileName;
+
     Get.snackbar(
       'Document Selected',
-      'GST Certificate selected for upload',
+      '$fileName selected for upload',
       snackPosition: SnackPosition.BOTTOM,
       duration: const Duration(seconds: 2),
     );
@@ -188,15 +199,25 @@ class HospitalRegistrationController extends GetxController {
 
   /// Upload CE License
   Future<void> uploadCELicense() async {
-    // TODO: Implement actual file picker
-    // Simulate file selection dialog
-    await Future.delayed(const Duration(milliseconds: 300));
-    
-    ceLicenseFileName.value = 'ce_license_${DateTime.now().millisecondsSinceEpoch}.pdf';
-    
+    final fileName = await FilePickUtils.pickSingleFileName(
+      dialogTitle: 'Select CE License',
+      allowedExtensions: ['pdf', 'jpg', 'jpeg', 'png'],
+    );
+
+    if (fileName == null) {
+      Get.snackbar(
+        'Upload Cancelled',
+        'No file selected.',
+        snackPosition: SnackPosition.BOTTOM,
+      );
+      return;
+    }
+
+    ceLicenseFileName.value = fileName;
+
     Get.snackbar(
       'Document Selected',
-      'CE License selected for upload',
+      '$fileName selected for upload',
       snackPosition: SnackPosition.BOTTOM,
       duration: const Duration(seconds: 2),
     );

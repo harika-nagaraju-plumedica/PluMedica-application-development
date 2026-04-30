@@ -100,6 +100,12 @@ class DiagnosticsTopHeader extends StatelessWidget {
                     ],
                   ),
                 ),
+                const SizedBox(width: 8),
+                IconButton(
+                  tooltip: 'Logout',
+                  icon: const Icon(Icons.logout),
+                  onPressed: controller.logout,
+                ),
               ],
             ),
             const SizedBox(height: 10),

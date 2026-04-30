@@ -259,7 +259,7 @@ class DoctorPrescriptionsController extends GetxController {
       createdAt: DateTime.now(),
     );
 
-    _clinicalDataService.addReferral(referral);
+    _clinicalDataService.createReferralRequest(referral);
     referrals.assignAll(_clinicalDataService.referrals);
     referralReasonController.clear();
     referralDescriptionController.clear();

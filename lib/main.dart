@@ -13,6 +13,8 @@ import 'bindings/doctor_appointments_binding.dart';
 import 'bindings/doctor_patient_history_binding.dart';
 import 'bindings/doctor_prescriptions_binding.dart';
 import 'bindings/doctor_payments_binding.dart';
+import 'bindings/doctor_referral_flow_binding.dart';
+import 'bindings/doctor_referral_notifications_binding.dart';
 import 'views/doctor_registration_view.dart';
 import 'views/doctor_login_view.dart';
 import 'views/doctor_dashboard_view.dart';
@@ -22,6 +24,8 @@ import 'views/doctor_prescriptions_view.dart';
 import 'views/doctor_payments_view.dart';
 import 'views/doctor_live_call_view.dart';
 import 'views/doctor_workflow_view.dart';
+import 'views/doctor_referral_flow_views.dart';
+import 'views/doctor_referral_notifications_view.dart';
 
 // Patient Flow Imports
 import 'bindings/patient/patient_registration_binding.dart';
@@ -91,6 +95,7 @@ import 'views/hospital/hospital_patient_records_view.dart';
 import 'views/hospital/hospital_payment_summary_view.dart';
 import 'views/hospital/hospital_job_postings_view.dart';
 import 'views/diagnostics/diagnostics_dashboard_view.dart';
+import 'views/diagnostics/diagnostics_flow_views.dart';
 import 'views/diagnostics/diagnostics_login_view.dart';
 import 'views/diagnostics/diagnostics_registration_view.dart';
 
@@ -203,6 +208,36 @@ class MyApp extends StatelessWidget {
       GetPage(
         name: '/doctor_workflow',
         page: () => const DoctorWorkflowView(),
+        transition: Transition.rightToLeft,
+      ),
+      GetPage(
+        name: '/doctor/referrals/form',
+        page: () => const DoctorReferralFormView(),
+        binding: DoctorReferralFlowBinding(),
+        transition: Transition.rightToLeft,
+      ),
+      GetPage(
+        name: '/doctor/referrals/search',
+        page: () => const DoctorReferralSearchView(),
+        binding: DoctorReferralFlowBinding(),
+        transition: Transition.rightToLeft,
+      ),
+      GetPage(
+        name: '/doctor/referrals/list',
+        page: () => const DoctorReferralListView(),
+        binding: DoctorReferralFlowBinding(),
+        transition: Transition.rightToLeft,
+      ),
+      GetPage(
+        name: '/doctor/referrals/confirmation',
+        page: () => const DoctorReferralConfirmationView(),
+        binding: DoctorReferralFlowBinding(),
+        transition: Transition.rightToLeft,
+      ),
+      GetPage(
+        name: '/doctor/referrals/incoming',
+        page: () => const DoctorReferralNotificationsView(),
+        binding: DoctorReferralNotificationsBinding(),
         transition: Transition.rightToLeft,
       ),
 
@@ -408,6 +443,48 @@ class MyApp extends StatelessWidget {
       GetPage(
         name: '/diagnostics/dashboard',
         page: () => const DiagnosticsDashboardView(),
+        binding: DiagnosticsDashboardBinding(),
+        transition: Transition.rightToLeft,
+      ),
+      GetPage(
+        name: '/diagnostics/global-search',
+        page: () => const DiagnosticsGlobalSearchView(),
+        binding: DiagnosticsDashboardBinding(),
+        transition: Transition.rightToLeft,
+      ),
+      GetPage(
+        name: '/diagnostics/patient-details',
+        page: () => const DiagnosticsPatientDetailsView(),
+        binding: DiagnosticsDashboardBinding(),
+        transition: Transition.rightToLeft,
+      ),
+      GetPage(
+        name: '/diagnostics/test-requests',
+        page: () => const DiagnosticsTestRequestsView(),
+        binding: DiagnosticsDashboardBinding(),
+        transition: Transition.rightToLeft,
+      ),
+      GetPage(
+        name: '/diagnostics/test-request-patient',
+        page: () => const DiagnosticsTestRequestPatientView(),
+        binding: DiagnosticsDashboardBinding(),
+        transition: Transition.rightToLeft,
+      ),
+      GetPage(
+        name: '/diagnostics/tests-performed',
+        page: () => const DiagnosticsTestsPerformedView(),
+        binding: DiagnosticsDashboardBinding(),
+        transition: Transition.rightToLeft,
+      ),
+      GetPage(
+        name: '/diagnostics/reports-dispatched',
+        page: () => const DiagnosticsReportsDispatchedView(),
+        binding: DiagnosticsDashboardBinding(),
+        transition: Transition.rightToLeft,
+      ),
+      GetPage(
+        name: '/diagnostics/payment-received',
+        page: () => const DiagnosticsPaymentReceivedView(),
         binding: DiagnosticsDashboardBinding(),
         transition: Transition.rightToLeft,
       ),

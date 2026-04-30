@@ -12,8 +12,15 @@ class DoctorReferral extends BaseModel {
   final String reason;
   final String description;
   final String? attachmentName;
+  final String visitType;
+  final DateTime? requestedDate;
+  final String? requestedTimeSlot;
+  final int? consultationFee;
+  final String? doctorSpecialization;
+  final String? hospitalOrClinic;
+  final String? suggestedTimeSlot;
   final DateTime createdAt;
-  final String status; // Pending, Accepted, Ignored
+  final String status; // Pending, Accepted, Rejected, Completed
 
   DoctorReferral({
     required this.id,
@@ -26,12 +33,20 @@ class DoctorReferral extends BaseModel {
     required this.reason,
     required this.description,
     this.attachmentName,
+    this.visitType = 'OP Consultation',
+    this.requestedDate,
+    this.requestedTimeSlot,
+    this.consultationFee,
+    this.doctorSpecialization,
+    this.hospitalOrClinic,
+    this.suggestedTimeSlot,
     required this.createdAt,
     this.status = 'Pending',
   });
 
   DoctorReferral copyWith({
     String? status,
+    String? suggestedTimeSlot,
   }) {
     return DoctorReferral(
       id: id,
@@ -44,6 +59,13 @@ class DoctorReferral extends BaseModel {
       reason: reason,
       description: description,
       attachmentName: attachmentName,
+      visitType: visitType,
+      requestedDate: requestedDate,
+      requestedTimeSlot: requestedTimeSlot,
+      consultationFee: consultationFee,
+      doctorSpecialization: doctorSpecialization,
+      hospitalOrClinic: hospitalOrClinic,
+      suggestedTimeSlot: suggestedTimeSlot ?? this.suggestedTimeSlot,
       createdAt: createdAt,
       status: status ?? this.status,
     );
@@ -61,6 +83,13 @@ class DoctorReferral extends BaseModel {
     'reason': reason,
     'description': description,
     'attachmentName': attachmentName,
+    'visitType': visitType,
+    'requestedDate': requestedDate?.toIso8601String(),
+    'requestedTimeSlot': requestedTimeSlot,
+    'consultationFee': consultationFee,
+    'doctorSpecialization': doctorSpecialization,
+    'hospitalOrClinic': hospitalOrClinic,
+    'suggestedTimeSlot': suggestedTimeSlot,
     'createdAt': createdAt.toIso8601String(),
     'status': status,
   };
@@ -77,6 +106,15 @@ class DoctorReferral extends BaseModel {
       reason: json['reason'] ?? '',
       description: json['description'] ?? '',
       attachmentName: json['attachmentName'],
+      visitType: json['visitType'] ?? 'OP Consultation',
+      requestedDate: json['requestedDate'] == null
+          ? null
+          : DateTime.tryParse(json['requestedDate']),
+      requestedTimeSlot: json['requestedTimeSlot'],
+      consultationFee: json['consultationFee'],
+      doctorSpecialization: json['doctorSpecialization'],
+      hospitalOrClinic: json['hospitalOrClinic'],
+      suggestedTimeSlot: json['suggestedTimeSlot'],
       createdAt: DateTime.tryParse(json['createdAt'] ?? '') ?? DateTime.now(),
       status: json['status'] ?? 'Pending',
     );

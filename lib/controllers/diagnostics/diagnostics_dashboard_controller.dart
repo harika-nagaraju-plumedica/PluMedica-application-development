@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 import '../../models/diagnostics/diagnostics_models.dart';
+import '../../utils/file_pick_utils.dart';
+import '../../services/patient_session_service.dart';
 
 class DiagnosticsDashboardController extends GetxController {
   static const menus = <String>[
@@ -35,6 +37,14 @@ class DiagnosticsDashboardController extends GetxController {
   final testFilterController = TextEditingController();
   final testCostController = TextEditingController(text: '1200');
   final notesController = TextEditingController();
+  final globalPatientSearchController = TextEditingController();
+  final testRequestSearchController = TextEditingController();
+  final reportsSearchController = TextEditingController();
+  final paymentSearchController = TextEditingController();
+  final paymentFromDateController = TextEditingController();
+  final paymentToDateController = TextEditingController();
+  final patientDetailsDateFilter = 'Day'.obs;
+  final testRequestSourceFilter = 'All'.obs;
 
   final testRequests = <DiagnosticsRequest>[
     DiagnosticsRequest(
@@ -60,8 +70,8 @@ class DiagnosticsDashboardController extends GetxController {
     DiagnosticsRequest(
       patientName: 'Amit Verma',
       patientId: 'PAT-0003',
-      doctorName: 'Dr. Nisha Verma',
-      source: 'Hospital',
+      doctorName: 'Sunrise Pharmacy',
+      source: 'Pharmacy',
       testRequested: 'Thyroid Panel',
       status: 'In Progress',
       mobile: '9799999999',
@@ -70,8 +80,8 @@ class DiagnosticsDashboardController extends GetxController {
     DiagnosticsRequest(
       patientName: 'Neha Gupta',
       patientId: 'PAT-0004',
-      doctorName: 'Dr. Harish Menon',
-      source: 'Doctor',
+      doctorName: 'Self',
+      source: 'Patient',
       testRequested: 'Liver Function Test',
       status: 'Completed',
       mobile: '9765432101',
@@ -86,7 +96,7 @@ class DiagnosticsDashboardController extends GetxController {
     ),
     DiagnosticsActivity(
       time: '09:20 AM',
-      event: 'New request received from Plumedica Hospital',
+      event: 'New request received from Plumedica Hospital and Patient portal',
     ),
     DiagnosticsActivity(
       time: '08:55 AM',
@@ -100,12 +110,77 @@ class DiagnosticsDashboardController extends GetxController {
 
   final selectedPatient = Rxn<DiagnosticsRequest>();
 
+  final flowPatients = <DiagnosticsRequest>[
+    DiagnosticsRequest(
+      patientName: 'Pt-1',
+      patientId: 'ID-1001',
+      doctorName: 'Dr. Arun',
+      source: 'Doctor',
+      testRequested: 'CBC',
+      status: 'Sample Collected',
+      mobile: '9000000001',
+      date: '30 Apr 2026',
+    ),
+    DiagnosticsRequest(
+      patientName: 'Pt-2',
+      patientId: 'ID-1002',
+      doctorName: 'MediPlus Pharmacy',
+      source: 'Pharmacy',
+      testRequested: 'Lipid Profile',
+      status: 'In Progress',
+      mobile: '9000000002',
+      date: '30 Apr 2026',
+    ),
+    DiagnosticsRequest(
+      patientName: 'Pt-3',
+      patientId: 'ID-1003',
+      doctorName: 'Self',
+      source: 'Patient',
+      testRequested: 'Thyroid Panel',
+      status: 'Completed',
+      mobile: '9000000003',
+      date: '29 Apr 2026',
+    ),
+  ].obs;
+
   List<DiagnosticsRequest> get searchResults {
     final query = patientSearchController.text.toLowerCase().trim();
     if (query.isEmpty) {
       return testRequests.take(3).toList();
     }
     return testRequests
+        .where(
+          (patient) =>
+              patient.patientName.toLowerCase().contains(query) ||
+              patient.patientId.toLowerCase().contains(query),
+        )
+        .toList();
+  }
+
+  List<DiagnosticsRequest> get globalPatientResults {
+    return _filterByIdNo(globalPatientSearchController.text);
+  }
+
+  List<DiagnosticsRequest> get testRequestResults {
+    final byId = _filterByIdNo(testRequestSearchController.text);
+    if (testRequestSourceFilter.value == 'All') {
+      return byId;
+    }
+    return byId
+        .where((patient) => patient.source == testRequestSourceFilter.value)
+        .toList();
+  }
+
+  List<DiagnosticsRequest> get reportsResults {
+    return _filterByIdNo(reportsSearchController.text);
+  }
+
+  List<DiagnosticsRequest> get paymentResults {
+    final query = paymentSearchController.text.toLowerCase().trim();
+    if (query.isEmpty) {
+      return flowPatients;
+    }
+    return flowPatients
         .where(
           (patient) =>
               patient.patientName.toLowerCase().contains(query) ||
@@ -172,6 +247,12 @@ class DiagnosticsDashboardController extends GetxController {
     testFilterController.dispose();
     testCostController.dispose();
     notesController.dispose();
+    globalPatientSearchController.dispose();
+    testRequestSearchController.dispose();
+    reportsSearchController.dispose();
+    paymentSearchController.dispose();
+    paymentFromDateController.dispose();
+    paymentToDateController.dispose();
     super.onClose();
   }
 
@@ -185,6 +266,14 @@ class DiagnosticsDashboardController extends GetxController {
 
   void setDateQuickFilter(String value) {
     dateQuickFilter.value = value;
+  }
+
+  void setPatientDetailsDateFilter(String value) {
+    patientDetailsDateFilter.value = value;
+  }
+
+  void setTestRequestSourceFilter(String value) {
+    testRequestSourceFilter.value = value;
   }
 
   void setSelectedTestPerformed(String value) {
@@ -207,6 +296,24 @@ class DiagnosticsDashboardController extends GetxController {
   void selectPatient(DiagnosticsRequest patient) {
     selectedPatient.value = patient;
     selectedMenu.value = 3;
+  }
+
+  void selectFlowPatient(DiagnosticsRequest patient) {
+    selectedPatient.value = patient;
+  }
+
+  List<DiagnosticsRequest> _filterByIdNo(String rawQuery) {
+    final query = rawQuery.toLowerCase().trim();
+    if (query.isEmpty) {
+      return flowPatients;
+    }
+    return flowPatients
+        .where(
+          (patient) =>
+              patient.patientId.toLowerCase().contains(query) ||
+              patient.patientName.toLowerCase().contains(query),
+        )
+        .toList();
   }
 
   void saveProgress() {
@@ -241,9 +348,27 @@ class DiagnosticsDashboardController extends GetxController {
     );
   }
 
-  void uploadMockReport() {
-    uploadedReportName.value =
-        'diagnostic_report_${DateTime.now().millisecondsSinceEpoch}.pdf';
+  Future<void> uploadMockReport() async {
+    final fileName = await FilePickUtils.pickSingleFileName(
+      dialogTitle: 'Select Diagnostic Report',
+      allowedExtensions: ['pdf', 'jpg', 'jpeg', 'png'],
+    );
+
+    if (fileName == null) {
+      Get.snackbar(
+        'Upload Cancelled',
+        'No file selected.',
+        snackPosition: SnackPosition.BOTTOM,
+      );
+      return;
+    }
+
+    uploadedReportName.value = fileName;
+    Get.snackbar(
+      'Report Selected',
+      '$fileName selected for upload.',
+      snackPosition: SnackPosition.BOTTOM,
+    );
   }
 
   void generateInvoice() {
@@ -257,5 +382,10 @@ class DiagnosticsDashboardController extends GetxController {
       textConfirm: 'OK',
       onConfirm: Get.back,
     );
+  }
+
+  Future<void> logout() async {
+    await PatientSessionService.logoutRole(AppRole.diagnostics);
+    Get.offAllNamed('/role_selection');
   }
 }

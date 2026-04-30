@@ -11,6 +11,8 @@ class ClinicalDataService extends GetxService {
   final prescriptions = <Prescription>[].obs;
   final followUps = <FollowUpRecord>[].obs;
   final referrals = <DoctorReferral>[].obs;
+  final doctorReferralNotifications = <Map<String, dynamic>>[].obs;
+  final patientReferralNotifications = <Map<String, dynamic>>[].obs;
 
   // Minimal in-memory doctor directory for doctor selection/filtering.
   final doctorDirectory = <Map<String, dynamic>>[
@@ -124,10 +126,29 @@ class ClinicalDataService extends GetxService {
           referringDoctorName: 'Dr. Priya Sharma',
           reason: 'Cardiac Workup',
           description: 'Patient has intermittent chest discomfort. Need cardiology opinion.',
+          visitType: 'OP Consultation',
+          requestedDate: DateTime.now().add(const Duration(days: 1)),
+          requestedTimeSlot: '10:00 AM - 11:00 AM',
+          consultationFee: 800,
+          doctorSpecialization: 'Cardiology',
+          hospitalOrClinic: 'Plumedica Clinic',
           createdAt: DateTime.now().subtract(const Duration(days: 2)),
           status: 'Pending',
         ),
       ]);
+    }
+
+    if (doctorReferralNotifications.isEmpty) {
+      final ref = referrals.firstWhereOrNull((item) => item.id == 'REF-5001');
+      if (ref != null) {
+        doctorReferralNotifications.add({
+          'id': 'DRN-${DateTime.now().millisecondsSinceEpoch}',
+          'referralId': ref.id,
+          'doctorId': ref.referredDoctorId,
+          'read': false,
+          'createdAt': ref.createdAt.toIso8601String(),
+        });
+      }
     }
 
     if (appointments.isEmpty) {
@@ -408,6 +429,7 @@ class ClinicalDataService extends GetxService {
     required String referralId,
     required String status,
     String? patientId,
+    String? suggestedTimeSlot,
   }) {
     final index = referrals.indexWhere((item) => item.id == referralId);
     if (index < 0) {
@@ -419,7 +441,159 @@ class ClinicalDataService extends GetxService {
       return false;
     }
 
-    referrals[index] = current.copyWith(status: status);
+    referrals[index] = current.copyWith(
+      status: status,
+      suggestedTimeSlot: suggestedTimeSlot,
+    );
     return true;
+  }
+
+  void createReferralRequest(DoctorReferral referral) {
+    referrals.insert(0, referral);
+    doctorReferralNotifications.insert(0, {
+      'id': 'DRN-${DateTime.now().millisecondsSinceEpoch}',
+      'referralId': referral.id,
+      'doctorId': referral.referredDoctorId,
+      'read': false,
+      'createdAt': DateTime.now().toIso8601String(),
+    });
+  }
+
+  List<DoctorReferral> getIncomingReferralsForDoctor(String doctorId) {
+    return referrals
+        .where((item) => item.referredDoctorId == doctorId)
+        .toList();
+  }
+
+  List<DoctorReferral> getAssignedReferralsForPatient(String patientId) {
+    return referrals.where((item) => item.patientId == patientId).toList();
+  }
+
+  int getDoctorNotificationCount(String doctorId) {
+    return doctorReferralNotifications
+        .where((item) => item['doctorId'] == doctorId && item['read'] == false)
+        .length;
+  }
+
+  List<Map<String, dynamic>> getDoctorNotifications(String doctorId) {
+    return doctorReferralNotifications
+        .where((item) => item['doctorId'] == doctorId)
+        .toList();
+  }
+
+  List<Map<String, dynamic>> getPatientNotifications(String patientId) {
+    return patientReferralNotifications
+        .where((item) => item['patientId'] == patientId)
+        .toList();
+  }
+
+  void markDoctorNotificationsRead(String doctorId) {
+    var changed = false;
+    for (var i = 0; i < doctorReferralNotifications.length; i++) {
+      final item = Map<String, dynamic>.from(doctorReferralNotifications[i]);
+      if (item['doctorId'] == doctorId && item['read'] == false) {
+        item['read'] = true;
+        doctorReferralNotifications[i] = item;
+        changed = true;
+      }
+    }
+    if (changed) {
+      doctorReferralNotifications.refresh();
+    }
+  }
+
+  bool respondToReferral({
+    required String referralId,
+    required String doctorId,
+    required String action,
+    String? suggestedTimeSlot,
+  }) {
+    final index = referrals.indexWhere((item) => item.id == referralId);
+    if (index < 0) {
+      return false;
+    }
+
+    final referral = referrals[index];
+    if (referral.referredDoctorId != doctorId) {
+      return false;
+    }
+
+    if (action == 'accept') {
+      final updated = referral.copyWith(status: 'Accepted');
+      referrals[index] = updated;
+
+      if (updated.requestedDate != null &&
+          (updated.requestedTimeSlot ?? '').isNotEmpty) {
+        setDoctorSlotStatus(
+          doctorId: updated.referredDoctorId,
+          day: _weekdayName(updated.requestedDate!),
+          slotLabel: updated.requestedTimeSlot!,
+          status: 'Booked',
+        );
+      }
+
+      appointments.insert(
+        0,
+        Appointment(
+          id: 'APPT-${DateTime.now().millisecondsSinceEpoch}',
+          doctorId: updated.referredDoctorId,
+          patientId: updated.patientId,
+          patientName: updated.patientName,
+          mode: updated.visitType,
+          appointmentDate: updated.requestedDate ?? DateTime.now(),
+          timeSlot: updated.requestedTimeSlot ?? 'TBD',
+          status: 'Waiting',
+          reason: updated.reason,
+          notes: 'Appointment created from referral ${updated.id}',
+          createdAt: DateTime.now(),
+        ),
+      );
+
+      patientReferralNotifications.insert(0, {
+        'id': 'PRN-${DateTime.now().millisecondsSinceEpoch}',
+        'patientId': updated.patientId,
+        'referralId': updated.id,
+        'status': 'Accepted',
+        'message':
+            'Dr. ${updated.referredDoctorName} accepted your referral request.',
+        'createdAt': DateTime.now().toIso8601String(),
+      });
+      return true;
+    }
+
+    if (action == 'reject') {
+      final updated = referral.copyWith(status: 'Rejected');
+      referrals[index] = updated;
+      patientReferralNotifications.insert(0, {
+        'id': 'PRN-${DateTime.now().millisecondsSinceEpoch}',
+        'patientId': updated.patientId,
+        'referralId': updated.id,
+        'status': 'Rejected',
+        'message':
+            'Referral request was rejected by ${updated.referredDoctorName}.',
+        'createdAt': DateTime.now().toIso8601String(),
+      });
+      return true;
+    }
+
+    if (action == 'suggest') {
+      if ((suggestedTimeSlot ?? '').trim().isEmpty) {
+        return false;
+      }
+      final updated = referral.copyWith(suggestedTimeSlot: suggestedTimeSlot);
+      referrals[index] = updated;
+      patientReferralNotifications.insert(0, {
+        'id': 'PRN-${DateTime.now().millisecondsSinceEpoch}',
+        'patientId': updated.patientId,
+        'referralId': updated.id,
+        'status': 'Pending',
+        'message':
+            '${updated.referredDoctorName} suggested $suggestedTimeSlot for your referral.',
+        'createdAt': DateTime.now().toIso8601String(),
+      });
+      return true;
+    }
+
+    return false;
   }
 }

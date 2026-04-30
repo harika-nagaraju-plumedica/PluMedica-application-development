@@ -95,31 +95,56 @@ class DiagnosticsDashboardView extends GetView<DiagnosticsDashboardController> {
           spacing: 12,
           runSpacing: 12,
           children: [
-            DiagnosticsSummaryCard(
-              title: 'Test Requests',
-              value: filtered.length.toString(),
-              icon: Icons.request_page,
-              color: AppColors.primaryBlue,
+            InkWell(
+              borderRadius: BorderRadius.circular(12),
+              onTap: () => Get.toNamed('/diagnostics/test-requests'),
+              child: DiagnosticsSummaryCard(
+                title: 'Test Requests',
+                value: filtered.length.toString(),
+                icon: Icons.request_page,
+                color: AppColors.primaryBlue,
+              ),
             ),
-            DiagnosticsSummaryCard(
-              title: 'Tests Performed',
-              value: performedCount.toString(),
-              icon: Icons.science,
-              color: AppColors.warning,
+            InkWell(
+              borderRadius: BorderRadius.circular(12),
+              onTap: () => Get.toNamed('/diagnostics/tests-performed'),
+              child: DiagnosticsSummaryCard(
+                title: 'Tests Performed',
+                value: performedCount.toString(),
+                icon: Icons.science,
+                color: AppColors.warning,
+              ),
             ),
-            DiagnosticsSummaryCard(
-              title: 'Reports Dispatched',
-              value: reportCount.toString(),
-              icon: Icons.picture_as_pdf,
-              color: AppColors.green,
+            InkWell(
+              borderRadius: BorderRadius.circular(12),
+              onTap: () => Get.toNamed('/diagnostics/reports-dispatched'),
+              child: DiagnosticsSummaryCard(
+                title: 'Reports Dispatched',
+                value: reportCount.toString(),
+                icon: Icons.picture_as_pdf,
+                color: AppColors.green,
+              ),
             ),
-            DiagnosticsSummaryCard(
-              title: 'Payments Received',
-              value: '₹ 24,500',
-              icon: Icons.payments,
-              color: AppColors.primaryDarkBlue,
+            InkWell(
+              borderRadius: BorderRadius.circular(12),
+              onTap: () => Get.toNamed('/diagnostics/payment-received'),
+              child: DiagnosticsSummaryCard(
+                title: 'Payment Received',
+                value: '₹ 24,500',
+                icon: Icons.payments,
+                color: AppColors.primaryDarkBlue,
+              ),
             ),
           ],
+        ),
+        const SizedBox(height: 12),
+        Align(
+          alignment: Alignment.centerLeft,
+          child: OutlinedButton.icon(
+            onPressed: () => Get.toNamed('/diagnostics/global-search'),
+            icon: const Icon(Icons.person_search),
+            label: const Text('Global Search'),
+          ),
         ),
         const SizedBox(height: 16),
         Card(
@@ -385,6 +410,11 @@ class DiagnosticsDashboardView extends GetView<DiagnosticsDashboardController> {
                   onTap: () => controller.setMenu(4),
                 ),
                 DiagnosticsModuleLinkButton(
+                  label: 'Patient: Request Test',
+                  icon: Icons.assignment_add,
+                  onTap: () => Get.toNamed('/diagnostics/test-requests'),
+                ),
+                DiagnosticsModuleLinkButton(
                   label: 'Patient: Test Status',
                   icon: Icons.timeline,
                   onTap: () => controller.setMenu(2),
@@ -401,7 +431,10 @@ class DiagnosticsDashboardView extends GetView<DiagnosticsDashboardController> {
                     title: 'Pharmacy Link',
                     middleText: 'Optional pharmacy diagnostics view opened.',
                     textConfirm: 'OK',
-                    onConfirm: Get.back,
+                    onConfirm: () {
+                      Get.back();
+                      controller.setMenu(1);
+                    },
                   ),
                 ),
                 DiagnosticsModuleLinkButton(
@@ -411,7 +444,10 @@ class DiagnosticsDashboardView extends GetView<DiagnosticsDashboardController> {
                     title: 'Bulk Requests',
                     middleText: 'Hospital bulk test request intake opened.',
                     textConfirm: 'OK',
-                    onConfirm: Get.back,
+                    onConfirm: () {
+                      Get.back();
+                      controller.setMenu(1);
+                    },
                   ),
                 ),
               ],

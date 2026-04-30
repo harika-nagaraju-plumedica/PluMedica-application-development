@@ -3,6 +3,7 @@ import 'package:get/get.dart';
 import '../services/admin_identity_service.dart';
 import '../services/clinical_data_service.dart';
 import '../services/patient_session_service.dart';
+import '../utils/file_pick_utils.dart';
 
 /// Controller for doctor registration flow
 class DoctorRegistrationController extends GetxController {
@@ -320,15 +321,25 @@ class DoctorRegistrationController extends GetxController {
 
   /// Upload Medical License
   Future<void> uploadMedicalLicense() async {
-    // TODO: Implement actual file picker
-    // Simulate file selection dialog
-    await Future.delayed(const Duration(milliseconds: 300));
-    
-    medicalLicenseFileName.value = 'medical_license_${DateTime.now().millisecondsSinceEpoch}.pdf';
-    
+    final fileName = await FilePickUtils.pickSingleFileName(
+      dialogTitle: 'Select Medical License',
+      allowedExtensions: ['pdf', 'jpg', 'jpeg', 'png'],
+    );
+
+    if (fileName == null) {
+      Get.snackbar(
+        'Upload Cancelled',
+        'No file selected.',
+        snackPosition: SnackPosition.BOTTOM,
+      );
+      return;
+    }
+
+    medicalLicenseFileName.value = fileName;
+
     Get.snackbar(
       'Document Selected',
-      'Medical License selected for upload',
+      '$fileName selected for upload',
       snackPosition: SnackPosition.BOTTOM,
       duration: const Duration(seconds: 2),
     );

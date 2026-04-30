@@ -28,6 +28,7 @@ class DoctorDashboardController extends GetxController {
   final totalPatients = 0.obs;
   final totalEarnings = 0.0.obs;
   final pendingPrescriptions = <Prescription>[].obs;
+  final incomingReferralCount = 0.obs;
 
   @override
   void onInit() {
@@ -70,6 +71,8 @@ class DoctorDashboardController extends GetxController {
           doctorAppointments.map((item) => item.patientId).toSet().length;
       totalEarnings.value = pendingAppointments.length * 700.0 +
           completedAppointments.length * 700.0;
+        incomingReferralCount.value =
+          _clinicalDataService.getDoctorNotificationCount(_currentDoctorId);
     } catch (e) {
       Get.snackbar(
         'Error',
@@ -104,6 +107,36 @@ class DoctorDashboardController extends GetxController {
   /// Navigate to payments screen
   void viewPayments() {
     Get.toNamed('/doctor_payments');
+  }
+
+  /// Doctor actions panel: Prescription
+  void openPrescription() {
+    Get.toNamed('/doctor_prescriptions');
+  }
+
+  /// Doctor actions panel: Order Labs
+  void openOrderLabs() {
+    Get.snackbar(
+      'Diagnostics Notified',
+      'Lab request data has been sent to diagnostics.',
+      snackPosition: SnackPosition.BOTTOM,
+    );
+  }
+
+  /// Doctor actions panel: Schedule Follow-up
+  void openScheduleFollowUp() {
+    Get.toNamed('/doctor_prescriptions');
+  }
+
+  /// Doctor actions panel: Referrals
+  void openReferrals() {
+    Get.toNamed('/doctor/referrals/form');
+  }
+
+  Future<void> openIncomingReferrals() async {
+    await Get.toNamed('/doctor/referrals/incoming');
+    incomingReferralCount.value =
+        _clinicalDataService.getDoctorNotificationCount(_currentDoctorId);
   }
 
   /// Logout

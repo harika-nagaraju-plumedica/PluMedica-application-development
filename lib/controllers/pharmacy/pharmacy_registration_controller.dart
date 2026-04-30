@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../../utils/validation_utils.dart';
+import '../../utils/file_pick_utils.dart';
 import '../../services/patient_session_service.dart';
 
 /// Pharmacy Registration Controller
@@ -200,18 +201,25 @@ class PharmacyRegistrationController extends GetxController {
 
   /// Upload GST Certificate
   Future<void> uploadGSTCertificate() async {
-    // TODO: Implement actual file picker
-    // For now, using mock implementation that simulates file selection
-    
-    // Simulate file selection dialog
-    await Future.delayed(const Duration(milliseconds: 300));
-    
-    // After file is selected, set filename without pending status
-    gstCertificateFileName.value = 'gst_certificate_${DateTime.now().millisecondsSinceEpoch}.pdf';
-    
+    final fileName = await FilePickUtils.pickSingleFileName(
+      dialogTitle: 'Select GST Certificate',
+      allowedExtensions: ['pdf', 'jpg', 'jpeg', 'png'],
+    );
+
+    if (fileName == null) {
+      Get.snackbar(
+        'Upload Cancelled',
+        'No file selected.',
+        snackPosition: SnackPosition.BOTTOM,
+      );
+      return;
+    }
+
+    gstCertificateFileName.value = fileName;
+
     Get.snackbar(
       'Document Selected',
-      'GST Certificate selected for upload',
+      '$fileName selected for upload',
       snackPosition: SnackPosition.BOTTOM,
       duration: const Duration(seconds: 2),
     );
@@ -219,9 +227,6 @@ class PharmacyRegistrationController extends GetxController {
 
   /// Upload Drug License Certificate
   Future<void> uploadDrugLicenseCertificate() async {
-    // TODO: Implement actual file picker
-    // For now, using mock implementation that simulates file selection
-    
     if (!hasDrugLicense.value) {
       Get.snackbar(
         'Error',
@@ -230,16 +235,26 @@ class PharmacyRegistrationController extends GetxController {
       );
       return;
     }
-    
-    // Simulate file selection dialog
-    await Future.delayed(const Duration(milliseconds: 300));
-    
-    // After file is selected, set filename without pending status
-    drugLicenseCertificateFileName.value = 'drug_license_${DateTime.now().millisecondsSinceEpoch}.pdf';
-    
+
+    final fileName = await FilePickUtils.pickSingleFileName(
+      dialogTitle: 'Select Drug License Certificate',
+      allowedExtensions: ['pdf', 'jpg', 'jpeg', 'png'],
+    );
+
+    if (fileName == null) {
+      Get.snackbar(
+        'Upload Cancelled',
+        'No file selected.',
+        snackPosition: SnackPosition.BOTTOM,
+      );
+      return;
+    }
+
+    drugLicenseCertificateFileName.value = fileName;
+
     Get.snackbar(
       'Document Selected',
-      'Drug License Certificate selected for upload',
+      '$fileName selected for upload',
       snackPosition: SnackPosition.BOTTOM,
       duration: const Duration(seconds: 2),
     );

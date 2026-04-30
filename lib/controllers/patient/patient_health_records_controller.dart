@@ -1,10 +1,11 @@
 import 'package:get/get.dart';
 
+import '../../utils/file_pick_utils.dart';
+
 class PatientHealthRecordsController extends GetxController {
   final isLoading = false.obs;
   final healthRecords = <Map<String, dynamic>>[].obs;
   final selectedRecord = Rx<dynamic>(null);
-  int _uploadSeed = 1;
 
   @override
   void onInit() {
@@ -83,19 +84,35 @@ class PatientHealthRecordsController extends GetxController {
   }
 
   Future<void> uploadRecord() async {
+    final fileName = await FilePickUtils.pickSingleFileName(
+      dialogTitle: 'Select Health Record',
+      allowedExtensions: ['pdf', 'doc', 'docx', 'jpg', 'jpeg', 'png'],
+    );
+
+    if (fileName == null) {
+      Get.snackbar(
+        'Upload Cancelled',
+        'No file selected.',
+        snackPosition: SnackPosition.BOTTOM,
+      );
+      return;
+    }
+
     final now = DateTime.now();
     final formattedDate =
         '${_monthShort(now.month)} ${now.day.toString().padLeft(2, '0')}, ${now.year}';
+    final extension = fileName.contains('.')
+        ? fileName.split('.').last.toLowerCase()
+        : 'file';
 
     final newRecord = <String, dynamic>{
       'id': 'HR-UP-${now.millisecondsSinceEpoch}',
-      'title': 'Uploaded Document $_uploadSeed',
+      'title': fileName,
       'date': formattedDate,
-      'type': 'pdf',
+      'type': extension,
       'doctorName': 'Self Upload',
     };
 
-    _uploadSeed++;
     healthRecords.insert(0, newRecord);
     Get.snackbar(
       'Upload Successful',
