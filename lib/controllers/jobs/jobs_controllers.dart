@@ -1,4 +1,6 @@
 import 'package:get/get.dart';
+import '../../services/api_exception.dart';
+import '../../services/registration_service.dart';
 import '../../services/patient_session_service.dart';
 
 class JobSeekerRegistrationController extends GetxController {
@@ -95,6 +97,17 @@ class JobSeekerLoginController extends GetxController {
     } finally {
       isLoading.value = false;
     }
+  }
+
+  void forgotPassword() {
+    Get.toNamed(
+      '/auth/forgot-password',
+      arguments: {
+        'moduleName': 'Job Seeker',
+        'loginRoute': '/jobs/job-seeker/login',
+        'registeredEmail': email.value.trim(),
+      },
+    );
   }
 }
 
@@ -210,7 +223,12 @@ class ApplicationStatusController extends GetxController {
 }
 
 class EmployerRegistrationController extends GetxController {
+  final _registrationService = RegistrationService();
+
   final isLoading = false.obs;
+  final companyName = ''.obs;
+  final email = ''.obs;
+  final password = ''.obs;
 
   @override
   void onInit() {
@@ -228,8 +246,35 @@ class EmployerRegistrationController extends GetxController {
   Future<void> register() async {
     isLoading.value = true;
     try {
-      await PatientSessionService.markRoleLoggedIn(AppRole.employer);
-      Get.offAllNamed('/jobs/employer/post-job');
+      final response = await _registrationService.registerEmployer(
+        companyName: companyName.value.trim(),
+        email: email.value.trim(),
+        password: password.value,
+      );
+
+      await PatientSessionService.markRoleRegistered(
+        AppRole.employer,
+        email: email.value.trim(),
+        displayName: companyName.value.trim(),
+        isApproved: false,
+      );
+
+      Get.snackbar(
+        'Registration Submitted',
+        response.message.isEmpty
+            ? 'Employer registration submitted. Waiting for super admin approval.'
+            : response.message,
+      );
+
+      Get.offAllNamed(
+        '/pending-verification',
+        arguments: {
+          'registrationType': 'Employer',
+          'userEmail': email.value.trim(),
+        },
+      );
+    } on ApiException catch (e) {
+      Get.snackbar('Registration Failed', e.message);
     } catch (e) {
       Get.snackbar('Error', 'Registration failed');
     } finally {
@@ -240,17 +285,46 @@ class EmployerRegistrationController extends GetxController {
 
 class EmployerLoginController extends GetxController {
   final isLoading = false.obs;
+  final email = ''.obs;
 
   Future<void> login() async {
     isLoading.value = true;
     try {
-      await PatientSessionService.markRoleLoggedIn(AppRole.employer);
+      final isApproved = await PatientSessionService.isRoleApproved(
+        AppRole.employer,
+      );
+      if (!isApproved) {
+        Get.offAllNamed(
+          '/pending-verification',
+          arguments: {
+            'registrationType': 'Employer',
+            'userEmail': email.value.trim(),
+          },
+        );
+        return;
+      }
+
+      await PatientSessionService.markRoleLoggedIn(
+        AppRole.employer,
+        email: email.value.trim(),
+      );
       Get.offAllNamed('/jobs/employer/post-job');
     } catch (e) {
       Get.snackbar('Error', 'Login failed');
     } finally {
       isLoading.value = false;
     }
+  }
+
+  void forgotPassword() {
+    Get.toNamed(
+      '/auth/forgot-password',
+      arguments: {
+        'moduleName': 'Employer',
+        'loginRoute': '/jobs/employer/login',
+        'registeredEmail': email.value.trim(),
+      },
+    );
   }
 }
 

@@ -14,7 +14,17 @@ class HospitalDashboardController extends GetxController {
   @override
   void onInit() {
     super.onInit();
+    _loadProfileIdentity();
     loadDashboardData();
+  }
+
+  Future<void> _loadProfileIdentity() async {
+    final displayName = await PatientSessionService.getRoleDisplayName(
+      AppRole.hospital,
+    );
+    if (displayName.isNotEmpty) {
+      hospitalName.value = displayName;
+    }
   }
 
   final consultants = <Map<String, dynamic>>[].obs;
@@ -25,31 +35,31 @@ class HospitalDashboardController extends GetxController {
     isLoading.value = true;
     try {
       await Future.delayed(const Duration(milliseconds: 500));
-      
+
       consultants.value = [
         {
           'id': 'DOC001',
           'name': 'Dr. Rajesh Kumar',
           'specialization': 'Cardiology',
-          'status': 'Available'
+          'status': 'Available',
         },
         {
           'id': 'DOC002',
           'name': 'Dr. Priya Sharma',
           'specialization': 'Neurology',
-          'status': 'Busy'
+          'status': 'Busy',
         },
         {
           'id': 'DOC003',
           'name': 'Dr. Amit Patel',
           'specialization': 'Orthopedics',
-          'status': 'Available'
+          'status': 'Available',
         },
         {
           'id': 'DOC004',
           'name': 'Dr. Sarah Johnson',
           'specialization': 'Pediatrics',
-          'status': 'Available'
+          'status': 'Available',
         },
       ];
 
@@ -61,7 +71,7 @@ class HospitalDashboardController extends GetxController {
           'ward': 'A',
           'bed': '101',
           'status': 'Stable',
-          'admissionDate': '2026-04-15'
+          'admissionDate': '2026-04-15',
         },
         {
           'id': 'ADM002',
@@ -70,7 +80,7 @@ class HospitalDashboardController extends GetxController {
           'ward': 'B',
           'bed': '205',
           'status': 'Recovering',
-          'admissionDate': '2026-04-10'
+          'admissionDate': '2026-04-10',
         },
       ];
 
@@ -79,13 +89,13 @@ class HospitalDashboardController extends GetxController {
           'id': 'EMG001',
           'severity': 'Critical',
           'description': 'Multiple trauma patient',
-          'time': '10:30 AM'
+          'time': '10:30 AM',
         },
         {
           'id': 'EMG002',
           'severity': 'High',
           'description': 'Chest pain - Cardiac alert',
-          'time': '11:45 AM'
+          'time': '11:45 AM',
         },
       ];
     } catch (e) {
@@ -97,6 +107,10 @@ class HospitalDashboardController extends GetxController {
 
   Future<void> navigateToConsultantManagement() async {
     Get.toNamed('/hospital/consultant_management');
+  }
+
+  Future<void> navigateToConsultation() async {
+    Get.toNamed('/hospital/consultation');
   }
 
   Future<void> navigateToAdmissionManagement() async {

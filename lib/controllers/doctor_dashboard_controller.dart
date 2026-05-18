@@ -21,6 +21,8 @@ class DoctorDashboardController extends GetxController {
   String get _currentDoctorName =>
     _adminIdentityService.getPrimaryName(AppRole.doctor);
 
+  final dashboardDoctorName = ''.obs;
+
   final isLoading = false.obs;
   final doctor = Rx<Doctor?>(null);
   final pendingAppointments = <Appointment>[].obs;
@@ -33,7 +35,21 @@ class DoctorDashboardController extends GetxController {
   @override
   void onInit() {
     super.onInit();
-    loadDashboardData();
+    _initializeDashboard();
+  }
+
+  Future<void> _initializeDashboard() async {
+    await _loadProfileIdentity();
+    await loadDashboardData();
+  }
+
+  Future<void> _loadProfileIdentity() async {
+    final displayName = await PatientSessionService.getRoleDisplayName(
+      AppRole.doctor,
+    );
+    if (displayName.isNotEmpty) {
+      dashboardDoctorName.value = displayName;
+    }
   }
 
   /// Load dashboard data
@@ -44,7 +60,9 @@ class DoctorDashboardController extends GetxController {
       // TODO: Fetch doctor profile
       doctor.value = Doctor(
         id: _currentDoctorId,
-        fullName: _currentDoctorName,
+        fullName: dashboardDoctorName.value.isNotEmpty
+            ? dashboardDoctorName.value
+            : _currentDoctorName,
         email: 'priya@example.com',
         mobileNumber: '9876543210',
         qualification: 'MBBS',

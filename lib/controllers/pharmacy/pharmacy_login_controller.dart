@@ -1,7 +1,10 @@
 import 'package:get/get.dart';
+import '../../services/api_exception.dart';
+import '../../services/auth_service.dart';
 import '../../services/patient_session_service.dart';
 
 class PharmacyLoginController extends GetxController {
+  final _authService = AuthService();
   final email = RxString('');
   final password = RxString('');
   final isLoading = RxBool(false);
@@ -32,13 +35,21 @@ class PharmacyLoginController extends GetxController {
     try {
       isLoading.value = true;
 
-      // TODO: Replace with actual API call
-      await Future.delayed(const Duration(seconds: 1));
-
-      await PatientSessionService.markRoleLoggedIn(
-        AppRole.pharmacy,
-        email: email.value,
+      final loginResult = await _authService.login(
+        email: email.value.trim(),
+        password: password.value,
       );
+
+      if (!loginResult.isApproved) {
+        Get.offAllNamed(
+          '/pending-verification',
+          arguments: {
+            'registrationType': loginResult.module,
+            'userEmail': email.value.trim(),
+          },
+        );
+        return;
+      }
 
       Get.snackbar(
         'Success',
@@ -48,17 +59,34 @@ class PharmacyLoginController extends GetxController {
       );
 
       Future.delayed(const Duration(milliseconds: 500), () {
-        Get.offAllNamed('/pharmacy/dashboard');
+        Get.offAllNamed(loginResult.dashboardRoute);
       });
+    } on ApiException catch (e) {
+      Get.snackbar(
+        'Login Failed',
+        e.message,
+        snackPosition: SnackPosition.BOTTOM,
+      );
     } catch (e) {
       Get.snackbar(
         'Error',
-        'An error occurred: $e',
+        'An error occurred while logging in. Please try again.',
         snackPosition: SnackPosition.BOTTOM,
       );
     } finally {
       isLoading.value = false;
     }
+  }
+
+  void forgotPassword() {
+    Get.toNamed(
+      '/auth/forgot-password',
+      arguments: {
+        'moduleName': 'Pharmacy',
+        'loginRoute': '/pharmacy/login',
+        'registeredEmail': email.value.trim(),
+      },
+    );
   }
 
   @override

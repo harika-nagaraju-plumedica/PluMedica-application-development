@@ -95,13 +95,7 @@ class PharmacyLoginView extends GetView<PharmacyLoginController> {
                     Align(
                       alignment: Alignment.centerRight,
                       child: TextButton(
-                        onPressed: () {
-                          Get.snackbar(
-                            'Coming Soon',
-                            'Password reset feature coming soon',
-                            snackPosition: SnackPosition.BOTTOM,
-                          );
-                        },
+                        onPressed: controller.forgotPassword,
                         child: Text(
                           'Forgot Password?',
                           style: AppFonts.bodySmall.copyWith(

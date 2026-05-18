@@ -1,13 +1,18 @@
 import 'package:get/get.dart';
+import '../../services/api_exception.dart';
+import '../../services/registration_service.dart';
 import '../../services/patient_session_service.dart';
 
 class PartnerRegistrationController extends GetxController {
+  final _registrationService = RegistrationService();
+
   final isLoading = false.obs;
   final companyName = 'Health Insurance Co.'.obs;
   final registrationNumber = 'INSURE-2024-001'.obs;
   final email = 'admin@healthinsurance.com'.obs;
   final phone = '+91-9876543210'.obs;
   final licenseNumber = 'LIC-2024-UIN-001'.obs;
+  final password = ''.obs;
   final address = '456 Insurance Plaza, Financial District, Metro City'.obs;
 
   @override
@@ -30,18 +35,43 @@ class PartnerRegistrationController extends GetxController {
     email.value = 'admin@healthinsurance.com';
     phone.value = '+91-9876543210';
     licenseNumber.value = 'LIC-2024-UIN-001';
+    password.value = '';
     address.value = '456 Insurance Plaza, Financial District, Metro City';
   }
 
   Future<void> register() async {
     isLoading.value = true;
     try {
-      await Future.delayed(const Duration(milliseconds: 500));
-      await PatientSessionService.markRoleLoggedIn(
+      final response = await _registrationService.registerPartnerOrganization(
+        organizationName: companyName.value.trim(),
+        email: email.value.trim(),
+        mobile: phone.value.trim(),
+        licenseNumber: licenseNumber.value.trim(),
+        password: password.value,
+      );
+
+      await PatientSessionService.markRoleRegistered(
         AppRole.partner,
         email: email.value,
+        displayName: companyName.value.trim(),
+        isApproved: false,
       );
-      Get.offAllNamed('/partner/dashboard');
+
+      Get.snackbar(
+        'Registration Submitted',
+        response.message.isEmpty
+            ? 'Insurance partner registration is pending super admin approval.'
+            : response.message,
+      );
+      Get.offAllNamed(
+        '/pending-verification',
+        arguments: {
+          'registrationType': 'Insurance',
+          'userEmail': email.value.trim(),
+        },
+      );
+    } on ApiException catch (e) {
+      Get.snackbar('Registration Failed', e.message);
     } catch (e) {
       Get.snackbar('Error', 'Registration failed');
     } finally {
@@ -87,6 +117,19 @@ class PartnerLoginController extends GetxController {
     isLoading.value = true;
     try {
       await Future.delayed(const Duration(milliseconds: 500));
+
+      final isApproved = await PatientSessionService.isRoleApproved(AppRole.partner);
+      if (!isApproved) {
+        Get.offAllNamed(
+          '/pending-verification',
+          arguments: {
+            'registrationType': 'Insurance',
+            'userEmail': email.value.trim(),
+          },
+        );
+        return;
+      }
+
       await PatientSessionService.markRoleLoggedIn(
         AppRole.partner,
         email: email.value,
@@ -97,6 +140,17 @@ class PartnerLoginController extends GetxController {
     } finally {
       isLoading.value = false;
     }
+  }
+
+  void forgotPassword() {
+    Get.toNamed(
+      '/auth/forgot-password',
+      arguments: {
+        'moduleName': 'Partner',
+        'loginRoute': '/partner/login',
+        'registeredEmail': email.value.trim(),
+      },
+    );
   }
 }
 
@@ -115,7 +169,17 @@ class PartnerDashboardController extends GetxController {
   @override
   void onInit() {
     super.onInit();
+    _loadProfileIdentity();
     loadDashboardData();
+  }
+
+  Future<void> _loadProfileIdentity() async {
+    final displayName = await PatientSessionService.getRoleDisplayName(
+      AppRole.partner,
+    );
+    if (displayName.isNotEmpty) {
+      partnerName.value = displayName;
+    }
   }
 
   Future<void> loadDashboardData() async {

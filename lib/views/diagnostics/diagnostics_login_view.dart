@@ -59,6 +59,14 @@ class DiagnosticsLoginView extends GetView<DiagnosticsLoginController> {
                   required: true,
                   validator: controller.validatePassword,
                 ),
+                const SizedBox(height: 8),
+                Align(
+                  alignment: Alignment.centerRight,
+                  child: TextButton(
+                    onPressed: controller.forgotPassword,
+                    child: const Text('Forgot Password?'),
+                  ),
+                ),
                 const SizedBox(height: 24),
                 AppButton(
                   text: 'Login',

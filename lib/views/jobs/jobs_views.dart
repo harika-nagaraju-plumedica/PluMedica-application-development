@@ -155,6 +155,14 @@ class JobSeekerLoginView extends GetView<JobSeekerLoginController> {
                         onChanged: (val) => controller.password.value = val,
                       ),
                     ),
+                    const SizedBox(height: 8),
+                    Align(
+                      alignment: Alignment.centerRight,
+                      child: TextButton(
+                        onPressed: controller.forgotPassword,
+                        child: const Text('Forgot Password?'),
+                      ),
+                    ),
                     const SizedBox(height: AppConstants.paddingLarge),
                     AppButton(
                       text: 'Login',
@@ -433,9 +441,24 @@ class EmployerRegistrationView
                 child: Column(
                   children: [
                     AppTextField(
-                        label: 'Company Name', hint: 'Enter name'),
+                      label: 'Company Name',
+                      hint: 'Enter name',
+                      onChanged: (val) => controller.companyName.value = val,
+                    ),
                     const SizedBox(height: AppConstants.paddingMedium),
-                    AppTextField(label: 'Email', hint: 'Enter email'),
+                    AppTextField(
+                      label: 'Email',
+                      hint: 'Enter email',
+                      keyboardType: TextInputType.emailAddress,
+                      onChanged: (val) => controller.email.value = val,
+                    ),
+                    const SizedBox(height: AppConstants.paddingMedium),
+                    AppTextField(
+                      label: 'Password',
+                      hint: 'Enter password',
+                      obscureText: true,
+                      onChanged: (val) => controller.password.value = val,
+                    ),
                     const SizedBox(height: AppConstants.paddingLarge),
                     AppButton(
                       text: 'Register',
@@ -465,12 +488,25 @@ class EmployerLoginView extends GetView<EmployerLoginController> {
                 child: Column(
                   children: [
                     const SizedBox(height: 60),
-                    AppTextField(label: 'Email', hint: 'Enter email'),
+                    AppTextField(
+                      label: 'Email',
+                      hint: 'Enter email',
+                      keyboardType: TextInputType.emailAddress,
+                      onChanged: (val) => controller.email.value = val,
+                    ),
                     const SizedBox(height: AppConstants.paddingMedium),
                     AppTextField(
                       label: 'Password',
                       hint: 'Enter password',
                       obscureText: true,
+                    ),
+                    const SizedBox(height: 8),
+                    Align(
+                      alignment: Alignment.centerRight,
+                      child: TextButton(
+                        onPressed: controller.forgotPassword,
+                        child: const Text('Forgot Password?'),
+                      ),
                     ),
                     const SizedBox(height: AppConstants.paddingLarge),
                     AppButton(

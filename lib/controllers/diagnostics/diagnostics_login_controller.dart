@@ -75,6 +75,17 @@ class DiagnosticsLoginController extends GetxController {
     Get.toNamed('/diagnostics/registration');
   }
 
+  void forgotPassword() {
+    Get.toNamed(
+      '/auth/forgot-password',
+      arguments: {
+        'moduleName': 'Diagnostics',
+        'loginRoute': '/diagnostics/login',
+        'registeredEmail': emailController.text.trim(),
+      },
+    );
+  }
+
   @override
   void onClose() {
     emailController.dispose();

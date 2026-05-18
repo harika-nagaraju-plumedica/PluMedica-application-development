@@ -1,17 +1,24 @@
 import 'package:flutter/material.dart';
+import 'package:file_picker/file_picker.dart';
 import 'package:get/get.dart';
+import '../../services/api_exception.dart';
+import '../../services/registration_service.dart';
 import '../../utils/validation_utils.dart';
 import '../../utils/file_pick_utils.dart';
 import '../../services/patient_session_service.dart';
 
 /// Pharmacy Registration Controller
 class PharmacyRegistrationController extends GetxController {
+  final _registrationService = RegistrationService();
+
   // Form controllers
   final legalPharmacyNameController = TextEditingController();
   final stateController = TextEditingController();
   final cityController = TextEditingController();
   final pharmacyPhoneController = TextEditingController();
   final gstinController = TextEditingController();
+  final emailController = TextEditingController();
+  final passwordController = TextEditingController();
   final drugLicenseNumberController = TextEditingController();
 
   // Observable state
@@ -21,6 +28,8 @@ class PharmacyRegistrationController extends GetxController {
   // Document upload state
   final gstCertificateFileName = Rx<String?>(null);
   final drugLicenseCertificateFileName = Rx<String?>(null);
+  final gstCertificateFile = Rx<PlatformFile?>(null);
+  final drugLicenseCertificateFile = Rx<PlatformFile?>(null);
   
   // Verification status tracking
   final gstCertificateStatus = Rx<String>(''); // 'pending', 'verified', 'rejected'
@@ -171,6 +180,26 @@ class PharmacyRegistrationController extends GetxController {
     return null;
   }
 
+  String? validateEmail(String? value) {
+    if (value == null || value.isEmpty) {
+      return 'Email is required';
+    }
+    if (!ValidationUtils.isValidEmail(value)) {
+      return 'Enter a valid email address';
+    }
+    return null;
+  }
+
+  String? validatePassword(String? value) {
+    if (value == null || value.isEmpty) {
+      return 'Password is required';
+    }
+    if (value.length < 8) {
+      return 'Password must be at least 8 characters';
+    }
+    return null;
+  }
+
   /// Set drug license flag
   void setHasDrugLicense(bool value) {
     hasDrugLicense.value = value;
@@ -201,12 +230,12 @@ class PharmacyRegistrationController extends GetxController {
 
   /// Upload GST Certificate
   Future<void> uploadGSTCertificate() async {
-    final fileName = await FilePickUtils.pickSingleFileName(
+    final file = await FilePickUtils.pickSingleFile(
       dialogTitle: 'Select GST Certificate',
       allowedExtensions: ['pdf', 'jpg', 'jpeg', 'png'],
     );
 
-    if (fileName == null) {
+    if (file == null) {
       Get.snackbar(
         'Upload Cancelled',
         'No file selected.',
@@ -215,11 +244,12 @@ class PharmacyRegistrationController extends GetxController {
       return;
     }
 
-    gstCertificateFileName.value = fileName;
+    gstCertificateFile.value = file;
+    gstCertificateFileName.value = file.name;
 
     Get.snackbar(
       'Document Selected',
-      '$fileName selected for upload',
+      '${file.name} selected for upload',
       snackPosition: SnackPosition.BOTTOM,
       duration: const Duration(seconds: 2),
     );
@@ -236,12 +266,12 @@ class PharmacyRegistrationController extends GetxController {
       return;
     }
 
-    final fileName = await FilePickUtils.pickSingleFileName(
+    final file = await FilePickUtils.pickSingleFile(
       dialogTitle: 'Select Drug License Certificate',
       allowedExtensions: ['pdf', 'jpg', 'jpeg', 'png'],
     );
 
-    if (fileName == null) {
+    if (file == null) {
       Get.snackbar(
         'Upload Cancelled',
         'No file selected.',
@@ -250,11 +280,12 @@ class PharmacyRegistrationController extends GetxController {
       return;
     }
 
-    drugLicenseCertificateFileName.value = fileName;
+    drugLicenseCertificateFile.value = file;
+    drugLicenseCertificateFileName.value = file.name;
 
     Get.snackbar(
       'Document Selected',
-      '$fileName selected for upload',
+      '${file.name} selected for upload',
       snackPosition: SnackPosition.BOTTOM,
       duration: const Duration(seconds: 2),
     );
@@ -329,46 +360,75 @@ class PharmacyRegistrationController extends GetxController {
       return;
     }
 
+    if (validateEmail(emailController.text) != null) {
+      Get.snackbar(
+        'Validation Error',
+        validateEmail(emailController.text)!,
+        snackPosition: SnackPosition.BOTTOM,
+      );
+      return;
+    }
+
+    if (validatePassword(passwordController.text) != null) {
+      Get.snackbar(
+        'Validation Error',
+        validatePassword(passwordController.text)!,
+        snackPosition: SnackPosition.BOTTOM,
+      );
+      return;
+    }
+
     // Notes: Documents are optional - users can submit without them
     // Admin will review whatever documents are uploaded
 
     isLoading.value = true;
 
     try {
-      // TODO: API call to submit registration
-      // Create pharmacy object with form data
-      // final pharmacy = Pharmacy(
-      //   id: '',
-      //   legalPharmacyName: legalPharmacyNameController.text,
-      //   state: stateController.text,
-      //   city: cityController.text,
-      //   pharmacyPhoneNumber: pharmacyPhoneController.text,
-      //   gstinNumber: gstinController.text,
-      //   drugLicenseNumber: hasDrugLicense.value ? drugLicenseNumberController.text : null,
-      //   licensType: licensType.value,
-      //   gstCertificateUrl: gstCertificateFileName.value,
-      //   drugLicenseCertificateUrl: drugLicenseCertificateFileName.value,
-      //   status: 'Pending Verification',
-      //   gstinVerified: false,
-      //   drugLicenseVerified: false,
-      //   createdAt: DateTime.now(),
-      // );
+      final response = await _registrationService.registerPharmacy(
+        legalPharmacyName: legalPharmacyNameController.text.trim(),
+        state: stateController.text.trim(),
+        city: cityController.text.trim(),
+        phoneNumber: pharmacyPhoneController.text.trim(),
+        gstNumber: gstinController.text.trim(),
+        hasDrugLicense: hasDrugLicense.value,
+        email: emailController.text.trim(),
+        password: passwordController.text,
+        gstCertificate: gstCertificateFile.value,
+        drugLicense: hasDrugLicense.value ? drugLicenseCertificateFile.value : null,
+      );
 
-      // Simulate API delay
-      await Future.delayed(const Duration(seconds: 2));
-      await PatientSessionService.markRoleLoggedIn(AppRole.pharmacy);
+      await PatientSessionService.markRoleRegistered(
+        AppRole.pharmacy,
+        email: emailController.text.trim(),
+        displayName: legalPharmacyNameController.text.trim(),
+        isApproved: false,
+      );
 
-      registrationStatus.value = 'Approved';
+      registrationStatus.value = 'Pending Approval';
 
       Get.snackbar(
-        'Success',
-        'Pharmacy registration successful. Welcome to Plumedica!',
+        'Registration Submitted',
+        response.message.isEmpty
+            ? 'Pharmacy registration submitted. Waiting for super admin approval.'
+            : response.message,
         snackPosition: SnackPosition.BOTTOM,
         duration: const Duration(seconds: 2),
       );
 
       await Future.delayed(const Duration(milliseconds: 500));
-      Get.offAllNamed('/pharmacy/dashboard');
+      Get.offAllNamed(
+        '/pending-verification',
+        arguments: {
+          'registrationType': 'Pharmacy',
+          'userEmail': emailController.text.trim(),
+        },
+      );
+    } on ApiException catch (e) {
+      Get.snackbar(
+        'Registration Failed',
+        e.message,
+        snackPosition: SnackPosition.BOTTOM,
+      );
     } catch (e) {
       Get.snackbar(
         'Error',
@@ -387,6 +447,8 @@ class PharmacyRegistrationController extends GetxController {
     cityController.dispose();
     pharmacyPhoneController.dispose();
     gstinController.dispose();
+    emailController.dispose();
+    passwordController.dispose();
     drugLicenseNumberController.dispose();
     super.onClose();
   }

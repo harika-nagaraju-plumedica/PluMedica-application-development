@@ -23,7 +23,17 @@ class PatientDashboardController extends GetxController {
   @override
   void onInit() {
     super.onInit();
+    _loadProfileIdentity();
     loadDashboardData();
+  }
+
+  Future<void> _loadProfileIdentity() async {
+    final displayName = await PatientSessionService.getRoleDisplayName(
+      AppRole.patient,
+    );
+    if (displayName.isNotEmpty) {
+      patientName.value = displayName;
+    }
   }
 
   Future<void> loadDashboardData() async {

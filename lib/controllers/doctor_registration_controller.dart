@@ -1,12 +1,16 @@
 import 'package:flutter/material.dart';
+import 'package:file_picker/file_picker.dart';
 import 'package:get/get.dart';
 import '../services/admin_identity_service.dart';
+import '../services/api_exception.dart';
 import '../services/clinical_data_service.dart';
 import '../services/patient_session_service.dart';
+import '../services/registration_service.dart';
 import '../utils/file_pick_utils.dart';
 
 /// Controller for doctor registration flow
 class DoctorRegistrationController extends GetxController {
+  final _registrationService = RegistrationService();
   final _clinicalDataService = Get.isRegistered<ClinicalDataService>()
       ? Get.find<ClinicalDataService>()
       : Get.put(ClinicalDataService(), permanent: true);
@@ -46,6 +50,7 @@ class DoctorRegistrationController extends GetxController {
   final isAvailabilityActive = true.obs;
   final daySectionKeys = <String, GlobalKey>{};
   final medicalLicenseFileName = Rx<String?>(null); // Renamed from resumeFileName
+  final medicalLicenseFile = Rx<PlatformFile?>(null);
   final registrationStatus = Rx<String>('Pending Approval');
 
   final List<String> qualificationsList = [
@@ -321,12 +326,12 @@ class DoctorRegistrationController extends GetxController {
 
   /// Upload Medical License
   Future<void> uploadMedicalLicense() async {
-    final fileName = await FilePickUtils.pickSingleFileName(
+    final file = await FilePickUtils.pickSingleFile(
       dialogTitle: 'Select Medical License',
       allowedExtensions: ['pdf', 'jpg', 'jpeg', 'png'],
     );
 
-    if (fileName == null) {
+    if (file == null) {
       Get.snackbar(
         'Upload Cancelled',
         'No file selected.',
@@ -335,11 +340,12 @@ class DoctorRegistrationController extends GetxController {
       return;
     }
 
-    medicalLicenseFileName.value = fileName;
+    medicalLicenseFile.value = file;
+    medicalLicenseFileName.value = file.name;
 
     Get.snackbar(
       'Document Selected',
-      '$fileName selected for upload',
+      '${file.name} selected for upload',
       snackPosition: SnackPosition.BOTTOM,
       duration: const Duration(seconds: 2),
     );
@@ -393,31 +399,34 @@ class DoctorRegistrationController extends GetxController {
     isLoading.value = true;
 
     try {
-      // TODO: API call to submit registration
-      // Create doctor object with form data
-      // final doctor = Doctor(
-      //   id: '',
-      //   fullName: fullNameController.text,
-      //   email: emailController.text,
-      //   mobileNumber: mobileController.text,
-      //   qualification: qualificationController.text,
-      //   specialization: specializationController.text.isEmpty
-      //       ? null
-      //       : specializationController.text,
-      //   yearOfGraduation: int.tryParse(graduationYearController.text),
-      //   yearsOfExperience: int.parse(experienceController.text),
-      //   clinicAddress: clinicAddressController.text,
-      //   licenseNumber: licenseNumberController.text,
-      //   medicalLicenseUrl: medicalLicenseFileName.value,
-      //   availability: selectedAvailability.toList(),
-      //   dayTimeSlots: selectedDayTimeSlots,
-      //   dayConsultationModes: selectedDayConsultationModes,
-      //   status: 'Pending Approval',
-      //   createdAt: DateTime.now(),
-      // );
+      final availabilityPayload = <Map<String, dynamic>>[];
+      for (final day in selectedAvailability) {
+        final consultationMode = selectedDayConsultationModes[day] ?? 'Virtual';
+        final slots = List<Map<String, String>>.from(daySlotStatuses[day] ?? const []);
+        for (final slot in slots) {
+          availabilityPayload.add({
+            'day': day,
+            'timeSlot': slot['slot'] ?? '',
+            'slotStatus': slot['status'] ?? 'Free',
+            'consultationMode': consultationMode,
+          });
+        }
+      }
 
-      // Simulate API delay
-      await Future.delayed(const Duration(seconds: 2));
+      final response = await _registrationService.registerDoctor(
+        fullName: fullNameController.text.trim(),
+        email: emailController.text.trim(),
+        mobileNumber: mobileController.text.trim(),
+        password: passwordController.text,
+        qualification: qualificationController.text.trim(),
+        specialization: specializationController.text.trim(),
+        yearOfGraduation: graduationYearController.text.trim(),
+        yearsOfExperience: experienceController.text.trim(),
+        clinicAddress: clinicAddressController.text.trim(),
+        medicalLicenseNumber: licenseNumberController.text.trim(),
+        availabilitySlots: availabilityPayload,
+        medicalLicenseDocument: medicalLicenseFile.value,
+      );
 
       final weeklySlots = <String, List<Map<String, String>>>{};
       for (final day in selectedAvailability) {
@@ -440,22 +449,38 @@ class DoctorRegistrationController extends GetxController {
         'availabilitySlots': weeklySlots,
       });
 
-      await PatientSessionService.markRoleLoggedIn(
+      await PatientSessionService.markRoleRegistered(
         AppRole.doctor,
         email: emailController.text,
+        displayName: fullNameController.text.trim(),
+        isApproved: false,
       );
 
-      registrationStatus.value = 'Approved';
+      registrationStatus.value = 'Pending Approval';
 
       Get.snackbar(
-        'Success',
-        'Registration successful. Welcome to Plumedica!',
+        'Registration Submitted',
+        response.message.isEmpty
+            ? 'Your registration is pending super admin approval.'
+            : response.message,
         snackPosition: SnackPosition.BOTTOM,
         duration: const Duration(seconds: 2),
       );
 
       await Future.delayed(const Duration(milliseconds: 500));
-      Get.offAllNamed('/doctor_dashboard');
+      Get.offAllNamed(
+        '/pending-verification',
+        arguments: {
+          'registrationType': 'Doctor',
+          'userEmail': emailController.text.trim(),
+        },
+      );
+    } on ApiException catch (e) {
+      Get.snackbar(
+        'Registration Failed',
+        e.message,
+        snackPosition: SnackPosition.BOTTOM,
+      );
     } catch (e) {
       Get.snackbar(
         'Error',

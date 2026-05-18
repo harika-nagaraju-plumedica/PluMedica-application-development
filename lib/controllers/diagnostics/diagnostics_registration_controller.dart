@@ -1,9 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
+import '../../services/api_exception.dart';
+import '../../services/registration_service.dart';
 import '../../services/patient_session_service.dart';
 
 class DiagnosticsRegistrationController extends GetxController {
+  final _registrationService = RegistrationService();
+
   final labNameController = TextEditingController();
   final emailController = TextEditingController();
   final passwordController = TextEditingController();
@@ -67,19 +71,26 @@ class DiagnosticsRegistrationController extends GetxController {
 
     isLoading.value = true;
     try {
-      await Future<void>.delayed(const Duration(milliseconds: 900));
+      final response = await _registrationService.registerDiagnosticsCenter(
+        centerName: labNameController.text.trim(),
+        email: emailController.text.trim(),
+        password: passwordController.text,
+      );
 
       await PatientSessionService.markRoleRegistered(
         AppRole.diagnostics,
         email: emailController.text.trim(),
+        displayName: labNameController.text.trim(),
       );
 
       Get.snackbar(
         'Registration Complete',
-        'Please login to continue.',
+        response.message.isEmpty ? 'Please login to continue.' : response.message,
         snackPosition: SnackPosition.BOTTOM,
       );
       Get.offAllNamed('/diagnostics/login');
+    } on ApiException catch (e) {
+      Get.snackbar('Registration Failed', e.message);
     } finally {
       isLoading.value = false;
     }

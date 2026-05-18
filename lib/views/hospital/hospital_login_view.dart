@@ -60,6 +60,19 @@ class HospitalLoginView extends GetView<HospitalLoginController> {
                       obscureText: true,
                       onChanged: (val) => controller.password.value = val,
                     ),
+                    const SizedBox(height: 12),
+                    Align(
+                      alignment: Alignment.centerRight,
+                      child: GestureDetector(
+                        onTap: controller.forgotPassword,
+                        child: Text(
+                          'Forgot Password?',
+                          style: AppFonts.bodyMedium.copyWith(
+                            color: AppColors.primaryBlue,
+                          ),
+                        ),
+                      ),
+                    ),
                     const SizedBox(height: AppConstants.paddingLarge),
                     AppButton(
                       text: 'Login',

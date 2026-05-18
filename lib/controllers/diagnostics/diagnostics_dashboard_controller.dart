@@ -27,6 +27,7 @@ class DiagnosticsDashboardController extends GetxController {
   final uploadedReportName = ''.obs;
   final notes = ''.obs;
   final uiTick = 0.obs;
+  final diagnosticsCenterName = 'Diagnostics Unit'.obs;
 
   final globalSearchController = TextEditingController();
   final patientSearchController = TextEditingController();
@@ -230,10 +231,20 @@ class DiagnosticsDashboardController extends GetxController {
   @override
   void onInit() {
     super.onInit();
+    _loadProfileIdentity();
     notesController.text = notes.value;
     Future<void>.delayed(const Duration(milliseconds: 700), () {
       isLoading.value = false;
     });
+  }
+
+  Future<void> _loadProfileIdentity() async {
+    final displayName = await PatientSessionService.getRoleDisplayName(
+      AppRole.diagnostics,
+    );
+    if (displayName.isNotEmpty) {
+      diagnosticsCenterName.value = displayName;
+    }
   }
 
   @override

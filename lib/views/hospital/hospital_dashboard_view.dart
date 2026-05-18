@@ -111,6 +111,53 @@ class HospitalDashboardView extends GetView<HospitalDashboardController> {
                       Column(
                         children: [
                           GestureDetector(
+                            onTap: controller.navigateToConsultation,
+                            child: Container(
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: AppConstants.paddingMedium,
+                                vertical: AppConstants.paddingMedium,
+                              ),
+                              decoration: BoxDecoration(
+                                color: AppColors.white,
+                                border: Border.all(
+                                  color: AppColors.veryLightGrey,
+                                ),
+                                borderRadius: BorderRadius.circular(
+                                  AppConstants.borderRadiusLarge,
+                                ),
+                              ),
+                              child: Row(
+                                children: [
+                                  Icon(
+                                    Icons.medical_information_outlined,
+                                    color: AppColors.primaryBlue,
+                                  ),
+                                  const SizedBox(
+                                    width: AppConstants.paddingMedium,
+                                  ),
+                                  Expanded(
+                                    child: Text(
+                                      'Consultation',
+                                      style: AppFonts.labelLarge.copyWith(
+                                        color: AppColors.textPrimary,
+                                      ),
+                                      overflow: TextOverflow.ellipsis,
+                                    ),
+                                  ),
+                                  SizedBox(
+                                    width: 24,
+                                    child: Icon(
+                                      Icons.arrow_forward_ios,
+                                      size: 16,
+                                      color: AppColors.textSecondary,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                          const SizedBox(height: AppConstants.paddingMedium),
+                          GestureDetector(
                             onTap: controller.navigateToConsultantManagement,
                             child: Container(
                               padding: const EdgeInsets.symmetric(

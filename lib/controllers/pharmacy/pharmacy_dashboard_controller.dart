@@ -169,10 +169,25 @@ class PharmacyDashboardController extends GetxController {
   @override
   void onInit() {
     super.onInit();
+    _loadProfileIdentity();
     // Simulate real-time updates
     Future.delayed(const Duration(seconds: 2), () {
       ordersToday.value = 22;
       revenueToday.value = 12400.00;
     });
+  }
+
+  Future<void> _loadProfileIdentity() async {
+    final displayName = await PatientSessionService.getRoleDisplayName(
+      AppRole.pharmacy,
+    );
+    final roleEmail = await PatientSessionService.getRoleEmail(AppRole.pharmacy);
+
+    if (displayName.isNotEmpty) {
+      pharmacyName.value = displayName;
+    }
+    if (roleEmail.isNotEmpty) {
+      pharmacyEmail.value = roleEmail;
+    }
   }
 }

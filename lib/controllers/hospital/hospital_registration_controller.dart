@@ -1,11 +1,16 @@
 import 'package:flutter/material.dart';
+import 'package:file_picker/file_picker.dart';
 import 'package:get/get.dart';
+import '../../services/api_exception.dart';
+import '../../services/registration_service.dart';
 import '../../utils/validation_utils.dart';
 import '../../utils/file_pick_utils.dart';
 import '../../services/patient_session_service.dart';
 
 /// Hospital Registration Controller
 class HospitalRegistrationController extends GetxController {
+  final _registrationService = RegistrationService();
+
   // Form controllers
   final legalNameController = TextEditingController();
   final stateController = TextEditingController();
@@ -15,12 +20,15 @@ class HospitalRegistrationController extends GetxController {
   final emailController = TextEditingController();
   final mobileController = TextEditingController();
   final addressController = TextEditingController();
+  final passwordController = TextEditingController();
 
   // Observable state
   final isLoading = false.obs;
   final registrationFormKey = GlobalKey<FormState>();
   final gstCertificateFileName = Rx<String?>(null);
   final ceLicenseFileName = Rx<String?>(null);
+  final gstCertificateFile = Rx<PlatformFile?>(null);
+  final ceLicenseFile = Rx<PlatformFile?>(null);
   
   // Verification status tracking
   final gstCertificateStatus = Rx<String>(''); // 'pending', 'verified', 'rejected'
@@ -171,14 +179,25 @@ class HospitalRegistrationController extends GetxController {
     return null;
   }
 
+  /// Validate password
+  String? validatePassword(String? value) {
+    if (value == null || value.isEmpty) {
+      return 'Password is required';
+    }
+    if (value.length < 8) {
+      return 'Password must be at least 8 characters';
+    }
+    return null;
+  }
+
   /// Upload GST Certificate
   Future<void> uploadGSTCertificate() async {
-    final fileName = await FilePickUtils.pickSingleFileName(
+    final file = await FilePickUtils.pickSingleFile(
       dialogTitle: 'Select GST Certificate',
       allowedExtensions: ['pdf', 'jpg', 'jpeg', 'png'],
     );
 
-    if (fileName == null) {
+    if (file == null) {
       Get.snackbar(
         'Upload Cancelled',
         'No file selected.',
@@ -187,11 +206,12 @@ class HospitalRegistrationController extends GetxController {
       return;
     }
 
-    gstCertificateFileName.value = fileName;
+    gstCertificateFile.value = file;
+    gstCertificateFileName.value = file.name;
 
     Get.snackbar(
       'Document Selected',
-      '$fileName selected for upload',
+      '${file.name} selected for upload',
       snackPosition: SnackPosition.BOTTOM,
       duration: const Duration(seconds: 2),
     );
@@ -199,12 +219,12 @@ class HospitalRegistrationController extends GetxController {
 
   /// Upload CE License
   Future<void> uploadCELicense() async {
-    final fileName = await FilePickUtils.pickSingleFileName(
+    final file = await FilePickUtils.pickSingleFile(
       dialogTitle: 'Select CE License',
       allowedExtensions: ['pdf', 'jpg', 'jpeg', 'png'],
     );
 
-    if (fileName == null) {
+    if (file == null) {
       Get.snackbar(
         'Upload Cancelled',
         'No file selected.',
@@ -213,11 +233,12 @@ class HospitalRegistrationController extends GetxController {
       return;
     }
 
-    ceLicenseFileName.value = fileName;
+    ceLicenseFile.value = file;
+    ceLicenseFileName.value = file.name;
 
     Get.snackbar(
       'Document Selected',
-      '$fileName selected for upload',
+      '${file.name} selected for upload',
       snackPosition: SnackPosition.BOTTOM,
       duration: const Duration(seconds: 2),
     );
@@ -248,44 +269,52 @@ class HospitalRegistrationController extends GetxController {
     isLoading.value = true;
 
     try {
-      // TODO: API call to submit registration
-      // Create hospital object with form data
-      // final hospital = Hospital(
-      //   id: '',
-      //   legalRegisteredName: legalNameController.text,
-      //   state: stateController.text,
-      //   city: cityController.text,
-      //   gstinNumber: gstinController.text,
-      //   ceRegistrationNumber: ceRegistrationController.text,
-      //   email: emailController.text,
-      //   mobileNumber: mobileController.text,
-      //   address: addressController.text,
-      //   gstCertificateUrl: gstCertificateFileName.value,
-      //   ceLicenseUrl: ceLicenseFileName.value,
-      //   status: 'Pending Verification',
-      //   gstinVerified: false,
-      //   ceVerified: false,
-      //   createdAt: DateTime.now(),
-      // );
-
-      // Simulate API delay
-      await Future.delayed(const Duration(seconds: 2));
-      await PatientSessionService.markRoleLoggedIn(
-        AppRole.hospital,
-        email: emailController.text,
+      final response = await _registrationService.registerHospital(
+        hospitalName: legalNameController.text.trim(),
+        state: stateController.text.trim(),
+        city: cityController.text.trim(),
+        gstNumber: gstinController.text.trim(),
+        ceRegistrationNumber: ceRegistrationController.text.trim(),
+        email: emailController.text.trim(),
+        mobile: mobileController.text.trim(),
+        address: addressController.text.trim(),
+        password: passwordController.text,
+        gstCertificate: gstCertificateFile.value,
+        ceLicense: ceLicenseFile.value,
       );
 
-      registrationStatus.value = 'Approved';
+      await PatientSessionService.markRoleRegistered(
+        AppRole.hospital,
+        email: emailController.text,
+        displayName: legalNameController.text.trim(),
+        isApproved: false,
+      );
+
+      registrationStatus.value = 'Pending Approval';
 
       Get.snackbar(
-        'Success',
-        'Hospital registration successful. Welcome to Plumedica!',
+        'Registration Submitted',
+        response.message.isEmpty
+            ? 'Hospital registration submitted. Waiting for super admin approval.'
+            : response.message,
         snackPosition: SnackPosition.BOTTOM,
         duration: const Duration(seconds: 2),
       );
 
       await Future.delayed(const Duration(milliseconds: 500));
-      Get.offAllNamed('/hospital/dashboard');
+      Get.offAllNamed(
+        '/pending-verification',
+        arguments: {
+          'registrationType': 'Hospital',
+          'userEmail': emailController.text.trim(),
+        },
+      );
+    } on ApiException catch (e) {
+      Get.snackbar(
+        'Registration Failed',
+        e.message,
+        snackPosition: SnackPosition.BOTTOM,
+      );
     } catch (e) {
       Get.snackbar(
         'Error',
@@ -307,6 +336,7 @@ class HospitalRegistrationController extends GetxController {
     emailController.dispose();
     mobileController.dispose();
     addressController.dispose();
+    passwordController.dispose();
     super.onClose();
   }
 }

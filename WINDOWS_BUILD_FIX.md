@@ -178,6 +178,43 @@ Build on Linux/Mac instead:
 flutter build apk --release   # Works fine, builds all architectures
 ```
 
+### If `flutter run` Fails With `Unable to run adb`
+
+If you see this error:
+
+```text
+Unable to run "adb", check your Android SDK installation and ANDROID_HOME environment variable:
+...\platform-tools\adb.exe
+Error details: Process exited abnormally with exit code -1073741819
+```
+
+This usually means `platform-tools\adb.exe` is corrupted (access violation crash), even when `ANDROID_HOME` is correct.
+
+**Verify quickly:**
+
+```powershell
+"C:\Users\Plumedica\AppData\Local\Android\Sdk\platform-tools\adb.exe" version
+Write-Output "LASTEXITCODE=$LASTEXITCODE"
+```
+
+If `LASTEXITCODE` is `-1073741819`, reinstall `platform-tools`:
+
+```powershell
+$sdkRoot = "C:\Users\Plumedica\AppData\Local\Android\Sdk"
+$sdkManager = Join-Path $sdkRoot "cmdline-tools\latest\bin\sdkmanager.bat"
+$env:JAVA_HOME = "C:\Program Files\Android\Android Studio\jbr"
+$env:Path = "$env:JAVA_HOME\bin;$env:Path"
+"y" | & $sdkManager --uninstall "platform-tools"
+"y" | & $sdkManager --install "platform-tools"
+```
+
+Then re-check:
+
+```powershell
+"C:\Users\Plumedica\AppData\Local\Android\Sdk\platform-tools\adb.exe" version
+flutter doctor -v
+```
+
 ---
 
 ## 📱 Device Support

@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:shared_preferences/shared_preferences.dart';
 
 enum AppRole {
@@ -42,6 +44,35 @@ class PatientSessionService {
       '${_roleName(role)}_is_logged_in';
 
   static String _emailKeyForRole(AppRole role) => '${_roleName(role)}_email';
+
+  static String _displayNameKeyForRole(AppRole role) =>
+      '${_roleName(role)}_display_name';
+
+  static String _approvalKeyForRole(AppRole role) =>
+      '${_roleName(role)}_is_approved';
+
+    static String _profileKeyForRole(AppRole role) =>
+      '${_roleName(role)}_profile';
+
+    static String roleName(AppRole role) => _roleName(role);
+
+    static String dashboardRouteForRole(AppRole role) =>
+      _dashboardRouteForRole(role);
+
+  static bool requiresSuperAdminApproval(AppRole role) {
+    switch (role) {
+      case AppRole.doctor:
+      case AppRole.hospital:
+      case AppRole.pharmacy:
+      case AppRole.partner:
+      case AppRole.employer:
+        return true;
+      case AppRole.patient:
+      case AppRole.diagnostics:
+      case AppRole.jobSeeker:
+        return false;
+    }
+  }
 
   static String _dashboardRouteForRole(AppRole role) {
     switch (role) {
@@ -139,21 +170,62 @@ class PatientSessionService {
     return prefs.getBool(_loggedInKeyForRole(role)) ?? false;
   }
 
-  static Future<void> markRoleRegistered(AppRole role, {String? email}) async {
+  static Future<bool> isRoleApproved(AppRole role) async {
+    if (!requiresSuperAdminApproval(role)) {
+      return true;
+    }
+    final prefs = await SharedPreferences.getInstance();
+    // Default to true for legacy local sessions created before approval tracking.
+    return prefs.getBool(_approvalKeyForRole(role)) ?? true;
+  }
+
+  static Future<void> markRoleApprovalStatus(
+    AppRole role,
+    bool isApproved,
+  ) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setBool(_approvalKeyForRole(role), isApproved);
+    if (!isApproved) {
+      await prefs.setBool(_loggedInKeyForRole(role), false);
+    }
+  }
+
+  static Future<void> markRoleRegistered(
+    AppRole role, {
+    String? email,
+    String? displayName,
+    bool? isApproved,
+  }) async {
     final prefs = await SharedPreferences.getInstance();
     await prefs.setBool(_registeredKeyForRole(role), true);
+    if (isApproved != null) {
+      await prefs.setBool(_approvalKeyForRole(role), isApproved);
+      if (!isApproved) {
+        await prefs.setBool(_loggedInKeyForRole(role), false);
+      }
+    }
     if (email != null && email.isNotEmpty) {
       await prefs.setString(_emailKeyForRole(role), email);
+    }
+    if (displayName != null && displayName.trim().isNotEmpty) {
+      await prefs.setString(_displayNameKeyForRole(role), displayName.trim());
     }
     await _setLastRole(role);
   }
 
-  static Future<void> markRoleLoggedIn(AppRole role, {String? email}) async {
+  static Future<void> markRoleLoggedIn(
+    AppRole role, {
+    String? email,
+    String? displayName,
+  }) async {
     final prefs = await SharedPreferences.getInstance();
     await prefs.setBool(_registeredKeyForRole(role), true);
     await prefs.setBool(_loggedInKeyForRole(role), true);
     if (email != null && email.isNotEmpty) {
       await prefs.setString(_emailKeyForRole(role), email);
+    }
+    if (displayName != null && displayName.trim().isNotEmpty) {
+      await prefs.setString(_displayNameKeyForRole(role), displayName.trim());
     }
     await _setLastRole(role);
   }
@@ -168,6 +240,38 @@ class PatientSessionService {
     return prefs.getString(_emailKeyForRole(role)) ?? '';
   }
 
+  static Future<String> getRoleDisplayName(AppRole role) async {
+    final prefs = await SharedPreferences.getInstance();
+    return prefs.getString(_displayNameKeyForRole(role)) ?? '';
+  }
+
+  static Future<void> saveRoleProfile(
+    AppRole role,
+    Map<String, dynamic> profile,
+  ) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString(_profileKeyForRole(role), jsonEncode(profile));
+  }
+
+  static Future<Map<String, dynamic>> getRoleProfile(AppRole role) async {
+    final prefs = await SharedPreferences.getInstance();
+    final raw = prefs.getString(_profileKeyForRole(role));
+    if (raw == null || raw.isEmpty) {
+      return <String, dynamic>{};
+    }
+
+    try {
+      final decoded = jsonDecode(raw);
+      if (decoded is Map<String, dynamic>) {
+        return decoded;
+      }
+    } catch (_) {
+      // Return empty profile if local cache is invalid.
+    }
+
+    return <String, dynamic>{};
+  }
+
   static Future<String> getStartupRoute() async {
     final lastRole = await getLastRole();
     final preferredRoles = lastRole == null ? null : [lastRole];
@@ -178,7 +282,10 @@ class PatientSessionService {
 
     for (final role in orderedRoles) {
       if (await isRoleLoggedIn(role)) {
-        return _dashboardRouteForRole(role);
+        if (await isRoleApproved(role)) {
+          return _dashboardRouteForRole(role);
+        }
+        await logoutRole(role);
       }
     }
 
@@ -206,12 +313,20 @@ class PatientSessionService {
     return isRoleLoggedIn(AppRole.patient);
   }
 
-  static Future<void> markRegistered({String? email}) async {
-    await markRoleRegistered(AppRole.patient, email: email);
+  static Future<void> markRegistered({String? email, String? displayName}) async {
+    await markRoleRegistered(
+      AppRole.patient,
+      email: email,
+      displayName: displayName,
+    );
   }
 
-  static Future<void> markLoggedIn({String? email}) async {
-    await markRoleLoggedIn(AppRole.patient, email: email);
+  static Future<void> markLoggedIn({String? email, String? displayName}) async {
+    await markRoleLoggedIn(
+      AppRole.patient,
+      email: email,
+      displayName: displayName,
+    );
   }
 
   static Future<void> logout() async {

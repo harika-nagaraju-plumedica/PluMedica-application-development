@@ -57,6 +57,7 @@ import 'views/patient/patient_referrals_view.dart';
 import 'bindings/hospital/hospital_registration_binding.dart';
 import 'bindings/hospital/hospital_login_binding.dart';
 import 'bindings/hospital/hospital_dashboard_binding.dart';
+import 'bindings/hospital/hospital_consultation_binding.dart';
 import 'bindings/hospital/hospital_consultant_management_binding.dart';
 import 'bindings/hospital/hospital_admission_management_binding.dart';
 import 'bindings/hospital/hospital_emergency_services_binding.dart';
@@ -88,6 +89,11 @@ import 'views/pharmacy/pharmacy_notifications_view.dart';
 import 'views/pending_verification_view.dart';
 import 'views/hospital/hospital_login_view.dart';
 import 'views/hospital/hospital_dashboard_view.dart';
+import 'views/hospital/hospital_consultation_view.dart';
+import 'views/hospital/hospital_consultation_intake_view.dart';
+import 'views/hospital/hospital_consultation_search_view.dart';
+import 'views/hospital/hospital_consultation_admission_details_view.dart';
+import 'views/hospital/hospital_consultation_form_view.dart';
 import 'views/hospital/hospital_consultant_management_view.dart';
 import 'views/hospital/hospital_admission_management_view.dart';
 import 'views/hospital/hospital_emergency_services_view.dart';
@@ -106,9 +112,18 @@ import 'views/partner/partner_views.dart';
 // Jobs Flow Imports
 import 'bindings/jobs/jobs_bindings.dart';
 import 'views/jobs/jobs_views.dart';
+import 'views/auth/password_reset_views.dart';
 
 // Role Selection View
 import 'views/role_selection_view.dart';
+import 'screens/patient_api_dashboard_screen.dart';
+import 'screens/patient_api_profile_screen.dart';
+import 'screens/medical_history_screen.dart';
+import 'screens/add_health_metric_screen.dart';
+import 'screens/patient_health_dashboard_screen.dart';
+import 'screens/metric_history_list_screen.dart';
+import 'screens/add_emergency_contact_screen.dart';
+import 'screens/patient_sos_api_screen.dart';
 
 void main() {
   // Initialize GetX controllers before running the app
@@ -142,6 +157,17 @@ class MyApp extends StatelessWidget {
         name: '/role_selection',
         page: () => const RoleSelectionView(),
         transition: Transition.fadeIn,
+      ),
+
+      GetPage(
+        name: '/auth/forgot-password',
+        page: () => const ForgotPasswordView(),
+        transition: Transition.rightToLeft,
+      ),
+      GetPage(
+        name: '/auth/reset-password',
+        page: () => const ResetPasswordView(),
+        transition: Transition.rightToLeft,
       ),
 
       // Pending Verification Route (shared across all registration types)
@@ -320,6 +346,46 @@ class MyApp extends StatelessWidget {
         binding: PatientClinicalRecordsBinding(),
         transition: Transition.rightToLeft,
       ),
+      GetPage(
+        name: '/patient/api/dashboard',
+        page: () => const PatientApiDashboardScreen(),
+        transition: Transition.rightToLeft,
+      ),
+      GetPage(
+        name: '/patient/api/profile',
+        page: () => const PatientApiProfileScreen(),
+        transition: Transition.rightToLeft,
+      ),
+      GetPage(
+        name: '/patient/api/medical-history',
+        page: () => const MedicalHistoryScreen(),
+        transition: Transition.rightToLeft,
+      ),
+      GetPage(
+        name: '/patient/api/add-health-metric',
+        page: () => const AddHealthMetricScreen(),
+        transition: Transition.rightToLeft,
+      ),
+      GetPage(
+        name: '/patient/api/health-dashboard',
+        page: () => const PatientHealthDashboardScreen(),
+        transition: Transition.rightToLeft,
+      ),
+      GetPage(
+        name: '/patient/api/metric-history',
+        page: () => const MetricHistoryListScreen(),
+        transition: Transition.rightToLeft,
+      ),
+      GetPage(
+        name: '/patient/api/add-emergency-contact',
+        page: () => const AddEmergencyContactScreen(),
+        transition: Transition.rightToLeft,
+      ),
+      GetPage(
+        name: '/patient/api/sos',
+        page: () => const PatientSosApiScreen(),
+        transition: Transition.rightToLeft,
+      ),
 
       // Hospital Flow Routes
       GetPage(
@@ -338,6 +404,36 @@ class MyApp extends StatelessWidget {
         name: '/hospital/dashboard',
         page: () => const HospitalDashboardView(),
         binding: HospitalDashboardBinding(),
+        transition: Transition.rightToLeft,
+      ),
+      GetPage(
+        name: '/hospital/consultation',
+        page: () => const HospitalConsultationView(),
+        binding: HospitalConsultationBinding(),
+        transition: Transition.rightToLeft,
+      ),
+      GetPage(
+        name: '/hospital/consultation/intake',
+        page: () => const HospitalConsultationIntakeView(),
+        binding: HospitalConsultationBinding(),
+        transition: Transition.rightToLeft,
+      ),
+      GetPage(
+        name: '/hospital/consultation/search',
+        page: () => const HospitalConsultationSearchView(),
+        binding: HospitalConsultationBinding(),
+        transition: Transition.rightToLeft,
+      ),
+      GetPage(
+        name: '/hospital/consultation/admission_details',
+        page: () => const HospitalConsultationAdmissionDetailsView(),
+        binding: HospitalConsultationBinding(),
+        transition: Transition.rightToLeft,
+      ),
+      GetPage(
+        name: '/hospital/consultation/form',
+        page: () => const HospitalConsultationFormView(),
+        binding: HospitalConsultationBinding(),
         transition: Transition.rightToLeft,
       ),
       GetPage(

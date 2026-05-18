@@ -69,6 +69,13 @@ class PartnerRegistrationView extends GetView<PartnerRegistrationController> {
                       initialValue: controller.licenseNumber.value,
                       onChanged: (val) => controller.licenseNumber.value = val,
                     ),
+                    const SizedBox(height: AppConstants.paddingMedium),
+                    AppTextField(
+                      label: 'Password',
+                      hint: 'Enter password',
+                      obscureText: true,
+                      onChanged: (val) => controller.password.value = val,
+                    ),
                     const SizedBox(height: AppConstants.paddingLarge),
                     AppButton(
                       text: 'Register',
@@ -146,6 +153,14 @@ class PartnerLoginView extends GetView<PartnerLoginController> {
                       obscureText: true,
                       initialValue: controller.password.value,
                       onChanged: (val) => controller.password.value = val,
+                    ),
+                    const SizedBox(height: 8),
+                    Align(
+                      alignment: Alignment.centerRight,
+                      child: TextButton(
+                        onPressed: controller.forgotPassword,
+                        child: const Text('Forgot Password?'),
+                      ),
                     ),
                     const SizedBox(height: AppConstants.paddingLarge),
                     AppButton(

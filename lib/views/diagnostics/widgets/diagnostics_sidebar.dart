@@ -45,12 +45,14 @@ class DiagnosticsSidebar extends StatelessWidget {
                       ),
                       const SizedBox(width: 10),
                       Expanded(
-                        child: Text(
-                          'Diagnostics Unit',
-                          style: AppFonts.heading3.copyWith(
-                            color: AppColors.white,
+                        child: Obx(
+                          () => Text(
+                            controller.diagnosticsCenterName.value,
+                            style: AppFonts.heading3.copyWith(
+                              color: AppColors.white,
+                            ),
+                            overflow: TextOverflow.ellipsis,
                           ),
-                          overflow: TextOverflow.ellipsis,
                         ),
                       ),
                     ],

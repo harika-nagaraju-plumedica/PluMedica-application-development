@@ -65,6 +65,13 @@ class PatientRegistrationView extends GetView<PatientRegistrationController> {
                       onChanged: (val) => controller.mobileNumber.value = val,
                     ),
                     const SizedBox(height: AppConstants.paddingMedium),
+                    AppTextField(
+                      label: 'Password',
+                      hint: 'Enter password',
+                      obscureText: true,
+                      onChanged: (val) => controller.password.value = val,
+                    ),
+                    const SizedBox(height: AppConstants.paddingMedium),
                     Obx(
                       () => AppDropdown(
                         label: 'Gender',

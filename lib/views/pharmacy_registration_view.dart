@@ -190,6 +190,28 @@ class PharmacyRegistrationView extends GetView<PharmacyRegistrationController> {
                         ),
                         const SizedBox(height: 16),
 
+                        // Email
+                        AppTextField(
+                          label: 'Email Address',
+                          hint: 'Enter pharmacy email',
+                          controller: controller.emailController,
+                          keyboardType: TextInputType.emailAddress,
+                          required: true,
+                          validator: controller.validateEmail,
+                        ),
+                        const SizedBox(height: 16),
+
+                        // Password
+                        AppTextField(
+                          label: 'Password',
+                          hint: 'Minimum 8 characters',
+                          controller: controller.passwordController,
+                          obscureText: true,
+                          required: true,
+                          validator: controller.validatePassword,
+                        ),
+                        const SizedBox(height: 16),
+
                         // GSTIN Number
                         AppTextField(
                           label: 'GSTIN Number',

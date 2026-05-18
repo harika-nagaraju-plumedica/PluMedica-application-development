@@ -1,7 +1,10 @@
 import 'package:get/get.dart';
+import '../../services/api_exception.dart';
+import '../../services/auth_service.dart';
 import '../../services/patient_session_service.dart';
 
 class HospitalLoginController extends GetxController {
+  final _authService = AuthService();
   final isLoading = false.obs;
   final email = 'admin@citymedical.com'.obs;
   final password = 'demo123'.obs;
@@ -23,18 +26,47 @@ class HospitalLoginController extends GetxController {
   }
 
   Future<void> login() async {
+    if (email.value.trim().isEmpty || password.value.isEmpty) {
+      Get.snackbar('Error', 'Please enter both email and password');
+      return;
+    }
+
     isLoading.value = true;
     try {
-      await Future.delayed(const Duration(milliseconds: 500));
-      await PatientSessionService.markRoleLoggedIn(
-        AppRole.hospital,
-        email: email.value,
+      final loginResult = await _authService.login(
+        email: email.value.trim(),
+        password: password.value,
       );
-      Get.offAllNamed('/hospital/dashboard');
+
+      if (!loginResult.isApproved) {
+        Get.offAllNamed(
+          '/pending-verification',
+          arguments: {
+            'registrationType': loginResult.module,
+            'userEmail': email.value.trim(),
+          },
+        );
+        return;
+      }
+
+      Get.offAllNamed(loginResult.dashboardRoute);
+    } on ApiException catch (e) {
+      Get.snackbar('Login Failed', e.message);
     } catch (e) {
-      Get.snackbar('Error', 'Login failed');
+      Get.snackbar('Error', 'Login failed. Please try again.');
     } finally {
       isLoading.value = false;
     }
+  }
+
+  void forgotPassword() {
+    Get.toNamed(
+      '/auth/forgot-password',
+      arguments: {
+        'moduleName': 'Hospital',
+        'loginRoute': '/hospital/login',
+        'registeredEmail': email.value.trim(),
+      },
+    );
   }
 }
