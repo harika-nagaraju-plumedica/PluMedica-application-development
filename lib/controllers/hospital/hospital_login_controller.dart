@@ -17,7 +17,17 @@ class HospitalLoginController extends GetxController {
   }
 
   Future<void> _loadRegisteredEmail() async {
-    final registeredEmail = await PatientSessionService.getRoleEmail(AppRole.hospital);
+    final lastIdentifier = await PatientSessionService.getRoleLoginIdentifier(
+      AppRole.hospital,
+    );
+    if (lastIdentifier.isNotEmpty) {
+      email.value = lastIdentifier;
+      return;
+    }
+
+    final registeredEmail = await PatientSessionService.getRoleEmail(
+      AppRole.hospital,
+    );
     if (registeredEmail.isNotEmpty) {
       email.value = registeredEmail;
     } else {
@@ -34,7 +44,7 @@ class HospitalLoginController extends GetxController {
     isLoading.value = true;
     try {
       final loginResult = await _authService.login(
-        email: email.value.trim(),
+        identifier: email.value.trim(),
         password: password.value,
       );
 

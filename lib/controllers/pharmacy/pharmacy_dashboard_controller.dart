@@ -3,6 +3,8 @@ import '../../services/patient_session_service.dart';
 
 class PharmacyDashboardController extends GetxController {
   final pharmacyName = RxString('City Pharmacy');
+  final pharmacyGeneratedId = RxString('');
+  final pharmacyStatus = RxString('Approved');
   final pharmacyPhone = RxString('+91 98765 43210');
   final pharmacyEmail = RxString('pharmacy@plumedica.com');
   
@@ -181,10 +183,20 @@ class PharmacyDashboardController extends GetxController {
     final displayName = await PatientSessionService.getRoleDisplayName(
       AppRole.pharmacy,
     );
+    final generatedId = await PatientSessionService.getRoleGeneratedId(
+      AppRole.pharmacy,
+    );
+    final status = await PatientSessionService.getRoleStatus(AppRole.pharmacy);
     final roleEmail = await PatientSessionService.getRoleEmail(AppRole.pharmacy);
 
     if (displayName.isNotEmpty) {
       pharmacyName.value = displayName;
+    }
+    if (generatedId.isNotEmpty) {
+      pharmacyGeneratedId.value = generatedId;
+    }
+    if (status.isNotEmpty) {
+      pharmacyStatus.value = status;
     }
     if (roleEmail.isNotEmpty) {
       pharmacyEmail.value = roleEmail;

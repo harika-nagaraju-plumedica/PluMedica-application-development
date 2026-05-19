@@ -28,6 +28,8 @@ class DiagnosticsDashboardController extends GetxController {
   final notes = ''.obs;
   final uiTick = 0.obs;
   final diagnosticsCenterName = 'Diagnostics Unit'.obs;
+  final diagnosticsGeneratedId = ''.obs;
+  final diagnosticsStatus = 'Approved'.obs;
 
   final globalSearchController = TextEditingController();
   final patientSearchController = TextEditingController();
@@ -242,8 +244,20 @@ class DiagnosticsDashboardController extends GetxController {
     final displayName = await PatientSessionService.getRoleDisplayName(
       AppRole.diagnostics,
     );
+    final generatedId = await PatientSessionService.getRoleGeneratedId(
+      AppRole.diagnostics,
+    );
+    final status = await PatientSessionService.getRoleStatus(
+      AppRole.diagnostics,
+    );
     if (displayName.isNotEmpty) {
       diagnosticsCenterName.value = displayName;
+    }
+    if (generatedId.isNotEmpty) {
+      diagnosticsGeneratedId.value = generatedId;
+    }
+    if (status.isNotEmpty) {
+      diagnosticsStatus.value = status;
     }
   }
 

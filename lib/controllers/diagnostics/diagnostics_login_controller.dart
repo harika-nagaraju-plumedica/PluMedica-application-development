@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
+import '../../services/api_exception.dart';
+import '../../services/auth_service.dart';
 import '../../services/patient_session_service.dart';
 
 class DiagnosticsLoginController extends GetxController {
+  final _authService = AuthService();
   final emailController = TextEditingController();
   final passwordController = TextEditingController();
 
@@ -18,6 +21,14 @@ class DiagnosticsLoginController extends GetxController {
   }
 
   Future<void> _loadRegisteredEmail() async {
+    final lastIdentifier = await PatientSessionService.getRoleLoginIdentifier(
+      AppRole.diagnostics,
+    );
+    if (lastIdentifier.isNotEmpty) {
+      emailController.text = lastIdentifier;
+      return;
+    }
+
     final registeredEmail = await PatientSessionService.getRoleEmail(
       AppRole.diagnostics,
     );
@@ -26,13 +37,9 @@ class DiagnosticsLoginController extends GetxController {
     }
   }
 
-  String? validateEmail(String? value) {
+  String? validateIdentifier(String? value) {
     if (value == null || value.trim().isEmpty) {
-      return 'Email is required';
-    }
-    const pattern = r'^[^@\s]+@[^@\s]+\.[^@\s]+$';
-    if (!RegExp(pattern).hasMatch(value.trim())) {
-      return 'Enter a valid email address';
+      return 'Email or ID is required';
     }
     return null;
   }
@@ -58,14 +65,35 @@ class DiagnosticsLoginController extends GetxController {
 
     isLoading.value = true;
     try {
-      await Future<void>.delayed(const Duration(milliseconds: 900));
-
-      await PatientSessionService.markRoleLoggedIn(
-        AppRole.diagnostics,
-        email: emailController.text.trim(),
+      final loginResult = await _authService.login(
+        identifier: emailController.text.trim(),
+        password: passwordController.text,
       );
 
-      Get.offAllNamed('/diagnostics/dashboard');
+      if (!loginResult.isApproved) {
+        Get.offAllNamed(
+          '/pending-verification',
+          arguments: {
+            'registrationType': loginResult.module,
+            'userEmail': emailController.text.trim(),
+          },
+        );
+        return;
+      }
+
+      Get.offAllNamed(loginResult.dashboardRoute);
+    } on ApiException catch (e) {
+      Get.snackbar(
+        'Login Failed',
+        e.message,
+        snackPosition: SnackPosition.BOTTOM,
+      );
+    } catch (e) {
+      Get.snackbar(
+        'Error',
+        'Failed to login. Please try again.',
+        snackPosition: SnackPosition.BOTTOM,
+      );
     } finally {
       isLoading.value = false;
     }

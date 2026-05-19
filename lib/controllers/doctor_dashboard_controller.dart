@@ -22,6 +22,8 @@ class DoctorDashboardController extends GetxController {
     _adminIdentityService.getPrimaryName(AppRole.doctor);
 
   final dashboardDoctorName = ''.obs;
+  final dashboardDoctorGeneratedId = ''.obs;
+  final dashboardDoctorStatus = 'Approved'.obs;
 
   final isLoading = false.obs;
   final doctor = Rx<Doctor?>(null);
@@ -47,8 +49,19 @@ class DoctorDashboardController extends GetxController {
     final displayName = await PatientSessionService.getRoleDisplayName(
       AppRole.doctor,
     );
+    final generatedId = await PatientSessionService.getRoleGeneratedId(
+      AppRole.doctor,
+    );
+    final status = await PatientSessionService.getRoleStatus(AppRole.doctor);
+
     if (displayName.isNotEmpty) {
       dashboardDoctorName.value = displayName;
+    }
+    if (generatedId.isNotEmpty) {
+      dashboardDoctorGeneratedId.value = generatedId;
+    }
+    if (status.isNotEmpty) {
+      dashboardDoctorStatus.value = status;
     }
   }
 
@@ -59,7 +72,9 @@ class DoctorDashboardController extends GetxController {
     try {
       // TODO: Fetch doctor profile
       doctor.value = Doctor(
-        id: _currentDoctorId,
+        id: dashboardDoctorGeneratedId.value.isNotEmpty
+            ? dashboardDoctorGeneratedId.value
+            : _currentDoctorId,
         fullName: dashboardDoctorName.value.isNotEmpty
             ? dashboardDoctorName.value
             : _currentDoctorName,
@@ -71,7 +86,7 @@ class DoctorDashboardController extends GetxController {
         clinicAddress: '123 Medical Street, City',
         licenseNumber: 'LIC123456',
         availability: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'],
-        status: 'approved',
+        status: dashboardDoctorStatus.value,
         createdAt: DateTime.now(),
       );
 

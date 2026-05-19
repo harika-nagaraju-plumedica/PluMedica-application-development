@@ -48,9 +48,9 @@ class HospitalLoginView extends GetView<HospitalLoginController> {
                     ),
                     const SizedBox(height: AppConstants.paddingLarge),
                     AppTextField(
-                      label: 'Email',
-                      hint: 'Enter hospital email',
-                      keyboardType: TextInputType.emailAddress,
+                      label: 'Email or ID',
+                      hint: 'Enter hospital email or generated ID',
+                      keyboardType: TextInputType.text,
                       onChanged: (val) => controller.email.value = val,
                     ),
                     const SizedBox(height: AppConstants.paddingMedium),

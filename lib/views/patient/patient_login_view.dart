@@ -55,9 +55,9 @@ class PatientLoginView extends GetView<PatientLoginController> {
                     ),
                     const SizedBox(height: AppConstants.paddingLarge),
                     AppTextField(
-                      label: 'Email',
-                      hint: 'Enter your email',
-                      keyboardType: TextInputType.emailAddress,
+                      label: 'Email or ID',
+                      hint: 'Enter your email or generated ID',
+                      keyboardType: TextInputType.text,
                       onChanged: (val) => controller.email.value = val,
                     ),
                     const SizedBox(height: AppConstants.paddingMedium),

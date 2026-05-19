@@ -16,7 +16,17 @@ class PharmacyLoginController extends GetxController {
   }
 
   Future<void> _loadRegisteredEmail() async {
-    final registeredEmail = await PatientSessionService.getRoleEmail(AppRole.pharmacy);
+    final lastIdentifier = await PatientSessionService.getRoleLoginIdentifier(
+      AppRole.pharmacy,
+    );
+    if (lastIdentifier.isNotEmpty) {
+      email.value = lastIdentifier;
+      return;
+    }
+
+    final registeredEmail = await PatientSessionService.getRoleEmail(
+      AppRole.pharmacy,
+    );
     if (registeredEmail.isNotEmpty) {
       email.value = registeredEmail;
     }
@@ -36,7 +46,7 @@ class PharmacyLoginController extends GetxController {
       isLoading.value = true;
 
       final loginResult = await _authService.login(
-        email: email.value.trim(),
+        identifier: email.value.trim(),
         password: password.value,
       );
 

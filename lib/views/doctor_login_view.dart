@@ -81,14 +81,14 @@ class DoctorLoginView extends GetView<DoctorLoginController> {
                           children: [
                             const SizedBox(height: 24),
 
-                            // Email TextField
+                            // Email or ID TextField
                             AppTextField(
-                              label: 'Email Address',
-                              hint: 'Enter your registered email',
+                              label: 'Email or ID',
+                              hint: 'Enter your registered email or generated ID',
                               controller: controller.emailController,
-                              keyboardType: TextInputType.emailAddress,
+                              keyboardType: TextInputType.text,
                               required: true,
-                              validator: controller.validateEmail,
+                              validator: controller.validateIdentifier,
                             ),
                             const SizedBox(height: 20),
 

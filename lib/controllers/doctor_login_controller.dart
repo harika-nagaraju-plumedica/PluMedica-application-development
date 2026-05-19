@@ -21,7 +21,17 @@ class DoctorLoginController extends GetxController {
   }
 
   Future<void> _loadRegisteredEmail() async {
-    final registeredEmail = await PatientSessionService.getRoleEmail(AppRole.doctor);
+    final lastIdentifier = await PatientSessionService.getRoleLoginIdentifier(
+      AppRole.doctor,
+    );
+    if (lastIdentifier.isNotEmpty) {
+      emailController.text = lastIdentifier;
+      return;
+    }
+
+    final registeredEmail = await PatientSessionService.getRoleEmail(
+      AppRole.doctor,
+    );
     if (registeredEmail.isNotEmpty) {
       emailController.text = registeredEmail;
     }
@@ -32,15 +42,10 @@ class DoctorLoginController extends GetxController {
     showPassword.value = !showPassword.value;
   }
 
-  /// Validate email
-  String? validateEmail(String? value) {
+  /// Validate email or generated ID
+  String? validateIdentifier(String? value) {
     if (value == null || value.isEmpty) {
-      return 'Email is required';
-    }
-    const emailPattern = r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$';
-    final regex = RegExp(emailPattern);
-    if (!regex.hasMatch(value)) {
-      return 'Enter a valid email address';
+      return 'Email or ID is required';
     }
     return null;
   }
@@ -66,7 +71,7 @@ class DoctorLoginController extends GetxController {
 
     try {
       final loginResult = await _authService.login(
-        email: emailController.text.trim(),
+        identifier: emailController.text.trim(),
         password: passwordController.text,
       );
 

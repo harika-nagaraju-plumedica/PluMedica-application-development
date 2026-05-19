@@ -73,11 +73,11 @@ class PharmacyLoginView extends GetView<PharmacyLoginController> {
                     ),
                     const SizedBox(height: AppConstants.paddingXLarge),
 
-                    // Email Field
+                    // Email or ID Field
                     AppTextField(
-                      label: 'Email Address',
-                      hint: 'Enter pharmacy email',
-                      keyboardType: TextInputType.emailAddress,
+                      label: 'Email or ID',
+                      hint: 'Enter pharmacy email or generated ID',
+                      keyboardType: TextInputType.text,
                       onChanged: (val) => controller.email.value = val,
                     ),
                     const SizedBox(height: AppConstants.paddingLarge),

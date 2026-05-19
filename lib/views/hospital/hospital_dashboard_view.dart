@@ -41,6 +41,8 @@ class HospitalDashboardView extends GetView<HospitalDashboardController> {
                       HospitalHeaderWidget(
                         hospitalName: controller.hospitalName.value,
                         hospitalLogo: 'assets/images/logo.jpeg',
+                        generatedId: controller.hospitalGeneratedId.value,
+                        status: controller.hospitalStatus.value,
                         onSettingsTap: () {
                           // TODO: Navigate to settings
                         },

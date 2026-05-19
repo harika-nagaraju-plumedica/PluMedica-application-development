@@ -43,12 +43,12 @@ class DiagnosticsLoginView extends GetView<DiagnosticsLoginController> {
                 ),
                 const SizedBox(height: 24),
                 AppTextField(
-                  label: 'Email',
-                  hint: 'Enter diagnostics email',
+                  label: 'Email or ID',
+                  hint: 'Enter diagnostics email or generated ID',
                   controller: controller.emailController,
-                  keyboardType: TextInputType.emailAddress,
+                  keyboardType: TextInputType.text,
                   required: true,
-                  validator: controller.validateEmail,
+                  validator: controller.validateIdentifier,
                 ),
                 const SizedBox(height: 16),
                 AppTextField(

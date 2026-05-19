@@ -91,6 +91,31 @@ class DiagnosticsDashboardView extends GetView<DiagnosticsDashboardController> {
       key: const ValueKey<String>('dashboard'),
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
+        Obx(
+          () => Card(
+            child: Padding(
+              padding: const EdgeInsets.all(12),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'Welcome, ${controller.diagnosticsCenterName.value}',
+                    style: AppFonts.labelLarge,
+                  ),
+                  const SizedBox(height: 6),
+                  Text(
+                    controller.diagnosticsGeneratedId.value.isEmpty
+                        ? 'Your ID: -'
+                        : 'Your ID: ${controller.diagnosticsGeneratedId.value}',
+                  ),
+                  const SizedBox(height: 2),
+                  Text('Status: ${controller.diagnosticsStatus.value}'),
+                ],
+              ),
+            ),
+          ),
+        ),
+        const SizedBox(height: 12),
         Wrap(
           spacing: 12,
           runSpacing: 12,

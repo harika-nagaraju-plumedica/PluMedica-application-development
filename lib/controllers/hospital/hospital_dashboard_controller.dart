@@ -4,6 +4,8 @@ import '../../services/patient_session_service.dart';
 class HospitalDashboardController extends GetxController {
   final isLoading = false.obs;
   final hospitalName = 'City Medical Centre'.obs;
+  final hospitalGeneratedId = ''.obs;
+  final hospitalStatus = 'Approved'.obs;
   final totalPatients = 150.obs;
   final totalBeds = 200.obs;
   final occupiedBeds = 125.obs;
@@ -22,8 +24,19 @@ class HospitalDashboardController extends GetxController {
     final displayName = await PatientSessionService.getRoleDisplayName(
       AppRole.hospital,
     );
+    final generatedId = await PatientSessionService.getRoleGeneratedId(
+      AppRole.hospital,
+    );
+    final status = await PatientSessionService.getRoleStatus(AppRole.hospital);
+
     if (displayName.isNotEmpty) {
       hospitalName.value = displayName;
+    }
+    if (generatedId.isNotEmpty) {
+      hospitalGeneratedId.value = generatedId;
+    }
+    if (status.isNotEmpty) {
+      hospitalStatus.value = status;
     }
   }
 

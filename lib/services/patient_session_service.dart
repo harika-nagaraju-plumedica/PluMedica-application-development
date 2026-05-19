@@ -45,11 +45,19 @@ class PatientSessionService {
 
   static String _emailKeyForRole(AppRole role) => '${_roleName(role)}_email';
 
+  static String _loginIdentifierKeyForRole(AppRole role) =>
+      '${_roleName(role)}_login_identifier';
+
   static String _displayNameKeyForRole(AppRole role) =>
       '${_roleName(role)}_display_name';
 
   static String _approvalKeyForRole(AppRole role) =>
       '${_roleName(role)}_is_approved';
+
+    static String _generatedIdKeyForRole(AppRole role) =>
+      '${_roleName(role)}_generated_id';
+
+    static String _statusKeyForRole(AppRole role) => '${_roleName(role)}_status';
 
     static String _profileKeyForRole(AppRole role) =>
       '${_roleName(role)}_profile';
@@ -193,7 +201,10 @@ class PatientSessionService {
   static Future<void> markRoleRegistered(
     AppRole role, {
     String? email,
+    String? loginIdentifier,
     String? displayName,
+    String? generatedId,
+    String? status,
     bool? isApproved,
   }) async {
     final prefs = await SharedPreferences.getInstance();
@@ -207,8 +218,20 @@ class PatientSessionService {
     if (email != null && email.isNotEmpty) {
       await prefs.setString(_emailKeyForRole(role), email);
     }
+    if (loginIdentifier != null && loginIdentifier.trim().isNotEmpty) {
+      await prefs.setString(
+        _loginIdentifierKeyForRole(role),
+        loginIdentifier.trim(),
+      );
+    }
     if (displayName != null && displayName.trim().isNotEmpty) {
       await prefs.setString(_displayNameKeyForRole(role), displayName.trim());
+    }
+    if (generatedId != null && generatedId.trim().isNotEmpty) {
+      await prefs.setString(_generatedIdKeyForRole(role), generatedId.trim());
+    }
+    if (status != null && status.trim().isNotEmpty) {
+      await prefs.setString(_statusKeyForRole(role), status.trim());
     }
     await _setLastRole(role);
   }
@@ -216,7 +239,10 @@ class PatientSessionService {
   static Future<void> markRoleLoggedIn(
     AppRole role, {
     String? email,
+    String? loginIdentifier,
     String? displayName,
+    String? generatedId,
+    String? status,
   }) async {
     final prefs = await SharedPreferences.getInstance();
     await prefs.setBool(_registeredKeyForRole(role), true);
@@ -224,8 +250,20 @@ class PatientSessionService {
     if (email != null && email.isNotEmpty) {
       await prefs.setString(_emailKeyForRole(role), email);
     }
+    if (loginIdentifier != null && loginIdentifier.trim().isNotEmpty) {
+      await prefs.setString(
+        _loginIdentifierKeyForRole(role),
+        loginIdentifier.trim(),
+      );
+    }
     if (displayName != null && displayName.trim().isNotEmpty) {
       await prefs.setString(_displayNameKeyForRole(role), displayName.trim());
+    }
+    if (generatedId != null && generatedId.trim().isNotEmpty) {
+      await prefs.setString(_generatedIdKeyForRole(role), generatedId.trim());
+    }
+    if (status != null && status.trim().isNotEmpty) {
+      await prefs.setString(_statusKeyForRole(role), status.trim());
     }
     await _setLastRole(role);
   }
@@ -240,9 +278,24 @@ class PatientSessionService {
     return prefs.getString(_emailKeyForRole(role)) ?? '';
   }
 
+  static Future<String> getRoleLoginIdentifier(AppRole role) async {
+    final prefs = await SharedPreferences.getInstance();
+    return prefs.getString(_loginIdentifierKeyForRole(role)) ?? '';
+  }
+
   static Future<String> getRoleDisplayName(AppRole role) async {
     final prefs = await SharedPreferences.getInstance();
     return prefs.getString(_displayNameKeyForRole(role)) ?? '';
+  }
+
+  static Future<String> getRoleGeneratedId(AppRole role) async {
+    final prefs = await SharedPreferences.getInstance();
+    return prefs.getString(_generatedIdKeyForRole(role)) ?? '';
+  }
+
+  static Future<String> getRoleStatus(AppRole role) async {
+    final prefs = await SharedPreferences.getInstance();
+    return prefs.getString(_statusKeyForRole(role)) ?? '';
   }
 
   static Future<void> saveRoleProfile(
@@ -317,6 +370,7 @@ class PatientSessionService {
     await markRoleRegistered(
       AppRole.patient,
       email: email,
+      loginIdentifier: email,
       displayName: displayName,
     );
   }
@@ -325,6 +379,7 @@ class PatientSessionService {
     await markRoleLoggedIn(
       AppRole.patient,
       email: email,
+      loginIdentifier: email,
       displayName: displayName,
     );
   }

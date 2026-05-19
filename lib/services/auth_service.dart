@@ -18,13 +18,19 @@ class AuthService {
   final TokenStorageService _tokenStorageService;
 
   Future<LoginResult> login({
-    required String email,
+    required String identifier,
     required String password,
   }) async {
+    final normalizedIdentifier = identifier.trim();
+    final isEmailLogin = _looksLikeEmail(normalizedIdentifier);
+
     final response = await _dioService.postJson(
       ApiEndpoints.authLogin,
       {
-        'email': email.trim(),
+        'emailOrId': normalizedIdentifier,
+        'email': isEmailLogin ? normalizedIdentifier : '',
+        'id': isEmailLogin ? '' : normalizedIdentifier,
+        'generatedId': isEmailLogin ? '' : normalizedIdentifier,
         'password': password,
       },
     );
@@ -49,6 +55,11 @@ class AuthService {
     }
 
     final role = _roleFromModule(loginData.module);
+    final extractedEmail = _extractEmail(
+      loginDataProfile: loginData.profile,
+      fallback: normalizedIdentifier,
+      isEmailLogin: isEmailLogin,
+    );
     final isApproved = _resolveApprovalStatus(loginData.profile, role);
 
     final token = loginData.token;
@@ -58,8 +69,11 @@ class AuthService {
 
     await PatientSessionService.markRoleRegistered(
       role,
-      email: email.trim(),
+      email: extractedEmail,
+      loginIdentifier: normalizedIdentifier,
       displayName: _extractDisplayName(loginData.profile),
+      generatedId: _extractGeneratedId(loginData.profile),
+      status: _extractStatus(loginData.profile),
       isApproved: isApproved,
     );
 
@@ -68,8 +82,11 @@ class AuthService {
     if (isApproved) {
       await PatientSessionService.markRoleLoggedIn(
         role,
-        email: email.trim(),
+        email: extractedEmail,
+        loginIdentifier: normalizedIdentifier,
         displayName: _extractDisplayName(loginData.profile),
+        generatedId: _extractGeneratedId(loginData.profile),
+        status: _extractStatus(loginData.profile),
       );
     }
 
@@ -130,6 +147,65 @@ class AuthService {
       }
     }
 
+    return '';
+  }
+
+  String _extractGeneratedId(Map<String, dynamic> profile) {
+    const candidateKeys = [
+      'generatedId',
+      'id',
+      'userId',
+      'doctorId',
+      'hospitalId',
+      'pharmacyId',
+      'diagnosticsId',
+      'centerId',
+    ];
+
+    for (final key in candidateKeys) {
+      final value = profile[key]?.toString().trim() ?? '';
+      if (value.isNotEmpty) {
+        return value;
+      }
+    }
+
+    return '';
+  }
+
+  String _extractStatus(Map<String, dynamic> profile) {
+    const candidateKeys = [
+      'status',
+      'approvalStatus',
+      'registrationStatus',
+      'verificationStatus',
+    ];
+
+    for (final key in candidateKeys) {
+      final value = profile[key]?.toString().trim() ?? '';
+      if (value.isNotEmpty) {
+        return value;
+      }
+    }
+
+    return 'Approved';
+  }
+
+  bool _looksLikeEmail(String input) {
+    return input.contains('@') && input.contains('.');
+  }
+
+  String _extractEmail({
+    required Map<String, dynamic> loginDataProfile,
+    required String fallback,
+    required bool isEmailLogin,
+  }) {
+    final profileEmail = loginDataProfile['email']?.toString().trim() ?? '';
+    if (profileEmail.isNotEmpty) {
+      return profileEmail;
+    }
+    if (isEmailLogin) {
+      return fallback;
+    }
     return '';
   }
 
@@ -215,11 +291,20 @@ class LoginData {
 
   factory LoginData.fromJson(dynamic raw) {
     final map = raw is Map<String, dynamic> ? raw : <String, dynamic>{};
+    final profileMap = map['profile'] is Map<String, dynamic>
+        ? Map<String, dynamic>.from(map['profile'] as Map)
+        : <String, dynamic>{};
+
+    if (profileMap.isEmpty) {
+      final flatProfile = Map<String, dynamic>.from(map)
+        ..remove('module')
+        ..remove('token');
+      profileMap.addAll(flatProfile);
+    }
+
     return LoginData(
       module: map['module']?.toString().trim() ?? '',
-      profile: map['profile'] is Map<String, dynamic>
-          ? map['profile'] as Map<String, dynamic>
-          : <String, dynamic>{},
+      profile: profileMap,
       token: map['token']?.toString() ?? '',
     );
   }
